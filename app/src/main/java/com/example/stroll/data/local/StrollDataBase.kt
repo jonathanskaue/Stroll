@@ -4,10 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Entity::class],
+    entities = [StrollDataEntity::class],
     version = 1
 )
 
 abstract class StrollDataBase: RoomDatabase() {
-    abstract val dao: Dao
+    abstract val dao: StrollDao
 }

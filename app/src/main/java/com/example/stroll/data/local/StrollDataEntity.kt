@@ -3,6 +3,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Entity(
+data class StrollDataEntity(
     @PrimaryKey val id: Int
 )
