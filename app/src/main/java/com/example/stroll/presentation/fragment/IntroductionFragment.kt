@@ -1,39 +1,52 @@
 package com.example.stroll.presentation.fragment
 
-import android.content.res.Configuration
+import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
+import androidx.preference.PreferenceManager
+import androidx.viewpager.widget.ViewPager
 import com.example.stroll.R
+import com.example.stroll.databinding.FragmentIntroductionBinding
 import com.example.stroll.databinding.FragmentMainBinding
 import com.example.stroll.databinding.FragmentMapBinding
+import com.example.stroll.presentation.adapters.ViewPagerAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import org.osmdroid.views.MapView
 
 @AndroidEntryPoint
-class MapFragment() : Fragment() {
+class IntroductionFragment() : Fragment() {
 
-    private lateinit var mapView: MapView
     private val viewModel: MainViewModel by viewModels()
 
-    private var _binding: FragmentMapBinding? = null
+    private var _binding: FragmentIntroductionBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var viewPager: ViewPager
+    lateinit var viewPagerAdapter: ViewPagerAdapter
+    lateinit var imageList: List<Int>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        _binding = FragmentMapBinding.inflate(inflater, container, false)
-        mapView = binding.map
+        _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
+
+        viewPager = binding.idViewPager
+
+        imageList = ArrayList<Int>()
+        imageList = imageList + R.drawable.skjermbilde_kart
+        imageList = imageList + R.drawable.skjermbilde_dualkartkamera
+        imageList = imageList + R.drawable.skjermbilde_records
+
+        viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList)
+        viewPager.adapter = viewPagerAdapter
         return binding.root
-        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,7 +54,7 @@ class MapFragment() : Fragment() {
     }
 
     fun loadSettings() {
-        val sp = context?.let { androidx.preference.PreferenceManager.getDefaultSharedPreferences(it) }
+        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val dark_mode = sp?.getBoolean("dark_mode", false)
 
         if (dark_mode == true) {
