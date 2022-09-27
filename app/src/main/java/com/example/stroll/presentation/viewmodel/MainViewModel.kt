@@ -24,7 +24,7 @@ class MainViewModel @Inject constructor(
     fun addDataToRoom() {
         viewModelScope.launch {
             strollRepo.insertData(
-                StrollData(
+                StrollDataEntity(
                     id = 2
                 )
             )

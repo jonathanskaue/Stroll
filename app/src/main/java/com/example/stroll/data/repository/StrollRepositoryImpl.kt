@@ -18,7 +18,7 @@ class StrollRepositoryImpl @Inject constructor(
     override val readAllData: LiveData<List<StrollDataEntity>> = dao.getAllData()
 ): StrollRepository {
 
-    override suspend fun insertData(data: StrollData) {
-        dao.insertData(data.toStrollDataEntity())
+    override suspend fun insertData(data: StrollDataEntity) {
+        dao.insertData(data)
     }
 }

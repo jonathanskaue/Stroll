@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface StrollRepository {
 
-    suspend fun insertData(data: StrollData)
+    suspend fun insertData(data: StrollDataEntity)
 
     val readAllData: LiveData<List<StrollDataEntity>>
 
