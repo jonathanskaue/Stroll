@@ -8,6 +8,7 @@ plugins {
 
 android {
     compileSdk 33
+    namespace 'com.example.stroll'
 
     defaultConfig {
         applicationId "com.example.stroll"
@@ -83,6 +84,17 @@ dependencies {
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
+    //Open Street Map
+    implementation 'org.osmdroid:osmdroid-android:6.1.14'
+    implementation 'org.osmdroid:osmdroid-geopackage:6.1.14'
+    implementation 'org.osmdroid:osmdroid-mapsforge:6.1.14'
+    implementation 'org.osmdroid:osmdroid-wms:6.1.14'
+    implementation 'org.osmdroid:osmdroid-shape:6.1.14'
+
+    //osmdroid-mapsforge
+    implementation 'org.mapsforge:mapsforge-map-android:0.18.0'
+    implementation 'org.mapsforge:mapsforge-map:0.18.0'
+    implementation 'org.mapsforge:mapsforge-themes:0.18.0'
 
     /*
     // MPAndroidChart doesnt work; will have to find new dependencies.
