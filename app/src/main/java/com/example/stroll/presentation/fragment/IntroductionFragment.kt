@@ -1,6 +1,5 @@
 package com.example.stroll.presentation.fragment
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,10 +11,10 @@ import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentIntroductionBinding
-import com.example.stroll.databinding.FragmentMainBinding
-import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.presentation.adapters.ViewPagerAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,6 +27,7 @@ class IntroductionFragment() : Fragment() {
 
     lateinit var viewPager: ViewPager
     lateinit var viewPagerAdapter: ViewPagerAdapter
+    lateinit var dotsIndicator: SpringDotsIndicator
     lateinit var imageList: List<Int>
 
     override fun onCreateView(
@@ -37,14 +37,16 @@ class IntroductionFragment() : Fragment() {
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
 
         viewPager = binding.idViewPager
+        dotsIndicator = binding.springDotsIndicator
 
         imageList = ArrayList<Int>()
-        imageList = imageList + R.drawable.skjermbilde_kart
-        imageList = imageList + R.drawable.skjermbilde_dualkartkamera
-        imageList = imageList + R.drawable.skjermbilde_records
+        imageList = imageList + R.drawable.mapicon
+        imageList = imageList + R.drawable.cameraicon
+        imageList = imageList + R.drawable.recordicon
 
         viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList)
         viewPager.adapter = viewPagerAdapter
+        dotsIndicator.attachTo(viewPager)
         return binding.root
     }
 
