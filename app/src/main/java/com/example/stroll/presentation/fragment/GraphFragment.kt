@@ -13,15 +13,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentGraphBinding
+import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class GraphFragment() : Fragment(), SensorEventListener {
+
+    private val viewModel: MainViewModel by viewModels()
 
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
@@ -35,15 +39,31 @@ class GraphFragment() : Fragment(), SensorEventListener {
     private var rotationMatrix = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     private var deviceOrientation = floatArrayOf(0f, 0f, 0f)
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
 
-        setUpSensors()
+        //Displays latest data in database
+        viewModel.allData.observe(viewLifecycleOwner) { data ->
+            data.forEach {
+                binding.accdata.text = (it.accData.toString())
+            }
+        }
+
+
+        binding.startButton.setOnClickListener {
+            setUpSensors()
+        }
+
+        binding.stopButton.setOnClickListener {
+            viewModel.addDataToRoom()
+        }
 
         return binding.root
     }
@@ -103,6 +123,11 @@ class GraphFragment() : Fragment(), SensorEventListener {
                 binding.tvSensorDataAccFiltered.text = displayDataTriple("acc", accSensorData)
             }
             binding.tvSensorDataAcc.text = displayDataTriple("acc", accSensorData)
+
+            var accData: List<Float> = listOf(accSensorData[0], accSensorData[1], accSensorData[2])
+            var accDataList = listOf(accData)
+            accDataList.plus(accData)
+            viewModel.getAccData(accDataList)
         }
         if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
             val gyroSensorData = event.values

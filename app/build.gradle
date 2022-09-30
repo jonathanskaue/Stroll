@@ -102,6 +102,9 @@ dependencies {
     //Dotsindicator
     implementation 'com.tbuonomo:dotsindicator:4.3'
 
+    //Converter
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1"
+
 
     /*
     // MPAndroidChart doesnt work; will have to find new dependencies.

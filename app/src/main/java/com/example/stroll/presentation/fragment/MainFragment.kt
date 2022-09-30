@@ -39,10 +39,6 @@ class MainFragment() : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        viewModel.addDataToRoom()
-        viewModel.allData.observe(viewLifecycleOwner) { data ->
-            binding.textView.text = data[0].id.toString()
-        }
         binding.btnMap.setOnClickListener {
             val action = MainFragmentDirections.actionMainFragmentToMapFragment()
             view?.findNavController()?.navigate(action)

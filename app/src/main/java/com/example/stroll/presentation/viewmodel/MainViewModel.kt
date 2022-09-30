@@ -5,12 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stroll.data.local.StrollDataEntity
-import com.example.stroll.domain.model.StrollData
 import com.example.stroll.domain.repository.StrollRepository
-import com.example.stroll.presentation.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,11 +17,18 @@ class MainViewModel @Inject constructor(
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
 
+    var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
+    val accData: LiveData<List<List<Float>>> = _accData
+
+    fun getAccData(data: List<List<Float>>) {
+        _accData.value = data
+    }
+
     fun addDataToRoom() {
         viewModelScope.launch {
             strollRepo.insertData(
                 StrollDataEntity(
-                    id = 2
+                    accData = accData.value!!
                 )
             )
         }
