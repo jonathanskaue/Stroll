@@ -102,12 +102,14 @@ class GraphFragment() : Fragment(), SensorEventListener {
             val accTotal =
                 sqrt(accSensorData[0] * accSensorData[0] + accSensorData[1] * accSensorData[1] + accSensorData[2] * accSensorData[2]) - 9.81
             if (accTotal > 0.5) {
-                Log.d(
-                    "changesAcc",
-                    listOf(accSensorData[0], accSensorData[1], accSensorData[2]).toString()
-                )
-
-
+                binding.tvSensorDataAccFiltered.text =
+                "acc x ${String.format("%.3f", accSensorData[0])}, acc y " +
+                        "${String.format("%.3f", accSensorData[1])}, acc z ${
+                            String.format(
+                                "%.3f",
+                                accSensorData[2]
+                            )
+                        }"
             }
             binding.tvSensorDataAcc.text =
                 "acc x ${String.format("%.3f", accSensorData[0])}, acc y " +
@@ -123,10 +125,15 @@ class GraphFragment() : Fragment(), SensorEventListener {
             val gyroTotal =
                 sqrt(gyroSensorData[0] * gyroSensorData[0] + gyroSensorData[1] * gyroSensorData[1] + gyroSensorData[2] * gyroSensorData[2])
             if (gyroTotal > 0.1) {
-                Log.d(
-                    "changesGyro",
-                    listOf(gyroSensorData[0], gyroSensorData[1], gyroSensorData[2]).toString()
-                )
+                binding.tvSensorDataGyroFiltered.text =
+                    "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
+                            "${String.format("%.3f", gyroSensorData[1])}, gyro z ${
+                                String.format(
+                                    "%.3f",
+                                    gyroSensorData[2]
+                                )
+                            }"
+            }
 
                 binding.tvSensorDataGyro.text =
                     "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
@@ -136,7 +143,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
                                     gyroSensorData[2]
                                 )
                             }"
-            }
+
             }
             if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
                 sensorMagData = event.values
