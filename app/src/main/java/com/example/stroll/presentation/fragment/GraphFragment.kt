@@ -6,7 +6,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -19,7 +18,6 @@ import androidx.preference.PreferenceManager
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentGraphBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.concurrent.fixedRateTimer
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
@@ -102,59 +100,24 @@ class GraphFragment() : Fragment(), SensorEventListener {
             val accTotal =
                 sqrt(accSensorData[0] * accSensorData[0] + accSensorData[1] * accSensorData[1] + accSensorData[2] * accSensorData[2]) - 9.81
             if (accTotal > 0.5) {
-                binding.tvSensorDataAccFiltered.text =
-                "acc x ${String.format("%.3f", accSensorData[0])}, acc y " +
-                        "${String.format("%.3f", accSensorData[1])}, acc z ${
-                            String.format(
-                                "%.3f",
-                                accSensorData[2]
-                            )
-                        }"
+                binding.tvSensorDataAccFiltered.text = displayDataTriple("acc", accSensorData)
             }
-            binding.tvSensorDataAcc.text =
-                "acc x ${String.format("%.3f", accSensorData[0])}, acc y " +
-                        "${String.format("%.3f", accSensorData[1])}, acc z ${
-                            String.format(
-                                "%.3f",
-                                accSensorData[2]
-                            )
-                        }"
+            binding.tvSensorDataAcc.text = displayDataTriple("acc", accSensorData)
         }
         if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
             val gyroSensorData = event.values
             val gyroTotal =
                 sqrt(gyroSensorData[0] * gyroSensorData[0] + gyroSensorData[1] * gyroSensorData[1] + gyroSensorData[2] * gyroSensorData[2])
             if (gyroTotal > 0.1) {
-                binding.tvSensorDataGyroFiltered.text =
-                    "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
-                            "${String.format("%.3f", gyroSensorData[1])}, gyro z ${
-                                String.format(
-                                    "%.3f",
-                                    gyroSensorData[2]
-                                )
-                            }"
+                binding.tvSensorDataGyroFiltered.text = displayDataTriple("gyro", gyroSensorData)
             }
 
-                binding.tvSensorDataGyro.text =
-                    "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
-                            "${String.format("%.3f", gyroSensorData[1])}, gyro z ${
-                                String.format(
-                                    "%.3f",
-                                    gyroSensorData[2]
-                                )
-                            }"
+                binding.tvSensorDataGyro.text = displayDataTriple("gyro", gyroSensorData)
 
             }
             if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
                 sensorMagData = event.values
-                binding.tvSensorDataMag.text =
-                    "mag x ${String.format("%.3f", sensorMagData[0])}, mag y " +
-                            "${String.format("%.3f", sensorMagData[1])}, mag z ${
-                                String.format(
-                                    "%.3f",
-                                    sensorMagData[2]
-                                )
-                            }"
+                binding.tvSensorDataMag.text = displayDataTriple("mag", sensorMagData)
             }
 
             SensorManager.getRotationMatrix(rotationMatrix, null, accSensorData, sensorMagData)
@@ -169,5 +132,16 @@ class GraphFragment() : Fragment(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         return
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun displayDataTriple(name: String, data: FloatArray): String {
+        return "$name x ${String.format("%.3f", data[0])}, $name y " +
+                "${String.format("%.3f", data[1])}, $name z ${
+                    String.format(
+                        "%.3f",
+                        data[2]
+                    )
+                }"
     }
 }
