@@ -3,10 +3,12 @@ package com.example.stroll.presentation.fragment
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.example.stroll.R
@@ -35,6 +37,7 @@ class IntroductionFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
 
         viewPager = binding.idViewPager
         dotsIndicator = binding.springDotsIndicator
@@ -53,6 +56,17 @@ class IntroductionFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadSettings()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings -> {
+                val action = IntroductionFragmentDirections.actionIntroductionFragmentToSettingsFragment()
+                view?.findNavController()?.navigate(action)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     fun loadSettings() {

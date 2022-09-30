@@ -39,6 +39,10 @@ class MainFragment() : Fragment() {
             val action = MainFragmentDirections.actionMainFragmentToIntroductionFragment()
             view?.findNavController()?.navigate(action)
         }
+        binding.btnGraph.setOnClickListener {
+            val action = MainFragmentDirections.actionMainFragmentToGraphFragment()
+            view?.findNavController()?.navigate(action)
+        }
         return binding.root
     }
 
