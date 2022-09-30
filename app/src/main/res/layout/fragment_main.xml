@@ -10,33 +10,6 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:id="@+id/tvUnfilteredSensors"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="unfiltered sensor data: "
-        android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBox"
-        app:layout_constraintVertical_bias="0.501" />
-
-    <TextView
-        android:id="@+id/tvBox"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:gravity="center"
-        android:background="#FF10FF"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/tvUnfilteredSensors"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.501" />
-
-    <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,47 +17,6 @@
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvSensorDataAcc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="@+id/tvUnfilteredSensors"
-        app:layout_constraintTop_toBottomOf="@+id/tvUnfilteredSensors" />
-
-    <TextView
-        android:id="@+id/tvSensorDataGyro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvSensorDataAcc"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvSensorDataAcc"
-        app:layout_constraintTop_toBottomOf="@+id/tvSensorDataAcc" />
-
-    <TextView
-        android:id="@+id/tvSensorDataMag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvSensorDataAcc"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvSensorDataAcc"
-        app:layout_constraintTop_toBottomOf="@+id/tvSensorDataGyro" />
-
-    <TextView
-        android:id="@+id/tvOrientation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvSensorDataMag"
-        app:layout_constraintStart_toStartOf="@+id/tvSensorDataMag"
-        app:layout_constraintTop_toBottomOf="@+id/tvSensorDataMag" />
 
     <Button
         android:id="@+id/btnMap"
@@ -112,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="Sensors"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnIntro"
         app:layout_constraintStart_toEndOf="@+id/btnMap" />
 
