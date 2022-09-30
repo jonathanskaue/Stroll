@@ -1,23 +1,23 @@
 package com.example.stroll.presentation.fragment
 
 import android.os.Bundle
-import android.view.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
-import com.example.stroll.databinding.FragmentMainBinding
-import com.example.stroll.presentation.viewmodel.MainViewModel
+import com.example.stroll.databinding.FragmentCameraBinding
+import com.example.stroll.databinding.FragmentGraphBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment() : Fragment() {
+class GraphFragment() : Fragment() {
 
-    private val viewModel: MainViewModel by viewModels()
-
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -25,24 +25,8 @@ class MainFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentGraphBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        viewModel.addDataToRoom()
-        viewModel.allData.observe(viewLifecycleOwner) { data ->
-            binding.textView.text = data[0].id.toString()
-        }
-        binding.btnMap.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToMapFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnIntro.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToIntroductionFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnGraph.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToGraphFragment()
-            view?.findNavController()?.navigate(action)
-        }
         return binding.root
     }
 
@@ -54,7 +38,7 @@ class MainFragment() : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.settings -> {
-                val action = MainFragmentDirections.actionMainFragmentToSettingsFragment()
+                val action = GraphFragmentDirections.actionGraphFragmentToSettingsFragment()
                 view?.findNavController()?.navigate(action)
                 true
             }

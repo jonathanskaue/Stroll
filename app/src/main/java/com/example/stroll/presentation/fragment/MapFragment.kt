@@ -1,23 +1,30 @@
 package com.example.stroll.presentation.fragment
 
+import android.content.res.Configuration
 import android.os.Bundle
-import android.view.*
-import androidx.appcompat.app.AppCompatDelegate
+import android.preference.PreferenceManager
 import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import androidx.preference.PreferenceManager
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentMainBinding
+import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import org.osmdroid.views.MapView
 
 @AndroidEntryPoint
-class MainFragment() : Fragment() {
+class MapFragment() : Fragment() {
 
+    private lateinit var mapView: MapView
     private val viewModel: MainViewModel by viewModels()
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -25,26 +32,11 @@ class MainFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        viewModel.addDataToRoom()
-        viewModel.allData.observe(viewLifecycleOwner) { data ->
-            binding.textView.text = data[0].id.toString()
-        }
-        binding.btnMap.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToMapFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnIntro.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToIntroductionFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnGraph.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToGraphFragment()
-            view?.findNavController()?.navigate(action)
-        }
+        mapView = binding.map
         return binding.root
-    }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -54,7 +46,7 @@ class MainFragment() : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.settings -> {
-                val action = MainFragmentDirections.actionMainFragmentToSettingsFragment()
+                val action = MapFragmentDirections.actionMapFragmentToSettingsFragment()
                 view?.findNavController()?.navigate(action)
                 true
             }
@@ -63,7 +55,7 @@ class MainFragment() : Fragment() {
     }
 
     fun loadSettings() {
-        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+        val sp = context?.let { androidx.preference.PreferenceManager.getDefaultSharedPreferences(it) }
         val dark_mode = sp?.getBoolean("dark_mode", false)
 
         if (dark_mode == true) {

@@ -1,48 +1,55 @@
 package com.example.stroll.presentation.fragment
 
 import android.os.Bundle
-import android.view.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import androidx.viewpager.widget.ViewPager
 import com.example.stroll.R
-import com.example.stroll.databinding.FragmentMainBinding
+import com.example.stroll.databinding.FragmentIntroductionBinding
+import com.example.stroll.presentation.adapters.ViewPagerAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
+import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment() : Fragment() {
+class IntroductionFragment() : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentIntroductionBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var viewPager: ViewPager
+    lateinit var viewPagerAdapter: ViewPagerAdapter
+    lateinit var dotsIndicator: SpringDotsIndicator
+    lateinit var imageList: List<Int>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        viewModel.addDataToRoom()
-        viewModel.allData.observe(viewLifecycleOwner) { data ->
-            binding.textView.text = data[0].id.toString()
-        }
-        binding.btnMap.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToMapFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnIntro.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToIntroductionFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnGraph.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToGraphFragment()
-            view?.findNavController()?.navigate(action)
-        }
+
+        viewPager = binding.idViewPager
+        dotsIndicator = binding.springDotsIndicator
+
+        imageList = ArrayList<Int>()
+        imageList = imageList + R.drawable.mapicon
+        imageList = imageList + R.drawable.cameraicon
+        imageList = imageList + R.drawable.recordicon
+
+        viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList)
+        viewPager.adapter = viewPagerAdapter
+        dotsIndicator.attachTo(viewPager)
         return binding.root
     }
 
@@ -54,7 +61,7 @@ class MainFragment() : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.settings -> {
-                val action = MainFragmentDirections.actionMainFragmentToSettingsFragment()
+                val action = IntroductionFragmentDirections.actionIntroductionFragmentToSettingsFragment()
                 view?.findNavController()?.navigate(action)
                 true
             }

@@ -9,5 +9,49 @@
         android:id="@+id/mainFragment"
         android:name="com.example.stroll.presentation.fragment.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_introductionFragment"
+            app:destination="@id/introductionFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_graphFragment"
+            app:destination="@id/graphFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.stroll.presentation.fragment.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/introductionFragment"
+        android:name="com.example.stroll.presentation.fragment.IntroductionFragment"
+        android:label="fragment_introduction"
+        tools:layout="@layout/fragment_introduction" >
+        <action
+            android:id="@+id/action_introductionFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.stroll.presentation.fragment.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/graphFragment"
+        android:name="com.example.stroll.presentation.fragment.GraphFragment"
+        android:label="fragment_graph"
+        tools:layout="@layout/fragment_graph" >
+        <action
+            android:id="@+id/action_graphFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
 </navigation>
