@@ -7,32 +7,17 @@
     tools:context=".presentation.fragment.GraphFragment">
 
     <!-- TODO: Update blank fragment layout -->
+
     <TextView
         android:id="@+id/tvUnfilteredSensors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="unfiltered sensor data: "
+        android:layout_marginStart="32dp"
+        android:text="Unfiltered sensor data: "
         android:textSize="30sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintBottom_toTopOf="@+id/tvFilteredSensors"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvBox"
-        app:layout_constraintVertical_bias="0.501" />
-
-    <TextView
-        android:id="@+id/tvBox"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:background="#FF10FF"
-        android:gravity="center"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/tvUnfilteredSensors"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.501" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvSensorDataAcc"
@@ -49,8 +34,6 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_blank_fragment"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvSensorDataAcc"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tvSensorDataAcc"
         app:layout_constraintTop_toBottomOf="@+id/tvSensorDataAcc" />
 
@@ -60,8 +43,6 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_blank_fragment"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvSensorDataAcc"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tvSensorDataAcc"
         app:layout_constraintTop_toBottomOf="@+id/tvSensorDataGyro" />
 
@@ -71,8 +52,37 @@
         android:layout_height="wrap_content"
         android:text="@string/hello_blank_fragment"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="@+id/tvSensorDataMag"
-        app:layout_constraintStart_toStartOf="@+id/tvSensorDataMag"
-        app:layout_constraintTop_toBottomOf="@+id/tvSensorDataMag" />
+        app:layout_constraintStart_toStartOf="@+id/tvSensorDataGyroFiltered"
+        app:layout_constraintTop_toBottomOf="@+id/tvSensorDataGyroFiltered" />
+
+    <TextView
+        android:id="@+id/tvFilteredSensors"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:text="Filtered sensor data: "
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUnfilteredSensors" />
+
+    <TextView
+        android:id="@+id/tvSensorDataAccFiltered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/tvFilteredSensors"
+        app:layout_constraintTop_toBottomOf="@+id/tvFilteredSensors" />
+
+    <TextView
+        android:id="@+id/tvSensorDataGyroFiltered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/tvSensorDataAccFiltered"
+        app:layout_constraintTop_toBottomOf="@+id/tvSensorDataAccFiltered" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

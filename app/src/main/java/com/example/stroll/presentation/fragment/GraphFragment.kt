@@ -28,6 +28,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
 
+
     private lateinit var sensorManager: SensorManager
     private var sensorAccChange = floatArrayOf(0f, 0f, 0f)
     private var accSensorData = floatArrayOf(0f, 0f, 0f)
@@ -45,18 +46,6 @@ class GraphFragment() : Fragment(), SensorEventListener {
         setHasOptionsMenu(true)
 
         setUpSensors()
-
-        fixedRateTimer("timer", false, 0, 500) {
-            Log.d(
-                "changesAcc",
-                listOf(sensorAccChange[0], sensorAccChange[1], sensorAccChange[2]).toString()
-            )
-
-            // resetting sensorAccChange
-            sensorAccChange = floatArrayOf(0f, 0f, 0f)
-
-
-        }
 
         return binding.root
     }
@@ -83,8 +72,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
 
         if (dark_mode == true) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-        else {
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
@@ -92,13 +80,13 @@ class GraphFragment() : Fragment(), SensorEventListener {
     private fun setUpSensors() {
         val sensorManager =
             activity?.getSystemService(AppCompatActivity.SENSOR_SERVICE) as SensorManager
-        val sensorAcc = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also {
+        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
         sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)?.also {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
-        val sensorMag = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)?.also {
+        sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)?.also {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
 
         }
@@ -114,11 +102,14 @@ class GraphFragment() : Fragment(), SensorEventListener {
             val accTotal =
                 sqrt(accSensorData[0] * accSensorData[0] + accSensorData[1] * accSensorData[1] + accSensorData[2] * accSensorData[2]) - 9.81
             if (accTotal > 0.5) {
-                Log.d("changesAcc", listOf(accSensorData[0], accSensorData[1],accSensorData[2]).toString())
-                for (i in sensorAccChange.indices){
-                    sensorAccChange[i] += accSensorData[i]
-                }
-
+                binding.tvSensorDataAccFiltered.text =
+                "acc x ${String.format("%.3f", accSensorData[0])}, acc y " +
+                        "${String.format("%.3f", accSensorData[1])}, acc z ${
+                            String.format(
+                                "%.3f",
+                                accSensorData[2]
+                            )
+                        }"
             }
             binding.tvSensorDataAcc.text =
                 "acc x ${String.format("%.3f", accSensorData[0])}, acc y " +
@@ -131,33 +122,49 @@ class GraphFragment() : Fragment(), SensorEventListener {
         }
         if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
             val gyroSensorData = event.values
-            binding.tvSensorDataGyro.text =
-                "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
-                        "${String.format("%.3f", gyroSensorData[1])}, gyro z ${
-                            String.format(
-                                "%.3f",
-                                gyroSensorData[2]
-                            )
-                        }"
-        }
-        if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
-            sensorMagData = event.values
-            binding.tvSensorDataMag.text =
-                "mag x ${String.format("%.3f", sensorMagData[0])}, mag y " +
-                        "${String.format("%.3f",sensorMagData[1])}, mag z ${
-                            String.format(
-                                "%.3f",
-                                sensorMagData[2]
-                            )
-                        }"
-        }
+            val gyroTotal =
+                sqrt(gyroSensorData[0] * gyroSensorData[0] + gyroSensorData[1] * gyroSensorData[1] + gyroSensorData[2] * gyroSensorData[2])
+            if (gyroTotal > 0.1) {
+                binding.tvSensorDataGyroFiltered.text =
+                    "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
+                            "${String.format("%.3f", gyroSensorData[1])}, gyro z ${
+                                String.format(
+                                    "%.3f",
+                                    gyroSensorData[2]
+                                )
+                            }"
+            }
 
-        SensorManager.getRotationMatrix(rotationMatrix, null, accSensorData, sensorMagData)
-        SensorManager.getOrientation(rotationMatrix, deviceOrientation)
-        binding.tvOrientation.text = "Device Orientation: ${(deviceOrientation[0]*180/3.14159).toInt()}," +
-                " ${(deviceOrientation[1]*180/3.14159).toInt()}, ${(deviceOrientation[2]*180/3.14159).toInt()}"
+                binding.tvSensorDataGyro.text =
+                    "gyro x ${String.format("%.3f", gyroSensorData[0])}, gyro y " +
+                            "${String.format("%.3f", gyroSensorData[1])}, gyro z ${
+                                String.format(
+                                    "%.3f",
+                                    gyroSensorData[2]
+                                )
+                            }"
 
-        // binding.tvBox.apply { translationX = - (deviceOrientation[0]*180/3.14159f) * 20f }
+            }
+            if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
+                sensorMagData = event.values
+                binding.tvSensorDataMag.text =
+                    "mag x ${String.format("%.3f", sensorMagData[0])}, mag y " +
+                            "${String.format("%.3f", sensorMagData[1])}, mag z ${
+                                String.format(
+                                    "%.3f",
+                                    sensorMagData[2]
+                                )
+                            }"
+            }
+
+            SensorManager.getRotationMatrix(rotationMatrix, null, accSensorData, sensorMagData)
+            SensorManager.getOrientation(rotationMatrix, deviceOrientation)
+            binding.tvOrientation.text =
+                "Device Orientation: ${(deviceOrientation[0] * 180 / 3.14159).toInt()}," +
+                        " ${(deviceOrientation[1] * 180 / 3.14159).toInt()}, ${(deviceOrientation[2] * 180 / 3.14159).toInt()}"
+
+            // binding.tvBox.apply { translationX = - (deviceOrientation[0]*180/3.14159f) * 20f }
+
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
