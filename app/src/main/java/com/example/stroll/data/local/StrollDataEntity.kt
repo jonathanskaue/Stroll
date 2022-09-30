@@ -4,5 +4,6 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class StrollDataEntity(
-    @PrimaryKey val id: Int
+    @PrimaryKey val id: Int,
+    // var orientation: Int = 0
 )
