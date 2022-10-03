@@ -30,7 +30,6 @@ class GraphFragment() : Fragment(), SensorEventListener {
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
 
-
     private lateinit var sensorManager: SensorManager
     private var sensorAccChange = floatArrayOf(0f, 0f, 0f)
     private var accSensorData = floatArrayOf(0f, 0f, 0f)
@@ -38,6 +37,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
     private var sensorMagData = floatArrayOf(0f, 0f, 0f)
     private var rotationMatrix = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     private var deviceOrientation = floatArrayOf(0f, 0f, 0f)
+    private var accDataList = mutableListOf<MutableList<Float>>()
 
 
     override fun onCreateView(
@@ -55,7 +55,6 @@ class GraphFragment() : Fragment(), SensorEventListener {
                 binding.accdata.text = (it.accData.toString())
             }
         }
-
 
         binding.startButton.setOnClickListener {
             setUpSensors()
@@ -124,9 +123,8 @@ class GraphFragment() : Fragment(), SensorEventListener {
             }
             binding.tvSensorDataAcc.text = displayDataTriple("acc", accSensorData)
 
-            var accData: List<Float> = listOf(accSensorData[0], accSensorData[1], accSensorData[2])
-            var accDataList = listOf(accData)
-            accDataList.plus(accData)
+            var accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
+            accDataList.add(accData)
             viewModel.getAccData(accDataList)
         }
         if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
