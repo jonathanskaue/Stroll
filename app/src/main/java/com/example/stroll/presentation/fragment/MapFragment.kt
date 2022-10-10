@@ -38,6 +38,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 
@@ -84,22 +85,6 @@ class MapFragment() : Fragment() {
         defaultLocationClient = DefaultLocationClient(requireContext(), fusedLocationProviderClient)
         defaultLocationClient.getLocationUpdates(1000)
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
-        } else {
-            Intent(requireContext(), LocationService::class.java).apply {
-                action = LocationService.ACTION_START
-                activity?.startService(this)
-            }
-        }
-
         Configuration.getInstance().load(context,
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
 
@@ -110,12 +95,30 @@ class MapFragment() : Fragment() {
         val myLocationOverlay = MyLocationNewOverlay(mapView)
         mapView.overlays.add(myLocationOverlay)
 
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionRequest.launch(arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
+        } else {
+            onMapReady()
+            Intent(requireContext(), LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+                activity?.startService(this)
+            }
+        }
+
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
             latLng.latitude = location!!.latitude
             latLng.longitude = location.longitude
+            newLocation()
         }
 
-        controller.setZoom(15.0)
+        controller.setZoom(18.0)
         controller.setCenter(latLng)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
@@ -131,12 +134,33 @@ class MapFragment() : Fragment() {
 
     @SuppressLint("MissingPermission")
     fun onMapReady() {
+        Configuration.getInstance().load(context,
+            context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
+        mapView = binding.map
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
             latLng.latitude = location!!.latitude
             latLng.longitude = location.longitude
         }
+
+        mapView.setMultiTouchControls(true)
         val controller = mapView.controller
+
+        val myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
+        myLocationOverlay.enableMyLocation()
+        myLocationOverlay.enableFollowLocation()
+        myLocationOverlay.isDrawAccuracyEnabled = true
+        mapView.overlays.add(myLocationOverlay)
         controller.setCenter(latLng)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun newLocation() {
+        val controller = mapView.controller
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+            latLng.latitude = location!!.latitude
+            latLng.longitude = location.longitude
+            controller.setCenter(latLng)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
