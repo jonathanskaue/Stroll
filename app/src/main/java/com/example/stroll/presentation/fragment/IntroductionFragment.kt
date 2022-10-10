@@ -31,6 +31,8 @@ class IntroductionFragment() : Fragment() {
     lateinit var viewPagerAdapter: ViewPagerAdapter
     lateinit var dotsIndicator: SpringDotsIndicator
     lateinit var imageList: List<Int>
+    lateinit var headingList: List<String>
+    lateinit var bodyList: List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,12 +44,23 @@ class IntroductionFragment() : Fragment() {
         viewPager = binding.idViewPager
         dotsIndicator = binding.springDotsIndicator
 
-        imageList = ArrayList<Int>()
+        imageList = ArrayList()
         imageList = imageList + R.drawable.mapicon
         imageList = imageList + R.drawable.cameraicon
         imageList = imageList + R.drawable.recordicon
 
-        viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList)
+        headingList = ArrayList()
+        headingList = headingList + "nigga"
+        headingList = headingList + "gringo"
+        headingList = headingList + "n-word"
+
+        bodyList = ArrayList()
+        bodyList = bodyList + "niggasaurus rex"
+        bodyList = headingList + "gringo"
+        bodyList = headingList + "n-word"
+
+
+        viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList, headingList, bodyList)
         viewPager.adapter = viewPagerAdapter
         dotsIndicator.attachTo(viewPager)
         return binding.root

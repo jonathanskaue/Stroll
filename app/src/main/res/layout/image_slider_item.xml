@@ -10,4 +10,16 @@
         android:layout_height="200dp"
         android:layout_centerInParent="true" />
 
+    <TextView
+        android:id="@+id/idIvHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_below="@+id/idIVImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-91dp" />
+    <TextView
+        android:id="@+id/idTvBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

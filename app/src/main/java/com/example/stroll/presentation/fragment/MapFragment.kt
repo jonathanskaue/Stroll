@@ -33,6 +33,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import org.mapsforge.map.android.layers.MyLocationOverlay
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -50,6 +51,7 @@ class MapFragment() : Fragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var defaultLocationClient: DefaultLocationClient
     private lateinit var latLng: GeoPoint
+    private lateinit var myLocationOverlay: MyLocationNewOverlay
     private val viewModel: MainViewModel by viewModels()
 
     private var _binding: FragmentMapBinding? = null
@@ -184,6 +186,14 @@ class MapFragment() : Fragment() {
         else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
     }
 
     override fun onDestroy() {
