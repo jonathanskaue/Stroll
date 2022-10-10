@@ -44,22 +44,18 @@ class GraphFragment() : Fragment(), SensorEventListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         // Inflate the layout for this fragment
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
 
-        //Displays latest data in database
         viewModel.allData.observe(viewLifecycleOwner) { data ->
             data.forEach {
-                binding.accdata.text = (it.accData.toString())
+                binding.accdata.text = it.accData.last().toString()
             }
         }
-
         binding.startButton.setOnClickListener {
             setUpSensors()
         }
-
         binding.stopButton.setOnClickListener {
             viewModel.addDataToRoom()
         }
@@ -120,12 +116,11 @@ class GraphFragment() : Fragment(), SensorEventListener {
                 sqrt(accSensorData[0] * accSensorData[0] + accSensorData[1] * accSensorData[1] + accSensorData[2] * accSensorData[2]) - 9.81
             if (accTotal > 0.5) {
                 binding.tvSensorDataAccFiltered.text = displayDataTriple("acc", accSensorData)
+                var accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
+                accDataList.add(accData)
+                viewModel.getAccData(accDataList)
             }
             binding.tvSensorDataAcc.text = displayDataTriple("acc", accSensorData)
-
-            var accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
-            accDataList.add(accData)
-            viewModel.getAccData(accDataList)
         }
         if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
             val gyroSensorData = event.values
@@ -133,9 +128,15 @@ class GraphFragment() : Fragment(), SensorEventListener {
                 sqrt(gyroSensorData[0] * gyroSensorData[0] + gyroSensorData[1] * gyroSensorData[1] + gyroSensorData[2] * gyroSensorData[2])
             if (gyroTotal > 0.1) {
                 binding.tvSensorDataGyroFiltered.text = displayDataTriple("gyro", gyroSensorData)
+
             }
 
                 binding.tvSensorDataGyro.text = displayDataTriple("gyro", gyroSensorData)
+
+
+
+
+
 
             }
             if (event?.sensor?.type == Sensor.TYPE_MAGNETIC_FIELD) {
