@@ -81,7 +81,7 @@ class MapFragment() : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        latLng = GeoPoint(19.43621, 28.4916)
+        latLng = GeoPoint(17.8, 68.9)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
         defaultLocationClient = DefaultLocationClient(requireContext(), fusedLocationProviderClient)
@@ -115,8 +115,10 @@ class MapFragment() : Fragment() {
         }
 
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-            latLng.latitude = location!!.latitude
-            latLng.longitude = location.longitude
+            if (location != null) {
+                latLng.latitude = location.latitude
+                latLng.longitude = location.longitude
+            }
             newLocation()
         }
 
@@ -140,8 +142,10 @@ class MapFragment() : Fragment() {
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
         mapView = binding.map
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-            latLng.latitude = location!!.latitude
-            latLng.longitude = location.longitude
+            if (location != null) {
+                latLng.latitude = location.latitude
+                latLng.longitude = location.longitude
+            }
         }
 
         mapView.setMultiTouchControls(true)

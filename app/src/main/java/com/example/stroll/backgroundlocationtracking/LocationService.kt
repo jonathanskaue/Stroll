@@ -6,8 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleService
 import com.example.stroll.R
+import com.example.stroll.domain.repository.StrollRepository
+import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -15,16 +21,15 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-
-class LocationService: Service() {
+@AndroidEntryPoint
+class LocationService: LifecycleService() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     lateinit var locationClient: LocationClient
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+
 
     override fun onCreate() {
         super.onCreate()
@@ -60,6 +65,7 @@ class LocationService: Service() {
                 val updatedNotification = notification.setContentText(
                     "Location: ($lat, $long)"
                 )
+
                 notificationManager.notify(1, updatedNotification.build())
             }
             .launchIn(serviceScope)
