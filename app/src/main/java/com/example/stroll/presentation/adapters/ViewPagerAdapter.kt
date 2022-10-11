@@ -4,14 +4,21 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
 import com.example.stroll.R
 import java.util.*
 
-class ViewPagerAdapter(val context: Context, val imageList: List<Int>, val headingList: List<String>, val bodyList: List<String>) : PagerAdapter() {
+class ViewPagerAdapter(
+    val context: Context,
+    val imageList: List<Int>,
+    val headingList: List<String>,
+    val bodyList: List<String>,
+    ): PagerAdapter() {
     override fun getCount(): Int {
         return imageList.size
     }
@@ -28,12 +35,14 @@ class ViewPagerAdapter(val context: Context, val imageList: List<Int>, val headi
         val imageView: ImageView = itemView.findViewById<View>(R.id.idIVImage) as ImageView
         val headingView = itemView.findViewById(R.id.idIvHeading) as TextView
         val bodyView = itemView.findViewById(R.id.idTvBody) as TextView
+        val introButtonButton = itemView.findViewById(R.id.introButton) as Button
 
 
         imageView.setImageResource(imageList.get(position))
         headingView.text = headingList[position]
         bodyView.text = bodyList[position]
         Objects.requireNonNull(container).addView(itemView)
+        introButtonButton.isVisible = position == count-1
 
         return itemView
     }
