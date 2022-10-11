@@ -2,23 +2,25 @@ package com.example.stroll.presentation.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
 import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import android.util.Log
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
@@ -33,8 +35,10 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.mapsforge.map.android.layers.MyLocationOverlay
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapListener
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
@@ -44,12 +48,11 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
 
 @AndroidEntryPoint
-class MapFragment() : Fragment() {
+class MapFragment() : BaseFragment() {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var defaultLocationClient: DefaultLocationClient
     private lateinit var latLng: GeoPoint
     private lateinit var myLocationOverlay: MyLocationNewOverlay
     private val viewModel: MainViewModel by viewModels()
@@ -57,71 +60,47 @@ class MapFragment() : Fragment() {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
-    val locationPermissionRequest = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                Toast.makeText(requireContext(), "You have given us permission to use your precise location", Toast.LENGTH_SHORT).show()
-                onMapReady()
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                Toast.makeText(requireContext(), "You have only given us access to your approximate location", Toast.LENGTH_SHORT).show()
-                onMapReady()
-            } else -> {
-                Toast.makeText(requireContext(), "You have chosen to not share your location", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
+    @SuppressLint("MissingPermission")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        latLng = GeoPoint(10.0, 10.0)
+
         // Inflate the layout for this fragment
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
-        latLng = GeoPoint(19.43621, 28.4916)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
-        defaultLocationClient = DefaultLocationClient(requireContext(), fusedLocationProviderClient)
-        defaultLocationClient.getLocationUpdates(1000)
 
         Configuration.getInstance().load(context,
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
 
         mapView = binding.map
+        mapView.setMultiTouchControls(true)
 
-        val controller = mapView.controller
+        controller = mapView.controller as MapController
 
-        val myLocationOverlay = MyLocationNewOverlay(mapView)
+        myLocationOverlay =
+            MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
+        myLocationOverlay.enableMyLocation()
+        myLocationOverlay.enableFollowLocation()
+        myLocationOverlay.isDrawAccuracyEnabled = true
         mapView.overlays.add(myLocationOverlay)
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
-        } else {
-            onMapReady()
-            Intent(requireContext(), LocationService::class.java).apply {
-                action = LocationService.ACTION_START
-                activity?.startService(this)
-            }
+        Intent(requireContext(), LocationService::class.java).apply {
+            action = LocationService.ACTION_START
+            activity?.startService(this)
         }
 
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-            latLng.latitude = location!!.latitude
-            latLng.longitude = location.longitude
-            newLocation()
+            if (location != null) {
+                latLng = GeoPoint(latLng.latitude, latLng.longitude)
+                controller.setCenter(latLng)
+            }
         }
 
+
         controller.setZoom(18.0)
-        controller.setCenter(latLng)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
 
@@ -131,61 +110,23 @@ class MapFragment() : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadSettings()
-    }
-
-    @SuppressLint("MissingPermission")
-    fun onMapReady() {
-        Configuration.getInstance().load(context,
-            context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
-        mapView = binding.map
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-            latLng.latitude = location!!.latitude
-            latLng.longitude = location.longitude
-        }
-
-        mapView.setMultiTouchControls(true)
-        val controller = mapView.controller
-
-        val myLocationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
-        myLocationOverlay.enableMyLocation()
-        myLocationOverlay.enableFollowLocation()
-        myLocationOverlay.isDrawAccuracyEnabled = true
-        mapView.overlays.add(myLocationOverlay)
-        controller.setCenter(latLng)
-    }
-
-    @SuppressLint("MissingPermission")
-    fun newLocation() {
-        val controller = mapView.controller
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-            latLng.latitude = location!!.latitude
-            latLng.longitude = location.longitude
-            controller.setCenter(latLng)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.settings -> {
-                val action = MapFragmentDirections.actionMapFragmentToSettingsFragment()
-                view?.findNavController()?.navigate(action)
-                true
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar, menu)
             }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
-    fun loadSettings() {
-        val sp = context?.let { androidx.preference.PreferenceManager.getDefaultSharedPreferences(it) }
-        val dark_mode = sp?.getBoolean("dark_mode", false)
-
-        if (dark_mode == true) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-        else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.settings -> {
+                        val action = MapFragmentDirections.actionMapFragmentToSettingsFragment()
+                        view.findNavController().navigate(action)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onResume() {
