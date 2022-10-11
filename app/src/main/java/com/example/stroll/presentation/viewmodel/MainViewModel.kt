@@ -7,6 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,6 +17,16 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val strollRepo: StrollRepository
 ): ViewModel() {
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            delay(1000)
+            _isLoading.value = false
+        }
+    }
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
 

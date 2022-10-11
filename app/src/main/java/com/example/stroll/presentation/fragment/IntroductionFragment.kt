@@ -50,14 +50,14 @@ class IntroductionFragment() : Fragment() {
         imageList = imageList + R.drawable.recordicon
 
         headingList = ArrayList()
-        headingList = headingList + "nigga"
-        headingList = headingList + "gringo"
-        headingList = headingList + "n-word"
+        headingList = headingList + "Start a hike!"
+        headingList = headingList + "Augmented Reality"
+        headingList = headingList + "Recorded hikes"
 
         bodyList = ArrayList()
-        bodyList = bodyList + "niggasaurus rex"
-        bodyList = headingList + "gringo"
-        bodyList = headingList + "n-word"
+        bodyList = bodyList + "Start a hike by either creating a starting point and destination \n or by just start strolling!"
+        bodyList = bodyList + "See your favorite destinations in AR"
+        bodyList = bodyList + "See all your previous hikes and stats!"
 
 
         viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList, headingList, bodyList)
