@@ -1,13 +1,17 @@
 package com.example.stroll.presentation.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.databinding.DataBindingUtil.setContentView
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
@@ -18,6 +22,8 @@ import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class IntroductionFragment() : Fragment() {
@@ -45,9 +51,9 @@ class IntroductionFragment() : Fragment() {
         dotsIndicator = binding.springDotsIndicator
 
         imageList = ArrayList()
-        imageList = imageList + R.drawable.mapicon
-        imageList = imageList + R.drawable.cameraicon
-        imageList = imageList + R.drawable.recordicon
+        imageList = imageList + R.drawable.allura___in_the_park
+        imageList = imageList + R.drawable.allura___giant_phone
+        imageList = imageList + R.drawable.allura___ui_windows
 
         headingList = ArrayList()
         headingList = headingList + "Start a hike!"
@@ -59,11 +65,25 @@ class IntroductionFragment() : Fragment() {
         bodyList = bodyList + "See your favorite destinations in AR"
         bodyList = bodyList + "See all your previous hikes and stats!"
 
-
-        viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList, headingList, bodyList)
+        viewPagerAdapter = ViewPagerAdapter(viewModel, view, requireContext(), imageList, headingList, bodyList)
         viewPager.adapter = viewPagerAdapter
         dotsIndicator.attachTo(viewPager)
+        (activity as AppCompatActivity).supportActionBar?.hide()
+
+        lifecycleScope.launch {
+            viewModel.isStarted.collect {
+                if (viewModel.isStarted.value) {
+                    val action = IntroductionFragmentDirections.actionIntroductionFragmentToMainFragment()
+                    view?.findNavController()?.navigate(action)
+                }
+            }
+        }
+
+
+
+
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
