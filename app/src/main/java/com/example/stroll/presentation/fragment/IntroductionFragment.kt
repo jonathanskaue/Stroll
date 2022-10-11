@@ -44,6 +44,7 @@ class IntroductionFragment() : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as AppCompatActivity).supportActionBar?.hide()
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
 
@@ -68,7 +69,6 @@ class IntroductionFragment() : Fragment() {
         viewPagerAdapter = ViewPagerAdapter(viewModel, view, requireContext(), imageList, headingList, bodyList)
         viewPager.adapter = viewPagerAdapter
         dotsIndicator.attachTo(viewPager)
-        (activity as AppCompatActivity).supportActionBar?.hide()
 
         lifecycleScope.launch {
             viewModel.isStarted.collect {
@@ -84,6 +84,11 @@ class IntroductionFragment() : Fragment() {
 
         return binding.root
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

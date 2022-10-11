@@ -42,6 +42,9 @@
             app:destination="@id/settingsFragment" />
         <action
             android:id="@+id/action_introductionFragment_to_mainFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/main_navigation"
+            app:popUpToInclusive="true"
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment

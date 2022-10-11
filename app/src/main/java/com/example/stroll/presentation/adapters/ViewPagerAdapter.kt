@@ -29,8 +29,6 @@ class ViewPagerAdapter(
     val bodyList: List<String>,
     ): PagerAdapter() {
 
-
-
     override fun getCount(): Int {
         return imageList.size
     }
@@ -53,17 +51,14 @@ class ViewPagerAdapter(
             viewModel.checkStarted()
         }
 
-
         imageView.setImageResource(imageList.get(position))
         headingView.text = headingList[position]
         bodyView.text = bodyList[position]
         Objects.requireNonNull(container).addView(itemView)
         introButtonButton.isVisible = position == count-1
 
-
         return itemView
     }
-
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         container.removeView(`object` as RelativeLayout)

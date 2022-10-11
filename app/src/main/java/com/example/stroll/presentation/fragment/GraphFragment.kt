@@ -52,7 +52,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
         //Displays latest data in database
         viewModel.allData.observe(viewLifecycleOwner) { data ->
             data.forEach {
-                binding.accdata.text = (it.accData.toString())
+                binding.accdata.text = (it.accData.last().toString())
             }
         }
 
