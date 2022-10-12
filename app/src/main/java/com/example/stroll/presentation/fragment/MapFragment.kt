@@ -2,42 +2,51 @@ package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.Icon
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toDrawable
+import androidx.core.content.getSystemService
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
+import com.example.stroll.backgroundlocationtracking.DefaultLocationClient
+import com.example.stroll.backgroundlocationtracking.LocationClient
 import com.example.stroll.backgroundlocationtracking.LocationService
+import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentMapBinding
+import com.example.stroll.other.Constants.ACTION_PAUSE
+import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
-import org.osmdroid.api.IGeoPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.mapsforge.map.android.layers.MyLocationOverlay
 import org.osmdroid.config.Configuration
-import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.events.MapListener
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.MapEventsOverlay
-import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import timber.log.Timber
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), MapEventsReceiver {
+class MapFragment() : BaseFragment() {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -45,6 +54,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     private lateinit var latLng: GeoPoint
     private lateinit var myLocationOverlay: MyLocationNewOverlay
     private val viewModel: MainViewModel by viewModels()
+
+    private var isTracking = false
+    private var pathPoints = mutableListOf<Polyline>()
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -76,15 +88,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         myLocationOverlay.isDrawAccuracyEnabled = true
         mapView.overlays.add(myLocationOverlay)
 
-        val points = ArrayList<IGeoPoint>()
-        val marker: Marker = Marker(mapView)
-        marker.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_place_24)
-        marker.position = marker.position
-
-        Intent(requireContext(), LocationService::class.java).apply {
-            action = LocationService.ACTION_START
-            activity?.startService(this)
-        }
 
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
@@ -97,6 +100,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         controller.setZoom(18.0)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
+        subscribeToObservers()
+        addAllPolyLines()
 
         return binding.root
     }
@@ -123,31 +128,51 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    fun addMarker(center: GeoPoint?) {
-        val marker = Marker(mapView)
-        marker.position = center
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        marker.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_place_24, null)
-        mapView.getOverlays().clear()
-        mapView.getOverlays().add(marker)
-        mapView.invalidate()
-        marker.title = "Destination"
-    }
-
     override fun onResume() {
         super.onResume()
+        mapView?.onResume()
     }
 
     override fun onPause() {
         super.onPause()
+        mapView?.onPause()
     }
 
-    override fun onDestroy() {
-        Intent(requireContext(), LocationService::class.java).apply {
-            action = LocationService.ACTION_STOP
-            activity?.startService(this)
+    override fun onLowMemory() {
+        super.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun subscribeToObservers() {
+        LocationService.isTracking.observe(viewLifecycleOwner, Observer {
+            updateTracking(it)
+        })
+
+        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
+            pathPoints = it
+            addLatestPolyline()
+        })
+    }
+    private fun updateTracking(isTracking: Boolean) {
+        this.isTracking = isTracking
+        if(!isTracking) {
+            binding.startHikeBtn.text = "Start"
+            binding.finishHikeBtn.visibility = View.VISIBLE
+        } else {
+            binding.startHikeBtn.text = "Stop"
+            binding.finishHikeBtn.visibility = View.GONE
         }
-        super.onDestroy()
+    }
+
+    private fun toggleRun() {
+        if(isTracking) {
+            sendCommandToService(ACTION_PAUSE)
+        } else {
+            sendCommandToService(ACTION_START)
+        }
     }
 
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
@@ -158,4 +183,33 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     override fun longPressHelper(p: GeoPoint?): Boolean {
         TODO("Not yet implemented")
     }
+
+    private fun addAllPolyLines() {
+        for (polyline in pathPoints) {
+            val polygon = Polygon()
+            polygon.fillColor = Color.RED
+            polygon.strokeWidth = 8f
+            mapView?.overlayManager?.add(polygon)
+
+        }
+    }
+
+    private fun addLatestPolyline() {
+        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+            val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
+            val lastLatLng = pathPoints.last().last()
+            val polygon = Polygon()
+            polygon.fillColor = Color.RED
+            polygon.strokeWidth = 8f
+            polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
+            polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
+            mapView?.overlayManager?.add(polygon)
+        }
+    }
+
+    private fun sendCommandToService(action: String) =
+        Intent(requireContext(), LocationService::class.java).also {
+            it.action = action
+            requireContext().startService(it)
+        }
 }
