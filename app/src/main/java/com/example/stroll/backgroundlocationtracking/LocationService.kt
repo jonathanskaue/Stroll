@@ -77,6 +77,7 @@ class LocationService : LifecycleService() {
                         startForegroundService()
                         isFirstRun = false
                     } else {
+                        startForegroundService()
                         Log.d("LOCATIONSERVICE", "startForegroundService: RESUMING SERVICE")
                     }
                 }
