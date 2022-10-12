@@ -10,8 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
 import com.example.stroll.R
-import com.example.stroll.domain.repository.StrollRepository
-import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -28,8 +26,6 @@ class LocationService: LifecycleService() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     lateinit var locationClient: LocationClient
-
-
 
     override fun onCreate() {
         super.onCreate()
@@ -57,7 +53,7 @@ class LocationService: LifecycleService() {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationClient
-            .getLocationUpdates(1000L)
+            .getLocationUpdates(100L)
             .catch { e -> e.printStackTrace()}
             .onEach { location ->
                 val lat = location.latitude.toString()
@@ -65,7 +61,6 @@ class LocationService: LifecycleService() {
                 val updatedNotification = notification.setContentText(
                     "Location: ($lat, $long)"
                 )
-
                 notificationManager.notify(1, updatedNotification.build())
             }
             .launchIn(serviceScope)

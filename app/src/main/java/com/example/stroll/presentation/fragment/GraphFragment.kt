@@ -6,14 +6,14 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
-class GraphFragment() : Fragment(), SensorEventListener {
+class GraphFragment() : BaseFragment(), SensorEventListener {
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -47,7 +47,6 @@ class GraphFragment() : Fragment(), SensorEventListener {
 
         // Inflate the layout for this fragment
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
 
         //Displays latest data in database
         viewModel.allData.observe(viewLifecycleOwner) { data ->
@@ -69,29 +68,23 @@ class GraphFragment() : Fragment(), SensorEventListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadSettings()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.settings -> {
-                val action = GraphFragmentDirections.actionGraphFragmentToSettingsFragment()
-                view?.findNavController()?.navigate(action)
-                true
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar, menu)
             }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
-    fun loadSettings() {
-        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        val dark_mode = sp?.getBoolean("dark_mode", false)
-
-        if (dark_mode == true) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.settings -> {
+                        val action = GraphFragmentDirections.actionGraphFragmentToSettingsFragment()
+                        view.findNavController().navigate(action)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun setUpSensors() {
