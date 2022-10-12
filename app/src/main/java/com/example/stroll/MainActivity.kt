@@ -15,6 +15,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
+import com.example.stroll.presentation.fragment.IntroductionFragmentDirections
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
-        navGraph.setStartDestination(R.id.mainFragment)
+        navGraph.setStartDestination(R.id.introductionFragment)
         NavigationUI.setupActionBarWithNavController(this, navController)
     }
 

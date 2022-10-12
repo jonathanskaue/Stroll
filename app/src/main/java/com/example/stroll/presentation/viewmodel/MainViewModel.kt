@@ -1,5 +1,6 @@
 package com.example.stroll.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,9 +24,15 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            delay(1000)
             _isLoading.value = false
         }
+    }
+
+    private val _isStarted = MutableStateFlow(false)
+    val isStarted = _isStarted
+
+    fun checkStarted() {
+        _isStarted.value = true
     }
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
