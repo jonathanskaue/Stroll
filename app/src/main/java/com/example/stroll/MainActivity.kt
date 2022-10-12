@@ -58,6 +58,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun navigateToMapFragmentIfNeeded(intent: Intent?) {
         if(intent?.action == ACTION_SHOW_MAP_FRAGMENT) {
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            navController = navHostFragment.navController
             navController.navigate(R.id.action_global_mapFragment)
         }
     }
