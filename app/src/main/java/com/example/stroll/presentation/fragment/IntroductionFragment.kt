@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentIntroductionBinding
 import com.example.stroll.presentation.adapters.ViewPagerAdapter
@@ -73,8 +74,9 @@ class IntroductionFragment() : Fragment() {
         lifecycleScope.launch {
             viewModel.isStarted.collect {
                 if (viewModel.isStarted.value) {
-                    val action = IntroductionFragmentDirections.actionIntroductionFragmentToMainFragment()
-                    view?.findNavController()?.navigate(action)
+                    (activity as MainActivity).loadFragment(MainFragment())
+                    /*val action = IntroductionFragmentDirections.actionIntroductionFragmentToMainFragment()
+                    view?.findNavController()?.navigate(action)*/
                 }
             }
         }

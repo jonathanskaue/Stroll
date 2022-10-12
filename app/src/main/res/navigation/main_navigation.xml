@@ -53,6 +53,9 @@
             app:popUpTo="@id/main_navigation"
             app:popUpToInclusive="true"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_introductionFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -66,5 +69,8 @@
         <action
             android:id="@+id/action_graphFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_graphFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
 </navigation>
