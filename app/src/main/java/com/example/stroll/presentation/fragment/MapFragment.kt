@@ -37,17 +37,20 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.mapsforge.map.android.layers.MyLocationOverlay
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.events.MapListener
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import timber.log.Timber
+import java.util.EventListener
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment() {
+class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -182,8 +185,7 @@ class MapFragment() : BaseFragment() {
     }
 
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        addMarker(p)
-        return true
+        TODO("not implemented")
     }
 
     override fun longPressHelper(p: GeoPoint?): Boolean {
