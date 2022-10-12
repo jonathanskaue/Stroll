@@ -51,8 +51,9 @@ class LocationService : LifecycleService() {
 
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
+    @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
+
 
     lateinit var currentNotificationBuilder: NotificationCompat.Builder
 
