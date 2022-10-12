@@ -47,13 +47,13 @@ class LocationService: LifecycleService() {
         val notification = NotificationCompat.Builder(this, "location")
             .setContentTitle("Tracking location...")
             .setContentText("Location: null")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.splash_icon)
             .setOngoing(true)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationClient
-            .getLocationUpdates(100L)
+            .getLocationUpdates(1000L)
             .catch { e -> e.printStackTrace()}
             .onEach { location ->
                 val lat = location.latitude.toString()

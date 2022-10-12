@@ -1,22 +1,15 @@
 package com.example.stroll.presentation.fragment
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.Icon
 import android.location.Location
-import android.location.LocationManager
-import android.os.Looper
-import android.util.Log
+import android.os.Bundle
 import android.view.*
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
@@ -24,31 +17,27 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
-import com.example.stroll.backgroundlocationtracking.DefaultLocationClient
-import com.example.stroll.backgroundlocationtracking.LocationClient
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import org.mapsforge.map.android.layers.MyLocationOverlay
+import org.osmdroid.api.IGeoPoint
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.events.MapListener
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.MapEventsOverlay
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import timber.log.Timber
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment() {
+class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -86,6 +75,11 @@ class MapFragment() : BaseFragment() {
         myLocationOverlay.enableFollowLocation()
         myLocationOverlay.isDrawAccuracyEnabled = true
         mapView.overlays.add(myLocationOverlay)
+
+        val points = ArrayList<IGeoPoint>()
+        val marker: Marker = Marker(mapView)
+        marker.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_place_24)
+        marker.position = marker.position
 
         Intent(requireContext(), LocationService::class.java).apply {
             action = LocationService.ACTION_START
@@ -129,6 +123,17 @@ class MapFragment() : BaseFragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+    fun addMarker(center: GeoPoint?) {
+        val marker = Marker(mapView)
+        marker.position = center
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        marker.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_place_24, null)
+        mapView.getOverlays().clear()
+        mapView.getOverlays().add(marker)
+        mapView.invalidate()
+        marker.title = "Destination"
+    }
+
     override fun onResume() {
         super.onResume()
     }
@@ -143,5 +148,14 @@ class MapFragment() : BaseFragment() {
             activity?.startService(this)
         }
         super.onDestroy()
+    }
+
+    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+        addMarker(p)
+        return true
+    }
+
+    override fun longPressHelper(p: GeoPoint?): Boolean {
+        TODO("Not yet implemented")
     }
 }

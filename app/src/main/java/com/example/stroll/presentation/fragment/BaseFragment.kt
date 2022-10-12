@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -26,15 +27,20 @@ abstract class BaseFragment : Fragment() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                Toast.makeText(requireContext(), "You have given us permission to use your precise location", Toast.LENGTH_SHORT).show()
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) &&
+            permissions.getOrDefault(Manifest.permission.ACTIVITY_RECOGNITION, false)-> {
+                Toast.makeText(requireContext(), "You have given us permission to use your precise location and activity", Toast.LENGTH_SHORT).show()
                 when (startingDestination) {
                     "fragment_main" -> view?.findNavController()?.navigate(MainFragmentDirections.actionMainFragmentToMapFragment())
                 }
             }
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                Toast.makeText(requireContext(), "you have given us permission to use your precise location, but we need your permissionto use your activity too", Toast.LENGTH_SHORT).show()
+            }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 Toast.makeText(requireContext(), "You have only given us access to your approximate location, we need your precise location", Toast.LENGTH_SHORT).show()
-            } else -> {
+            }
+            else -> {
             Toast.makeText(requireContext(), "You have chosen to not share your location, we need your precise location", Toast.LENGTH_SHORT).show()
         }
         }
@@ -67,17 +73,22 @@ abstract class BaseFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            )  != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACTIVITY_RECOGNITION
+            )  != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionRequest.launch(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACTIVITY_RECOGNITION
             ))
-        } else {
+        }
+        else {
             when (startingDestination) {
                 "fragment_main" -> view?.findNavController()?.navigate(MainFragmentDirections.actionMainFragmentToMapFragment())
             }
         }
     }
-
 }
