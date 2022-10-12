@@ -43,13 +43,22 @@ import javax.inject.Inject
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
+@AndroidEntryPoint
 class LocationService : LifecycleService() {
 
     var isFirstRun = true
+    private val timeHikedInSeconds = MutableLiveData<Long>()
 
+    @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    @Inject
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
+
+
+    lateinit var currentNotificationBuilder: NotificationCompat.Builder
 
     companion object {
+        val timeHikedInMillis = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
     }
@@ -57,10 +66,13 @@ class LocationService : LifecycleService() {
     private fun postInitialValues() {
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
+        timeHikedInSeconds.postValue(0L)
+        timeHikedInMillis.postValue(0L)
     }
 
     override fun onCreate() {
         super.onCreate()
+        currentNotificationBuilder = baseNotificationBuilder
         postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
@@ -77,6 +89,7 @@ class LocationService : LifecycleService() {
                         startForegroundService()
                         isFirstRun = false
                     } else {
+                        startTimer()
                         Log.d("LOCATIONSERVICE", "startForegroundService: RESUMING SERVICE")
                     }
                 }
@@ -93,7 +106,33 @@ class LocationService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
+    private var isTimerEnabled = false
+    private var hikeTime = 0L
+    private var timeHiked = 0L
+    private var timeStarted = 0L
+    private var lastSecondTimeStamp = 0L
+
+    private fun startTimer() {
+        addEmptyPolyline()
+        isTracking.postValue(true)
+        timeStarted = System.currentTimeMillis()
+        isTimerEnabled = true
+        CoroutineScope(Dispatchers.Main).launch {
+            while (isTracking.value!!) {
+                hikeTime = System.currentTimeMillis() - timeStarted
+                timeHikedInMillis.postValue(timeHiked + hikeTime)
+                if (timeHikedInMillis.value!! >= lastSecondTimeStamp + 1000L) {
+                    timeHikedInSeconds.postValue(timeHikedInSeconds.value!! + 1)
+                    lastSecondTimeStamp += 1000L
+                }
+                delay(TIMER_UPDATE_INTERVAL)
+            }
+            timeHiked += hikeTime
+        }
+    }
+
     private fun pauseService() {
+        isTimerEnabled = false
         isTracking.postValue(false)
     }
 
@@ -145,38 +184,19 @@ class LocationService : LifecycleService() {
     } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
 
     private fun startForegroundService() {
-        addEmptyPolyline()
+        startTimer()
         isTracking.postValue(true)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(notificationManager)
-        }
+        createNotificationChannel(notificationManager)
 
-        val notificationBuilder = NotificationCompat.Builder(this, "TRACKING CHANNEL")
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.group_1)
-            .setContentTitle("Running App")
-            .setContentText("00:00:00")
-            .setContentIntent(getMainActivityPendingIntent())
-
-        startForeground(1, notificationBuilder.build())
+        startForeground(1, baseNotificationBuilder.build())
         Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
     }
 
-    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, MainActivity::class.java).also {
-            it.action = ACTION_SHOW_MAP_FRAGMENT
-        },
-        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-    )
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         val channel = NotificationChannel(
             "TRACKING CHANNEL",

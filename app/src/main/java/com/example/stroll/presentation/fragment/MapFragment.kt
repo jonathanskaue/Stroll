@@ -27,6 +27,7 @@ import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
 import com.example.stroll.other.Constants.ACTION_START
+import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -61,6 +62,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
+    private var currentTimeInMillis = 0L
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -163,6 +165,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
             addLatestPolyline()
+        })
+
+        LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
+            currentTimeInMillis = it
+            val formattedTime = Utility.getFormattedStopWatchTime(currentTimeInMillis, true)
+            binding.timerTV.text = formattedTime
         })
     }
     private fun updateTracking(isTracking: Boolean) {
