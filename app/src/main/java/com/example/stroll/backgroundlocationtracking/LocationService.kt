@@ -81,6 +81,7 @@ class LocationService : LifecycleService() {
                     }
                 }
                 ACTION_PAUSE -> {
+                    pauseService()
                     Log.d("LOCATIONSERVICE", "startForegroundService: PAUSED SERVICE")
                 }
                 ACTION_STOP -> {
@@ -90,6 +91,10 @@ class LocationService : LifecycleService() {
             }
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun pauseService() {
+        isTracking.postValue(false)
     }
 
     @SuppressLint("MissingPermission")
