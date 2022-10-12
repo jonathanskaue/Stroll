@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -53,6 +54,7 @@ class MapFragment() : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         latLng = GeoPoint(10.0, 10.0)
 
         // Inflate the layout for this fragment
@@ -96,11 +98,15 @@ class MapFragment() : BaseFragment() {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.toggleHikeBtn.setOnClickListener {
+            toggleRun()
+        }
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.toolbar, menu)
             }
+
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
@@ -154,11 +160,11 @@ class MapFragment() : BaseFragment() {
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
         if(!isTracking) {
-            binding.startHikeBtn.text = "Start"
-            binding.finishHikeBtn.visibility = View.VISIBLE
+            binding.toggleHikeBtn.text = "Start"
+            binding.finishHikeBtn.isVisible = true
         } else {
-            binding.startHikeBtn.text = "Stop"
-            binding.finishHikeBtn.visibility = View.GONE
+            binding.toggleHikeBtn.text = "Stop"
+            binding.finishHikeBtn.isVisible = false
         }
     }
 
