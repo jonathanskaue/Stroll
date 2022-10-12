@@ -2,6 +2,7 @@ package com.example.stroll.presentation.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -26,7 +27,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
+import com.example.stroll.backgroundlocationtracking.LocationService
+import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentMainBinding
+import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.concurrent.fixedRateTimer
@@ -36,6 +40,9 @@ import kotlin.math.sqrt
 class MainFragment() : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels()
+
+    private var isTracking = false
+    private var pathPoints = mutableListOf<Polyline>()
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -61,11 +68,17 @@ class MainFragment() : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         binding.btnMap.setOnClickListener {
             checkLocationPermissions()
         }
+
+        binding.startTrackingBtn.setOnClickListener {
+            sendCommandToService(ACTION_START)
+        }
+
         binding.btnIntro.setOnClickListener {
             val action = MainFragmentDirections.actionMainFragmentToIntroductionFragment()
             view?.findNavController()?.navigate(action)
@@ -108,6 +121,13 @@ class MainFragment() : BaseFragment() {
             else -> super.onOptionsItemSelected(item)
         }
     }*/
+
+    private fun sendCommandToService(action: String) =
+        Intent(requireContext(), LocationService::class.java).also {
+            it.action = action
+            requireContext().startService(it)
+        }
+
 
 
 }

@@ -1,85 +1,183 @@
 package com.example.stroll.backgroundlocationtracking
-
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
+import android.app.NotificationManager.IMPORTANCE_LOW
+import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
-import android.os.IBinder
+import android.location.Location
+import android.os.Build
+import android.os.Looper
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.example.stroll.MainActivity
 import com.example.stroll.R
-import com.google.android.gms.location.LocationServices
+import com.example.stroll.other.Constants.ACTION_PAUSE
+import com.example.stroll.other.Constants.ACTION_SHOW_MAP_FRAGMENT
+import com.example.stroll.other.Constants.ACTION_START
+import com.example.stroll.other.Constants.ACTION_STOP
+import com.example.stroll.other.Constants.FASTEST_LOCATION_INTERVAL
+import com.example.stroll.other.Constants.LOCATION_UPDATE_INTERVAL
+import com.example.stroll.other.Constants.TIMER_UPDATE_INTERVAL
+import com.example.stroll.other.Utility
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class LocationService: LifecycleService() {
+typealias Polyline = MutableList<LatLng>
+typealias Polylines = MutableList<Polyline>
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    lateinit var locationClient: LocationClient
+class LocationService : LifecycleService() {
+
+    var isFirstRun = true
+
+    lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    companion object {
+        val isTracking = MutableLiveData<Boolean>()
+        val pathPoints = MutableLiveData<Polylines>()
+    }
+
+    private fun postInitialValues() {
+        isTracking.postValue(false)
+        pathPoints.postValue(mutableListOf())
+    }
 
     override fun onCreate() {
         super.onCreate()
-        locationClient = DefaultLocationClient(
-            applicationContext,
-            LocationServices.getFusedLocationProviderClient(applicationContext)
-        )
+        postInitialValues()
+        fusedLocationProviderClient = FusedLocationProviderClient(this)
+
+        isTracking.observe(this, Observer {
+            updateLocationTracking(it)
+        })
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action) {
-            ACTION_START -> start()
-            ACTION_STOP -> stop()
+        intent?.let {
+            when (it.action) {
+                ACTION_START -> {
+                    if(isFirstRun) {
+                        startForegroundService()
+                        isFirstRun = false
+                    } else {
+                        Log.d("LOCATIONSERVICE", "startForegroundService: RESUMING SERVICE")
+                    }
+                }
+                ACTION_PAUSE -> {
+                    Log.d("LOCATIONSERVICE", "startForegroundService: PAUSED SERVICE")
+                }
+                ACTION_STOP -> {
+                    Log.d("LOCATIONSERVICE", "startForegroundService: STOPPED SRVICE")
+                }
+                else -> {}
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun start() {
-        val notification = NotificationCompat.Builder(this, "location")
-            .setContentTitle("Tracking location...")
-            .setContentText("Location: null")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setOngoing(true)
-
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        locationClient
-            .getLocationUpdates(100L)
-            .catch { e -> e.printStackTrace()}
-            .onEach { location ->
-                val lat = location.latitude.toString()
-                val long = location.longitude.toString()
-                val updatedNotification = notification.setContentText(
-                    "Location: ($lat, $long)"
-                )
-                notificationManager.notify(1, updatedNotification.build())
+    @SuppressLint("MissingPermission")
+    private fun updateLocationTracking(isTracking: Boolean) {
+        if(isTracking) {
+            val request = LocationRequest().apply {
+                interval = LOCATION_UPDATE_INTERVAL
+                fastestInterval = FASTEST_LOCATION_INTERVAL
+                priority = PRIORITY_HIGH_ACCURACY
             }
-            .launchIn(serviceScope)
-
-        startForeground(1, notification.build())
+            fusedLocationProviderClient.requestLocationUpdates(
+                request,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+        } else {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        }
     }
 
-    private fun stop() {
-        stopForeground(true)
-        stopSelf()
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            if(isTracking.value!!) {
+                result?.locations?.let { locations ->
+                    for(location in locations) {
+                        addPathPoint(location)
+                        Log.d("NEW LOCATION:", "${location.latitude}, ${location.longitude}")
+                    }
+                }
+            }
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
+    private fun addPathPoint(location: Location?) {
+        location?.let {
+            val pos = LatLng(location.latitude, location.longitude)
+            pathPoints.value?.apply {
+                last().add(pos)
+                pathPoints.postValue(this)
+            }
+        }
     }
 
-    companion object{
-        const val ACTION_START = "ACTION_START"
-        const val ACTION_STOP = "ACTION_STOP"
+    private fun addEmptyPolyline() = pathPoints.value?.apply {
+        add(mutableListOf())
+        pathPoints.postValue(this)
+    } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
+
+    private fun startForegroundService() {
+        addEmptyPolyline()
+        isTracking.postValue(true)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+                as NotificationManager
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(notificationManager)
+        }
+
+        val notificationBuilder = NotificationCompat.Builder(this, "TRACKING CHANNEL")
+            .setAutoCancel(false)
+            .setOngoing(true)
+            .setSmallIcon(R.drawable.group_1)
+            .setContentTitle("Running App")
+            .setContentText("00:00:00")
+            .setContentIntent(getMainActivityPendingIntent())
+
+        startForeground(1, notificationBuilder.build())
+        Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
+    }
+
+    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
+        this,
+        0,
+        Intent(this, MainActivity::class.java).also {
+            it.action = ACTION_SHOW_MAP_FRAGMENT
+        },
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(notificationManager: NotificationManager) {
+        val channel = NotificationChannel(
+            "TRACKING CHANNEL",
+            "TRACKING",
+            IMPORTANCE_LOW
+        )
+        notificationManager.createNotificationChannel(channel)
     }
 }
