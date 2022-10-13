@@ -45,7 +45,7 @@ class IntroductionFragment() : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        (activity as AppCompatActivity).supportActionBar?.hide()
+        (activity as MainActivity).bottomNavBar.visibility = View.GONE
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
 
         viewPager = binding.idViewPager
@@ -83,6 +83,6 @@ class IntroductionFragment() : BaseFragment() {
 
     override fun onStop() {
         super.onStop()
-        (activity as AppCompatActivity).supportActionBar?.show()
+        (activity as MainActivity).bottomNavBar.visibility = View.VISIBLE
     }
 }
