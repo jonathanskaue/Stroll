@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun checkLocationPermissions() {
+    private fun checkLocationPermissions() {
 
         if (ContextCompat.checkSelfPermission(
                 applicationContext,

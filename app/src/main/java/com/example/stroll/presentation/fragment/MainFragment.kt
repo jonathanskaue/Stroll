@@ -56,9 +56,6 @@ class MainFragment() : BaseFragment() {
         // Inflate the layout for this fragment
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        binding.startTrackingBtn.setOnClickListener {
-            sendCommandToService(ACTION_START)
-        }
         return binding.root
     }
 
