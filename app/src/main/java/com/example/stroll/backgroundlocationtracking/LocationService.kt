@@ -54,7 +54,6 @@ class LocationService : LifecycleService() {
     @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
-
     lateinit var currentNotificationBuilder: NotificationCompat.Builder
 
     companion object {
@@ -78,6 +77,7 @@ class LocationService : LifecycleService() {
 
         isTracking.observe(this, Observer {
             updateLocationTracking(it)
+            updateNotificationTrackingState(it)
         })
     }
 
@@ -168,6 +168,7 @@ class LocationService : LifecycleService() {
         }
     }
 
+
     private fun addPathPoint(location: Location?) {
         location?.let {
             val pos = LatLng(location.latitude, location.longitude)
@@ -193,6 +194,12 @@ class LocationService : LifecycleService() {
         createNotificationChannel(notificationManager)
 
         startForeground(1, baseNotificationBuilder.build())
+
+        timeHikedInSeconds.observe(this, Observer {
+            val notification = currentNotificationBuilder
+                .setContentText(Utility.getFormattedStopWatchTime(it * 1000L))
+            notificationManager.notify(1, notification.build())
+        })
         Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
     }
 
@@ -204,5 +211,30 @@ class LocationService : LifecycleService() {
             IMPORTANCE_LOW
         )
         notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun updateNotificationTrackingState(isTracking: Boolean) {
+        val notificationActionText = if(isTracking) "Pause" else "Resume"
+        val pendingIntent = if (isTracking) {
+            val pauseIntent = Intent(this, LocationService::class.java).apply {
+                action = ACTION_PAUSE
+            }
+            PendingIntent.getService(this, 1, pauseIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+        else {
+            val resumeIntent = Intent(this, LocationService::class.java).apply {
+                action = ACTION_START
+            }
+            PendingIntent.getService(this, 2, resumeIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        currentNotificationBuilder.javaClass.getDeclaredField("mActions").apply {
+            isAccessible = true
+            set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
+        }
+        currentNotificationBuilder = baseNotificationBuilder
+            .addAction(R.drawable.ic_baseline_pause_24, notificationActionText, pendingIntent)
+        notificationManager.notify(1, currentNotificationBuilder.build())
     }
 }
