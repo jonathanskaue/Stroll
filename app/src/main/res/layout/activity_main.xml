@@ -14,4 +14,17 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_navigation"/>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_bar"
+        android:scrollIndicators="left" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

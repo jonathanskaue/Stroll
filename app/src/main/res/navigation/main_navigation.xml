@@ -5,6 +5,10 @@
     android:id="@+id/main_navigation"
     app:startDestination="@id/introductionFragment">
 
+    <action android:id="@+id/action_global_mapFragment"
+        app:destination="@id/mapFragment"
+        app:launchSingleTop="true" />
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.stroll.presentation.fragment.MainFragment"
@@ -49,6 +53,9 @@
             app:popUpTo="@id/main_navigation"
             app:popUpToInclusive="true"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_introductionFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -62,5 +69,8 @@
         <action
             android:id="@+id/action_graphFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_graphFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
 </navigation>
