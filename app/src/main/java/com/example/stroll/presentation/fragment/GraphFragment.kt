@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentGraphBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
@@ -77,8 +78,7 @@ class GraphFragment() : BaseFragment(), SensorEventListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.settings -> {
-                        val action = GraphFragmentDirections.actionGraphFragmentToSettingsFragment()
-                        view.findNavController().navigate(action)
+                        view.findNavController().navigate(GraphFragmentDirections.actionGraphFragmentToSettingsFragment())
                         true
                     }
                     else -> false

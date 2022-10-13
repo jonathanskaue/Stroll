@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
-class IntroductionFragment() : Fragment() {
+class IntroductionFragment() : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -47,7 +47,6 @@ class IntroductionFragment() : Fragment() {
     ): View? {
         (activity as AppCompatActivity).supportActionBar?.hide()
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
 
         viewPager = binding.idViewPager
         dotsIndicator = binding.springDotsIndicator
@@ -74,16 +73,10 @@ class IntroductionFragment() : Fragment() {
         lifecycleScope.launch {
             viewModel.isStarted.collect {
                 if (viewModel.isStarted.value) {
-                    (activity as MainActivity).loadFragment(MainFragment())
-                    /*val action = IntroductionFragmentDirections.actionIntroductionFragmentToMainFragment()
-                    view?.findNavController()?.navigate(action)*/
+                    view?.findNavController()?.navigate(R.id.action_global_mainFragment)
                 }
             }
         }
-
-
-
-
         return binding.root
 
     }
@@ -91,33 +84,5 @@ class IntroductionFragment() : Fragment() {
     override fun onStop() {
         super.onStop()
         (activity as AppCompatActivity).supportActionBar?.show()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        loadSettings()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.settings -> {
-                val action = IntroductionFragmentDirections.actionIntroductionFragmentToSettingsFragment()
-                view?.findNavController()?.navigate(action)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    fun loadSettings() {
-        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        val dark_mode = sp?.getBoolean("dark_mode", false)
-
-        if (dark_mode == true) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-        else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
     }
 }

@@ -26,6 +26,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
@@ -72,8 +73,7 @@ class MainFragment() : BaseFragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.settings -> {
-                        val action = MainFragmentDirections.actionMainFragmentToSettingsFragment()
-                        view.findNavController().navigate(action)
+                        view.findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
                         true
                     }
                     else -> false
@@ -87,8 +87,6 @@ class MainFragment() : BaseFragment() {
             it.action = action
             requireContext().startService(it)
         }
-
-
 
 }
 

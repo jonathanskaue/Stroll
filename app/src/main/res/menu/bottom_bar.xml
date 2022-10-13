@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/map"
-        android:icon="@drawable/ic_baseline_map_24"
-        android:title="@string/map"/>
-    <item
-        android:id="@+id/home"
+        android:id="@+id/mainFragment"
         android:icon="@drawable/ic_baseline_house_24"
         android:title="@string/home"/>
     <item
-        android:id="@+id/sensors"
+        android:id="@+id/mapFragment"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="@string/map"/>
+    <item
+        android:id="@+id/graphFragment"
         android:icon="@drawable/ic_baseline_sensors_24"
         android:title="@string/sensors"/>
     <item
-        android:id="@+id/intro"
+        android:id="@+id/introductionFragment"
         android:icon="@drawable/ic_baseline_help_24"
         android:title="@string/introduction"/>
 </menu>

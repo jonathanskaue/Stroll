@@ -22,7 +22,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.example.stroll.other.Constants.ACTION_SHOW_MAP_FRAGMENT
 import com.example.stroll.presentation.fragment.*
@@ -36,21 +41,16 @@ import dagger.hilt.android.HiltAndroidApp
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
-    private lateinit var bottomNavBar: BottomNavigationView
+    lateinit var bottomNavBar: BottomNavigationView
     private val viewModel: MainViewModel by viewModels()
-    lateinit var startingDestination : String
-    val locationPermissionRequest = registerForActivityResult(
+    private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) &&
                     permissions.getOrDefault(Manifest.permission.ACTIVITY_RECOGNITION, false)-> {
                 Toast.makeText(applicationContext, "You have given us permission to use your precise location and activity", Toast.LENGTH_SHORT).show()
-                when (startingDestination) {
-                    "fragment_main" -> loadFragment(MapFragment())
-                    "fragment_introduction" -> loadFragment(MapFragment())
-                    "fragment_graph" -> loadFragment(MapFragment())
-                }
+                navController.navigate(R.id.action_global_mapFragment)
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 Toast.makeText(applicationContext, "you have given us permission to use your precise location, but we need your permissionto use your activity too", Toast.LENGTH_SHORT).show()
@@ -73,50 +73,39 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        navigateToMapFragmentIfNeeded(intent)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
-        navGraph.setStartDestination(R.id.introductionFragment)
-        NavigationUI.setupActionBarWithNavController(this, navController)
         bottomNavBar = findViewById(R.id.bottomNav)
-        bottomNavBar.visibility = View.GONE
+        val bottomBarConfiguration = AppBarConfiguration(setOf(R.id.mainFragment, R.id.mapFragment, R.id.graphFragment, R.id.introductionFragment))
+        setupActionBarWithNavController(navController, bottomBarConfiguration)
+
+        bottomNavBar.setupWithNavController(navController)
         bottomNavBar.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.map -> {
+                R.id.mapFragment -> {
                     checkLocationPermissions()
                     return@setOnItemSelectedListener true
                 }
-                R.id.home -> {
-                    loadFragment(MainFragment())
+                R.id.mainFragment -> {
+                    navController.navigate(R.id.action_global_mainFragment)
                     return@setOnItemSelectedListener true
                 }
-                R.id.sensors -> {
-                    loadFragment(GraphFragment())
+                R.id.graphFragment -> {
+                    navController.navigate(R.id.action_global_graphFragment)
                     return@setOnItemSelectedListener true
 
                 }
-                R.id.intro -> {
-                    loadFragment(IntroductionFragment())
+                R.id.introductionFragment -> {
+                    navController.navigate(R.id.action_global_introductionFragment)
                     return@setOnItemSelectedListener true
                 }
                 else -> {return@setOnItemSelectedListener true}
-            }
-        }
+        } }
+        navigateToMapFragmentIfNeeded(intent)
+        navGraph.setStartDestination(R.id.introductionFragment)
     }
 
-    fun loadFragment(fragment: Fragment) {
-        bottomNavBar.visibility = View.VISIBLE
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.nav_host_fragment, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = this.findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp()
-    }
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         navigateToMapFragmentIfNeeded(intent)
@@ -131,7 +120,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun checkLocationPermissions() {
-        startingDestination = navController.currentDestination?.label.toString()
 
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
@@ -149,11 +137,26 @@ class MainActivity : AppCompatActivity() {
             ))
         }
         else {
-            when (startingDestination) {
-                "fragment_main" -> loadFragment(MapFragment())
-                "fragment_introduction" -> loadFragment(MapFragment())
-                "fragment_graph" -> loadFragment(MapFragment())
-            }
+            navController.navigate(R.id.action_global_mapFragment)
         }
     }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp()
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

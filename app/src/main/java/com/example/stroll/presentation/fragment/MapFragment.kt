@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.DefaultLocationClient
 import com.example.stroll.backgroundlocationtracking.LocationClient
@@ -129,8 +130,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.settings -> {
-                        val action = MapFragmentDirections.actionMapFragmentToSettingsFragment()
-                        view.findNavController().navigate(action)
+                        view.findNavController().navigate(MapFragmentDirections.actionMapFragmentToSettingsFragment())
                         true
                     }
                     else -> false

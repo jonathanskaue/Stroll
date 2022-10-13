@@ -8,6 +8,15 @@
     <action android:id="@+id/action_global_mapFragment"
         app:destination="@id/mapFragment"
         app:launchSingleTop="true" />
+    <action android:id="@+id/action_global_introductionFragment"
+        app:destination="@+id/introductionFragment"
+        app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_graphFragment"
+        app:destination="@+id/graphFragment"
+        app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_mainFragment"
+        app:destination="@+id/mainFragment"
+        app:launchSingleTop="true"/>
 
     <fragment
         android:id="@+id/mainFragment"
@@ -56,6 +65,9 @@
         <action
             android:id="@+id/action_introductionFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_introductionFragment_to_graphFragment"
+            app:destination="@id/graphFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -72,5 +84,11 @@
         <action
             android:id="@+id/action_graphFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_graphFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_graphFragment_to_introductionFragment"
+            app:destination="@id/introductionFragment" />
     </fragment>
 </navigation>
