@@ -1,17 +1,13 @@
 package com.example.stroll.presentation.fragment
 
 import android.os.Bundle
-import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.databinding.DataBindingUtil.setContentView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
@@ -22,11 +18,9 @@ import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
-class IntroductionFragment() : Fragment() {
+class IntroductionFragment() : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -44,78 +38,51 @@ class IntroductionFragment() : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        (activity as AppCompatActivity).supportActionBar?.hide()
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
 
         viewPager = binding.idViewPager
         dotsIndicator = binding.springDotsIndicator
 
         imageList = ArrayList()
-        imageList = imageList + R.drawable.allura___in_the_park
-        imageList = imageList + R.drawable.allura___giant_phone
-        imageList = imageList + R.drawable.allura___ui_windows
+        imageList = imageList + R.drawable.mapicon
+        imageList = imageList + R.drawable.cameraicon
+        imageList = imageList + R.drawable.recordicon
 
         headingList = ArrayList()
-        headingList = headingList + "Start a hike!"
-        headingList = headingList + "Augmented Reality"
-        headingList = headingList + "Recorded hikes"
+        headingList = headingList + "nigga"
+        headingList = headingList + "gringo"
+        headingList = headingList + "n-word"
 
         bodyList = ArrayList()
-        bodyList = bodyList + "Start a hike by either creating a starting point and destination \n or by just start strolling!"
-        bodyList = bodyList + "See your favorite destinations in AR"
-        bodyList = bodyList + "See all your previous hikes and stats!"
+        bodyList = bodyList + "niggasaurus rex"
+        bodyList = headingList + "gringo"
+        bodyList = headingList + "n-word"
 
-        viewPagerAdapter = ViewPagerAdapter(viewModel, view, requireContext(), imageList, headingList, bodyList)
+
+        viewPagerAdapter = ViewPagerAdapter(requireContext(), imageList, headingList, bodyList)
         viewPager.adapter = viewPagerAdapter
         dotsIndicator.attachTo(viewPager)
-
-        lifecycleScope.launch {
-            viewModel.isStarted.collect {
-                if (viewModel.isStarted.value) {
-                    val action = IntroductionFragmentDirections.actionIntroductionFragmentToMainFragment()
-                    view?.findNavController()?.navigate(action)
-                }
-            }
-        }
-
-
-
-
         return binding.root
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-        (activity as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadSettings()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.settings -> {
-                val action = IntroductionFragmentDirections.actionIntroductionFragmentToSettingsFragment()
-                view?.findNavController()?.navigate(action)
-                true
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar, menu)
             }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
-    fun loadSettings() {
-        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        val dark_mode = sp?.getBoolean("dark_mode", false)
-
-        if (dark_mode == true) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-        else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.settings -> {
+                        val action = IntroductionFragmentDirections.actionIntroductionFragmentToSettingsFragment()
+                        view.findNavController().navigate(action)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 }
