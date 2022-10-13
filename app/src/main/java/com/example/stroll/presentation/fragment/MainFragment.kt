@@ -47,23 +47,6 @@ class MainFragment() : BaseFragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    /*val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                Toast.makeText(requireContext(), "You have given us permission to use your precise location", Toast.LENGTH_SHORT).show()
-                val action = MainFragmentDirections.actionMainFragmentToMapFragment()
-                view?.findNavController()?.navigate(action)
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                Toast.makeText(requireContext(), "You have only given us access to your approximate location, we need your precise location", Toast.LENGTH_SHORT).show()
-            } else -> {
-            Toast.makeText(requireContext(), "You have chosen to not share your location, we need your precise location", Toast.LENGTH_SHORT).show()
-        }
-        }
-    }*/
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,21 +54,9 @@ class MainFragment() : BaseFragment() {
 
         // Inflate the layout for this fragment
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        binding.btnMap.setOnClickListener {
-            checkLocationPermissions()
-        }
 
         binding.startTrackingBtn.setOnClickListener {
             sendCommandToService(ACTION_START)
-        }
-
-        binding.btnIntro.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToIntroductionFragment()
-            view?.findNavController()?.navigate(action)
-        }
-        binding.btnGraph.setOnClickListener {
-            val action = MainFragmentDirections.actionMainFragmentToGraphFragment()
-            view?.findNavController()?.navigate(action)
         }
         return binding.root
     }
@@ -110,17 +81,6 @@ class MainFragment() : BaseFragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
-
-    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.settings -> {
-                val action = MainFragmentDirections.actionMainFragmentToSettingsFragment()
-                view?.findNavController()?.navigate(action)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }*/
 
     private fun sendCommandToService(action: String) =
         Intent(requireContext(), LocationService::class.java).also {
