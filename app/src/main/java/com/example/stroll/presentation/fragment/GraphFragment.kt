@@ -1,11 +1,13 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,19 +19,25 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
+import com.example.stroll.backgroundlocationtracking.LocationService
+import com.example.stroll.backgroundlocationtracking.LocationService.Companion.ACTION_START
+import com.example.stroll.backgroundlocationtracking.SensorService
 import com.example.stroll.databinding.FragmentGraphBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
-class GraphFragment() : Fragment(), SensorEventListener {
+class GraphFragment() : Fragment(){
 
     private val viewModel: MainViewModel by viewModels()
 
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
+    lateinit var sensorData: MutableMap<String, FloatArray>
 
+
+/*
     private lateinit var sensorManager: SensorManager
     private var sensorAccChange = floatArrayOf(0f, 0f, 0f)
     private var accSensorData = floatArrayOf(0f, 0f, 0f)
@@ -37,7 +45,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
     private var sensorMagData = floatArrayOf(0f, 0f, 0f)
     private var rotationMatrix = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     private var deviceOrientation = floatArrayOf(0f, 0f, 0f)
-    private var accDataList = mutableListOf<MutableList<Float>>()
+    private var accDataList = mutableListOf<MutableList<Float>>()*/
 
 
     override fun onCreateView(
@@ -56,12 +64,21 @@ class GraphFragment() : Fragment(), SensorEventListener {
             }
         }
 
-        binding.startButton.setOnClickListener {
+       /* binding.startButton.setOnClickListener {
             setUpSensors()
-        }
+        }*/
 
         binding.stopButton.setOnClickListener {
             viewModel.addDataToRoom()
+        }
+        Intent(requireContext(), SensorService::class.java).apply {
+            action = SensorService.ACTION_START
+            activity?.startService(this)
+        }
+
+        Intent(requireContext(), SensorService::class.java).apply {
+            action = SensorService.ACTION_START
+            activity?.startService(this)
         }
 
         return binding.root
@@ -94,7 +111,7 @@ class GraphFragment() : Fragment(), SensorEventListener {
         }
     }
 
-    private fun setUpSensors() {
+    /*private fun setUpSensors() {
         val sensorManager =
             activity?.getSystemService(AppCompatActivity.SENSOR_SERVICE) as SensorManager
         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)?.also {
@@ -107,11 +124,9 @@ class GraphFragment() : Fragment(), SensorEventListener {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
 
         }
-    }
+    }*/
 
-
-    @SuppressLint("SetTextI18n")
-    override fun onSensorChanged(event: SensorEvent?) {
+    /*override fun onSensorChanged(event: SensorEvent?) {
 
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
 
@@ -151,11 +166,11 @@ class GraphFragment() : Fragment(), SensorEventListener {
 
             // binding.tvBox.apply { translationX = - (deviceOrientation[0]*180/3.14159f) * 20f }
 
-    }
+    }*/
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+    /*override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         return
-    }
+    }*/
 
     @SuppressLint("SetTextI18n")
     private fun displayDataTriple(name: String, data: FloatArray): String {
@@ -167,4 +182,15 @@ class GraphFragment() : Fragment(), SensorEventListener {
                     )
                 }"
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("sensorService", "Stop")
+
+        Intent(requireContext(), SensorService::class.java).apply {
+            action = SensorService.ACTION_STOP
+            activity?.startService(this)
+        }
+    }
+
 }
