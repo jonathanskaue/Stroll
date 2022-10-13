@@ -1,31 +1,19 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
-import androidx.preference.PreferenceManager
 import com.example.stroll.R
-import com.example.stroll.backgroundlocationtracking.LocationService
-import com.example.stroll.backgroundlocationtracking.LocationService.Companion.ACTION_START
-import com.example.stroll.backgroundlocationtracking.SensorService
+//import com.example.stroll.backgroundlocationtracking.LocationService.Companion.ACTION_START
 import com.example.stroll.databinding.FragmentGraphBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class GraphFragment() : BaseFragment(){
@@ -68,15 +56,15 @@ class GraphFragment() : BaseFragment(){
         binding.stopButton.setOnClickListener {
             viewModel.addDataToRoom()
         }
-        Intent(requireContext(), SensorService::class.java).apply {
-            action = SensorService.ACTION_START
-            activity?.startService(this)
-        }
-
-        Intent(requireContext(), SensorService::class.java).apply {
-            action = SensorService.ACTION_START
-            activity?.startService(this)
-        }
+//        Intent(requireContext(), SensorService::class.java).apply {
+//            action = SensorService.ACTION_START
+//            activity?.startService(this)
+//        }
+//
+//        Intent(requireContext(), SensorService::class.java).apply {
+//            action = SensorService.ACTION_START
+//            activity?.startService(this)
+//        }
 
         return binding.root
     }
@@ -184,10 +172,10 @@ class GraphFragment() : BaseFragment(){
         super.onDestroy()
         Log.d("sensorService", "Stop")
 
-        Intent(requireContext(), SensorService::class.java).apply {
-            action = SensorService.ACTION_STOP
-            activity?.startService(this)
-        }
+//        Intent(requireContext(), SensorService::class.java).apply {
+//            action = SensorService.ACTION_STOP
+//            activity?.startService(this)
+//        }
     }
 
 }
