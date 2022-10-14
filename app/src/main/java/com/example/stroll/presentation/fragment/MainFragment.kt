@@ -42,9 +42,6 @@ class MainFragment() : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var isTracking = false
-    private var pathPoints = mutableListOf<Polyline>()
-
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
@@ -58,32 +55,5 @@ class MainFragment() : BaseFragment() {
 
         return binding.root
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.toolbar, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.settings -> {
-                        view.findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
-    private fun sendCommandToService(action: String) =
-        Intent(requireContext(), LocationService::class.java).also {
-            it.action = action
-            requireContext().startService(it)
-        }
-
 }
 

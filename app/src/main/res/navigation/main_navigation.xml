@@ -17,6 +17,9 @@
     <action android:id="@+id/action_global_mainFragment"
         app:destination="@+id/mainFragment"
         app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_settingsFragment"
+        app:destination="@+id/settingsFragment"
+        app:launchSingleTop="true"/>
 
     <fragment
         android:id="@+id/mainFragment"

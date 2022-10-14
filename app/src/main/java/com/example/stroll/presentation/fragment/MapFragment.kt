@@ -52,7 +52,7 @@ import timber.log.Timber
 import java.util.EventListener
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), MapEventsReceiver {
+class MapFragment() : BaseFragment() {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -120,23 +120,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         binding.toggleHikeBtn.setOnClickListener {
             toggleRun()
         }
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.toolbar, menu)
-            }
-
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.settings -> {
-                        view.findNavController().navigate(MapFragmentDirections.actionMapFragmentToSettingsFragment())
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onResume() {
@@ -190,14 +173,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         } else {
             sendCommandToService(ACTION_START)
         }
-    }
-
-    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        TODO("not implemented")
-    }
-
-    override fun longPressHelper(p: GeoPoint?): Boolean {
-        TODO("Not yet implemented")
     }
 
     private fun addAllPolyLines() {

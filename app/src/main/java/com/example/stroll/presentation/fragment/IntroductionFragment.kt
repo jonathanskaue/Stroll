@@ -45,7 +45,6 @@ class IntroductionFragment() : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        (activity as MainActivity).bottomNavBar.visibility = View.GONE
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
 
         viewPager = binding.idViewPager
@@ -78,7 +77,11 @@ class IntroductionFragment() : BaseFragment() {
             }
         }
         return binding.root
+    }
 
+    override fun onResume() {
+        super.onResume()
+        (activity as MainActivity).bottomNavBar.visibility = View.GONE
     }
 
     override fun onStop() {
