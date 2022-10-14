@@ -51,6 +51,7 @@ import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.*
+import kotlin.math.nextUp
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -130,8 +131,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             endHikeAndSaveToDb()
         }
 
-        addAllPolyLines()
-
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -153,10 +152,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
-        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
-            pathPoints = it
-            addLatestPolyline()
-        })
+
     }
 
     override fun onPause() {
@@ -177,7 +173,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             updateTracking(it)
         })
 
-
+        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
+            pathPoints = it
+            addLatestPolyline()
+            addAllPolyLines()
+        })
 
         LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
             currentTimeInMillis = it
@@ -275,6 +275,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         return BoundingBox(north, east, south, west)
     }
 
+    // If you're still moving fast and camera follows currentLocationMarker, the hike will be saved to db with bitmap,
+    // but you will not be taken to mainfragment. Will have to fix later.
     private fun endHikeAndSaveToDb() {
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
@@ -300,17 +302,27 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     }
 
-
+    /*--
+        En funksjon som skal iterere mellom punktpar.
+        punkt 1 og 2 skal lage en linje mellom hverandre,
+        samme med punkt 2 og 3, samme med 3 og 4 osv..
+        Livedata fra viewmodel er bare å glemme
+    --*/
     private fun addAllPolyLines() {
-        val polygonList = mutableListOf<Polygon>()
-        val polygon = Polygon()
-        for (polyline in pathPoints) {
-            for (i in 0 until polyline.size) {
-                polygon.addPoint(GeoPoint(polyline[i].latitude, polyline[i].longitude))
+/*        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+            val polygonList = mutableListOf<Polygon>()
+
+            for ( (polyline1, polyline2) in pathPoints.last().zip(pathPoints.last()-1)) {
+                Log.d("ziploop", "addAllPolyLines: $polyline1 and $polyline2")
+                val polygon = Polygon()
+                val latLang1 = pathPoints.first()[pathPoints.first().size - 1]
+                polygon.addPoint(GeoPoint(latLang1.latitude, latLang1.longitude))
+                polygon.addPoint(GeoPoint(latLang1.latitude + 0.0001, latLang1.longitude+ 0.0001))
+                polygon.strokeWidth = 16f
                 polygonList.add(polygon)
             }
-        }
-        mapView.overlayManager.addAll(polygonList)
+            mapView.overlayManager.addAll((polygonList))
+        }*/
     }
 
     private fun addLatestPolyline() {
