@@ -230,21 +230,40 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun zoomToSeeWholeTrack() {
         val firstAndLastLocation = mutableListOf<GeoPoint>()
+        var minLat = 90
+        var maxLat = -90
+        var minLon = 180
+        var maxLon = -180
         for (polyline in pathPoints) {
             for (position in polyline) {
                 firstAndLastLocation.add(GeoPoint(position.latitude, position.longitude))
             }
         }
-        mapView.zoomToBoundingBox(
-            BoundingBox.fromGeoPoints(
-                Arrays.asList(
-                    firstAndLastLocation.minBy { min ->
-                        min.latitude
-                    },
-                    firstAndLastLocation.maxBy { max ->
-                        max.latitude
-                    })),
-            false, 300)
+        mapView.zoomToBoundingBox(getBounds(), false, 150)
+    }
+
+    private fun getBounds(): BoundingBox {
+        var north = -90.0
+        var south = 90.0
+        var west = 180.0
+        var east = -180.0
+        for (polyline in pathPoints) {
+            for (position in polyline) {
+                if (position.latitude > north) {
+                    north = position.latitude
+                }
+                if (position.latitude < south) {
+                    south = position.latitude
+                }
+                if (position.longitude < west) {
+                    west = position.longitude
+                }
+                if (position.longitude > east) {
+                    east = position.longitude
+                }
+            }
+        }
+        return BoundingBox(north, east, south, west)
     }
 
     private fun endHikeAndSaveToDb() {
