@@ -103,7 +103,13 @@ class MainActivity : AppCompatActivity() {
                 else -> {return@setOnItemSelectedListener true}
         } }
         navigateToMapFragmentIfNeeded(intent)
-        navGraph.setStartDestination(R.id.introductionFragment)
+        if (viewModel.allData.value?.size == null) {
+            navGraph.setStartDestination(R.id.introductionFragment)
+        }
+        else {
+            navGraph.setStartDestination(R.id.mainFragment)
+        }
+
     }
 
     override fun onNewIntent(intent: Intent?) {
