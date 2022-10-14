@@ -3,14 +3,11 @@ package com.example.stroll.presentation.fragment
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -19,40 +16,39 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
-import com.example.stroll.MainActivity
 import com.example.stroll.R
-import com.example.stroll.backgroundlocationtracking.DefaultLocationClient
-import com.example.stroll.backgroundlocationtracking.LocationClient
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
 import com.example.stroll.other.Constants.ACTION_START
+import com.example.stroll.other.Constants.ACTION_STOP
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import org.mapsforge.map.android.layers.MyLocationOverlay
+import org.osmdroid.api.IGeoPoint
+import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.events.MapListener
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Overlay.Snappable
+import org.osmdroid.views.overlay.PolyOverlayWithIW
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import timber.log.Timber
-import java.util.EventListener
+import java.util.*
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), MapEventsReceiver {
+class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -104,7 +100,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             }
         }
 
-
         controller.setZoom(18.0)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
@@ -118,14 +113,17 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.toggleHikeBtn.setOnClickListener {
-            toggleRun()
+            toggleHike()
         }
+        binding.cancelHikeBtn.setOnClickListener {
+            showCancelHikeDialog()
+        }
+
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.toolbar, menu)
             }
-
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
@@ -171,22 +169,52 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             currentTimeInMillis = it
             val formattedTime = Utility.getFormattedStopWatchTime(currentTimeInMillis, true)
             binding.timerTV.text = formattedTime
+            if (currentTimeInMillis > 0L) {
+                binding.cancelHikeBtn.isVisible = true
+            }
         })
+    }
+
+    private fun showCancelHikeDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
+            .setTitle("Cancel Hike?")
+            .setMessage("Are you sure you want to cancel the hike and delete data for current hike?")
+            .setIcon(R.drawable.group_1)
+            .setPositiveButton("YES") {_,_ ->
+                stopHike()
+            }
+            .setNegativeButton("NO") { dialogInterface, _ ->
+                dialogInterface.cancel()
+            }
+            .create()
+        dialog.show()
+    }
+
+    private fun stopHike() {
+        sendCommandToService(ACTION_STOP)
+        view?.findNavController()?.navigate(R.id.action_global_mainFragment)
     }
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
-        if(!isTracking) {
-            binding.toggleHikeBtn.text = "Start"
-            binding.finishHikeBtn.isVisible = true
+        if (!isTracking) {
+            if (currentTimeInMillis == 0L) {
+                binding.toggleHikeBtn.text = "START"
+            }
+            else {
+                binding.toggleHikeBtn.text = "RESUME"
+                binding.finishHikeBtn.isVisible = true
+            }
+
         } else {
-            binding.toggleHikeBtn.text = "Stop"
+            binding.toggleHikeBtn.text = "PAUSE"
             binding.finishHikeBtn.isVisible = false
         }
     }
 
-    private fun toggleRun() {
+    private fun toggleHike() {
         if(isTracking) {
             sendCommandToService(ACTION_PAUSE)
+            zoomToSeeWholeTrack()
         } else {
             sendCommandToService(ACTION_START)
         }
@@ -200,13 +228,33 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         TODO("Not yet implemented")
     }
 
+    private fun zoomToSeeWholeTrack() {
+        val firstAndLastLocation = mutableListOf<GeoPoint>()
+        for (polyline in pathPoints) {
+            for (position in polyline) {
+                firstAndLastLocation.add(GeoPoint(position.latitude, position.longitude))
+            }
+        }
+        mapView.zoomToBoundingBox(
+            BoundingBox.fromGeoPoints(
+                Arrays.asList(
+                    firstAndLastLocation.minBy { min ->
+                        min.latitude
+                    },
+                    firstAndLastLocation.maxBy { max ->
+                        max.latitude
+                    })),
+            false, 300)
+    }
+
+    private fun endHikeAndSaveToDb() {
+
+    }
+
     private fun addAllPolyLines() {
         for (polyline in pathPoints) {
             val polygon = Polygon()
-            polygon.fillColor = Color.RED
-            polygon.strokeWidth = 8f
-            mapView?.overlayManager?.add(polygon)
-
+            mapView.overlayManager.add(polygon)
         }
     }
 
@@ -215,8 +263,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
             val lastLatLng = pathPoints.last().last()
             val polygon = Polygon()
-            polygon.fillColor = Color.RED
             polygon.strokeWidth = 8f
+            //polygon.fillPaint.color = 2
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
             mapView?.overlayManager?.add(polygon)
@@ -228,4 +276,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             it.action = action
             requireContext().startService(it)
         }
+
+    override fun onSnapToItem(x: Int, y: Int, snapPoint: Point?, mapView: IMapView?): Boolean {
+
+        return true
+    }
 }

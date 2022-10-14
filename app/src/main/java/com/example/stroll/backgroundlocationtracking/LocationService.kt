@@ -47,6 +47,7 @@ typealias Polylines = MutableList<Polyline>
 class LocationService : LifecycleService() {
 
     var isFirstRun = true
+    var serviceStopped = false
     private val timeHikedInSeconds = MutableLiveData<Long>()
 
     @Inject
@@ -98,6 +99,7 @@ class LocationService : LifecycleService() {
                     Log.d("LOCATIONSERVICE", "startForegroundService: PAUSED SERVICE")
                 }
                 ACTION_STOP -> {
+                    stopService()
                     Log.d("LOCATIONSERVICE", "startForegroundService: STOPPED SRVICE")
                 }
                 else -> {}
@@ -134,6 +136,15 @@ class LocationService : LifecycleService() {
     private fun pauseService() {
         isTimerEnabled = false
         isTracking.postValue(false)
+    }
+
+    private fun stopService() {
+        serviceStopped = true
+        isFirstRun = true
+        pauseService()
+        postInitialValues()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     @SuppressLint("MissingPermission")
@@ -196,9 +207,11 @@ class LocationService : LifecycleService() {
         startForeground(1, baseNotificationBuilder.build())
 
         timeHikedInSeconds.observe(this, Observer {
-            val notification = currentNotificationBuilder
-                .setContentText(Utility.getFormattedStopWatchTime(it * 1000L))
-            notificationManager.notify(1, notification.build())
+            if (!serviceStopped) {
+                val notification = currentNotificationBuilder
+                    .setContentText(Utility.getFormattedStopWatchTime(it * 1000L))
+                notificationManager.notify(1, notification.build())
+            }
         })
         Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
     }
@@ -233,8 +246,10 @@ class LocationService : LifecycleService() {
             isAccessible = true
             set(currentNotificationBuilder, ArrayList<NotificationCompat.Action>())
         }
-        currentNotificationBuilder = baseNotificationBuilder
-            .addAction(R.drawable.ic_baseline_pause_24, notificationActionText, pendingIntent)
-        notificationManager.notify(1, currentNotificationBuilder.build())
+        if (!serviceStopped) {
+            currentNotificationBuilder = baseNotificationBuilder
+                .addAction(R.drawable.ic_baseline_pause_24, notificationActionText, pendingIntent)
+            notificationManager.notify(1, currentNotificationBuilder.build())
+        }
     }
 }

@@ -4,4 +4,10 @@
 
     <item android:id="@+id/settings"
           android:title="Settings" />
+
+    <item android:id="@+id/cancelHike"
+        android:icon="@drawable/ic_baseline_close_24"
+        android:visible="false"
+        app:showAsAction="always"
+        android:title="Cancel Hike"/>
 </menu>
