@@ -50,18 +50,18 @@ class GraphFragment() : BaseFragment(), SensorEventListener {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
 
         //Displays latest data in database
-        viewModel.allData.observe(viewLifecycleOwner) { data ->
+        /*viewModel.allData.observe(viewLifecycleOwner) { data ->
             data.forEach {
                 binding.accdata.text = (it.accData.last().toString())
             }
-        }
+        }*/
 
         binding.startButton.setOnClickListener {
             setUpSensors()
         }
 
         binding.stopButton.setOnClickListener {
-            viewModel.addDataToRoom()
+            //viewModel.addDataToRoom()
         }
 
         return binding.root

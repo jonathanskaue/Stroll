@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,13 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val strollRepo: StrollRepository
 ): ViewModel() {
+
+    private val _pathPoints = MutableLiveData<MutableList<Polyline?>>()
+    val pathPoints: LiveData<MutableList<Polyline?>> = _pathPoints
+
+    fun insertPathPoints(pathPoints: MutableList<Polyline?>) {
+        _pathPoints.value = pathPoints
+    }
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
@@ -35,7 +43,11 @@ class MainViewModel @Inject constructor(
         _isStarted.value = true
     }
 
+
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
+    val hikesSortedByDistance = viewModelScope.launch {
+        strollRepo.selectAllHikesSortedByDistance()
+    }
 
     var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
     val accData: LiveData<List<List<Float>>> = _accData
@@ -44,13 +56,9 @@ class MainViewModel @Inject constructor(
         _accData.value = data
     }
 
-    fun addDataToRoom() {
+    fun addDataToRoom(hike: StrollDataEntity) {
         viewModelScope.launch {
-            strollRepo.insertData(
-                StrollDataEntity(
-                    accData = accData.value!!
-                )
-            )
+            strollRepo.insertData(hike)
         }
     }
 

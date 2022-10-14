@@ -16,4 +16,12 @@ class StrollRepositoryImpl @Inject constructor(
     override suspend fun insertData(data: StrollDataEntity) {
         dao.insertData(data)
     }
+
+    override suspend fun selectAllHikesSortedByDistance() {
+        dao.selectAllHikesSortedByDistance()
+    }
+
+    override suspend fun deleteData(data: StrollDataEntity) {
+        dao.deleteData(data)
+    }
 }

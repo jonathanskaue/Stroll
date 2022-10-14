@@ -169,7 +169,7 @@ class LocationService : LifecycleService() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             if(isTracking.value!!) {
-                result?.locations?.let { locations ->
+                result.locations.let { locations ->
                     for(location in locations) {
                         addPathPoint(location)
                         Log.d("NEW LOCATION:", "${location.latitude}, ${location.longitude}")

@@ -2,11 +2,13 @@ package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -19,6 +21,7 @@ import androidx.preference.PreferenceManager
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
+import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
 import com.example.stroll.other.Constants.ACTION_START
@@ -30,6 +33,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.api.IMapView
@@ -40,12 +44,14 @@ import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
+import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.PolyOverlayWithIW
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.*
+import kotlin.math.round
 
 @AndroidEntryPoint
 class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
@@ -102,9 +108,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         controller.setZoom(18.0)
 
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        //mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
-        addAllPolyLines()
+
+
 
         return binding.root
     }
@@ -118,6 +125,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         binding.cancelHikeBtn.setOnClickListener {
             showCancelHikeDialog()
         }
+        binding.finishHikeBtn.setOnClickListener {
+            zoomToSeeWholeTrack()
+            endHikeAndSaveToDb()
+        }
+
+        addAllPolyLines()
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
@@ -140,6 +153,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
+        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
+            pathPoints = it
+            addLatestPolyline()
+        })
     }
 
     override fun onPause() {
@@ -160,10 +177,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             updateTracking(it)
         })
 
-        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
-            pathPoints = it
-            addLatestPolyline()
-        })
+
 
         LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
             currentTimeInMillis = it
@@ -214,7 +228,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private fun toggleHike() {
         if(isTracking) {
             sendCommandToService(ACTION_PAUSE)
-            zoomToSeeWholeTrack()
         } else {
             sendCommandToService(ACTION_START)
         }
@@ -230,10 +243,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun zoomToSeeWholeTrack() {
         val firstAndLastLocation = mutableListOf<GeoPoint>()
-        var minLat = 90
-        var maxLat = -90
-        var minLon = 180
-        var maxLon = -180
         for (polyline in pathPoints) {
             for (position in polyline) {
                 firstAndLastLocation.add(GeoPoint(position.latitude, position.longitude))
@@ -267,14 +276,41 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     }
 
     private fun endHikeAndSaveToDb() {
+        val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
+            if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
+                return@MapSnapshotable
+            }
+            val bitmap: Bitmap = Bitmap.createBitmap(pMapSnapshot.bitmap)
+            var distanceInMeters = 0
+            for (polyline in pathPoints) {
+                distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
+            }
+            val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+            val dateTimeStamp = Calendar.getInstance().timeInMillis
+            val hike = StrollDataEntity(bitmap, dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
+            viewModel.addDataToRoom(hike)
+            Snackbar.make(
+                requireActivity().findViewById(R.id.mainFragment),
+                "Hike saved successfully",
+                Snackbar.LENGTH_LONG
+            ).show()
+            stopHike()
+        }, MapSnapshot.INCLUDE_FLAG_UPTODATE, mapView)
+        Thread(mapSnapshot).start()
 
     }
 
+
     private fun addAllPolyLines() {
+        val polygonList = mutableListOf<Polygon>()
+        val polygon = Polygon()
         for (polyline in pathPoints) {
-            val polygon = Polygon()
-            mapView.overlayManager.add(polygon)
+            for (i in 0 until polyline.size) {
+                polygon.addPoint(GeoPoint(polyline[i].latitude, polyline[i].longitude))
+                polygonList.add(polygon)
+            }
         }
+        mapView.overlayManager.addAll(polygonList)
     }
 
     private fun addLatestPolyline() {
@@ -301,3 +337,4 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         return true
     }
 }
+

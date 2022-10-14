@@ -1,5 +1,7 @@
 package com.example.stroll.other
 
+import android.location.Location
+import com.example.stroll.backgroundlocationtracking.Polyline
 import java.util.concurrent.TimeUnit
 
 object Utility {
@@ -21,5 +23,25 @@ object Utility {
                 "${if(minutes < 10) "0" else ""}$minutes:" +
                 "${if(seconds < 10) "0" else ""}$seconds:" +
                 "${if(milliseconds < 10) "0" else ""}$milliseconds"
+    }
+
+
+    fun calculatePolylineLength(polyline: Polyline): Float {
+        var distance = 0f
+        for (i in 0..polyline.size - 2) {
+            val position = polyline[i]
+            val position2 = polyline[i + 1]
+
+            val result = FloatArray(1)
+            Location.distanceBetween(
+                position.latitude,
+                position.longitude,
+                position2.latitude,
+                position2.longitude,
+                result
+            )
+            distance = distance + result[0]
+        }
+        return distance
     }
 }

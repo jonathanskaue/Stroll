@@ -24,14 +24,17 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentMainBinding
 import com.example.stroll.other.Constants.ACTION_START
+import com.example.stroll.presentation.adapters.HikeAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.concurrent.fixedRateTimer
@@ -48,6 +51,8 @@ class MainFragment() : BaseFragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var hikeAdapter: HikeAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,6 +67,11 @@ class MainFragment() : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val menuHost: MenuHost = requireActivity()
+        setupRecyclerView()
+
+        viewModel.allData.observe(viewLifecycleOwner, Observer {
+            hikeAdapter.submitList(it)
+        })
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.toolbar, menu)
@@ -77,6 +87,12 @@ class MainFragment() : BaseFragment() {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun setupRecyclerView() = binding.rvHikes.apply {
+        hikeAdapter = HikeAdapter()
+        adapter = hikeAdapter
+        layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun sendCommandToService(action: String) =
