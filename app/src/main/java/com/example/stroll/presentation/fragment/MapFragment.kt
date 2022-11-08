@@ -155,6 +155,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
+        addAllPolyLines()
 
     }
 
@@ -178,8 +179,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
-            //addLatestPolyline()
-            addAllPolyLines()
+            addLatestPolyline()
+            //addAllPolyLines()
 
         })
 
