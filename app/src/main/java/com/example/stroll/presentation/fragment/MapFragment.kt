@@ -16,6 +16,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
@@ -30,28 +31,27 @@ import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import org.osmdroid.api.IGeoPoint
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.overlay.Overlay.Snappable
-import org.osmdroid.views.overlay.PolyOverlayWithIW
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.*
-import kotlin.math.nextUp
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -127,8 +127,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             showCancelHikeDialog()
         }
         binding.finishHikeBtn.setOnClickListener {
+
             zoomToSeeWholeTrack()
             endHikeAndSaveToDb()
+            myLocationOverlay.disableFollowLocation()
+            myLocationOverlay.disableMyLocation()
         }
 
         val menuHost: MenuHost = requireActivity()
@@ -175,8 +178,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
-            addLatestPolyline()
+            //addLatestPolyline()
             addAllPolyLines()
+
         })
 
         LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
@@ -282,14 +286,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
                 return@MapSnapshotable
             }
-            val bitmap: Bitmap = Bitmap.createBitmap(pMapSnapshot.bitmap)
+            //val bitmap: Bitmap = Bitmap.createBitmap(pMapSnapshot.bitmap)
             var distanceInMeters = 0
             for (polyline in pathPoints) {
                 distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
             }
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
             val dateTimeStamp = Calendar.getInstance().timeInMillis
-            val hike = StrollDataEntity(bitmap, dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
+            val hike = StrollDataEntity(pMapSnapshot.bitmap, dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
             viewModel.addDataToRoom(hike)
             Snackbar.make(
                 requireActivity().findViewById(R.id.mainFragment),
@@ -309,20 +313,19 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         Livedata fra viewmodel er bare å glemme
     --*/
     private fun addAllPolyLines() {
-/*        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
-            val polygonList = mutableListOf<Polygon>()
+        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+            for (polyline in pathPoints) {
 
-            for ( (polyline1, polyline2) in pathPoints.last().zip(pathPoints.last()-1)) {
-                Log.d("ziploop", "addAllPolyLines: $polyline1 and $polyline2")
-                val polygon = Polygon()
-                val latLang1 = pathPoints.first()[pathPoints.first().size - 1]
-                polygon.addPoint(GeoPoint(latLang1.latitude, latLang1.longitude))
-                polygon.addPoint(GeoPoint(latLang1.latitude + 0.0001, latLang1.longitude+ 0.0001))
-                polygon.strokeWidth = 16f
-                polygonList.add(polygon)
+                for (i in 0..polyline.size - 2) {
+                    var polygon = Polygon()
+                    val position = polyline[i] // LATLNG
+                    val position2 = polyline[i + 1]
+                    polygon.addPoint(GeoPoint(position.latitude, position.longitude))
+                    polygon.addPoint(GeoPoint(position2.latitude, position2.longitude))
+                    mapView.overlayManager.add((polygon))
+                }
             }
-            mapView.overlayManager.addAll((polygonList))
-        }*/
+        }
     }
 
     private fun addLatestPolyline() {
