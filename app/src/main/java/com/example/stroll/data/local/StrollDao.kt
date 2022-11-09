@@ -21,5 +21,4 @@ interface StrollDao {
 
     @Query("SELECT * FROM hike_table")
     fun getAllData(): LiveData<List<StrollDataEntity>>
-
 }

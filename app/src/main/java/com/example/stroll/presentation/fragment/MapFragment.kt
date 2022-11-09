@@ -36,6 +36,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -45,6 +49,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
+import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
@@ -53,7 +58,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Thread.MAX_PRIORITY
 import java.util.*
+import kotlin.concurrent.thread
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -111,7 +118,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         controller.setZoom(18.0)
 
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        //mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
 
 
@@ -284,19 +291,26 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     // If you're still moving fast and camera follows currentLocationMarker, the hike will be saved to db with bitmap,
     // but you will not be taken to mainfragment. Will have to fix later.
+    @OptIn(DelicateCoroutinesApi::class)
     private fun endHikeAndSaveToDb() {
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
+                Log.d("endHikeAndSaveToDb","Det funker ikke")
                 return@MapSnapshotable
             }
             //val bitmap: Bitmap = Bitmap.createBitmap(pMapSnapshot.bitmap)
             var distanceInMeters = 0
+            Log.d("endHikeAndSaveToDb","Distance in meters = $distanceInMeters")
+
             for (polyline in pathPoints) {
                 distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
             }
+            Log.d("endHikeAndSaveToDb","Distance in meters after loop = $distanceInMeters")
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+            Log.d("endHikeAndSaveToDb","Average speed in km/h = $averageSpeed")
             val dateTimeStamp = Calendar.getInstance().timeInMillis
+            Log.d("endHikeAndSaveToDb","Date = $dateTimeStamp")
             val hike = StrollDataEntity(pMapSnapshot.bitmap.toString().plus(".png"), dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
             viewModel.addDataToRoom(hike)
             Snackbar.make(
@@ -305,9 +319,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 Snackbar.LENGTH_LONG
             ).show()
             stopHike()
-        }, MapSnapshot.INCLUDE_FLAG_SCALED, mapView)
-        Thread(mapSnapshot).start()
-
+        }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
+            Thread(mapSnapshot).start()
     }
 
     /*--
@@ -338,7 +351,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             val lastLatLng = pathPoints.last().last()
             val polygon = Polygon()
             polygon.strokeWidth = 8f
-            //polygon.fillPaint.color = 2
+            polygon.fillPaint.color = 2
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
             mapView.overlayManager?.add(polygon)
