@@ -1,44 +1,51 @@
 package com.example.stroll
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import com.example.stroll.other.Constants.ACTION_SHOW_MAP_FRAGMENT
 import com.example.stroll.presentation.fragment.*
 import com.example.stroll.presentation.viewmodel.MainViewModel
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 //It works!!!!!!!!
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private var activityTrackingEnabled = false
+    private lateinit var activityTransitionList: List<ActivityTransition>
+
+    private val TRANSITIONS_RECEIVER_ACTION: String =
+        BuildConfig.APPLICATION_ID + "TRANSITIONS_RECEIVER_ACTION"
+    private var mActivityTransitionsPendingIntent: PendingIntent? = null
+    private var mTransitionsReceiver: TransitionsReceiver? = null
 
     private lateinit var navController: NavController
     lateinit var bottomNavBar: BottomNavigationView
@@ -72,6 +79,39 @@ class MainActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        activityTrackingEnabled = false
+
+        activityTransitionList = ArrayList()
+
+        (activityTransitionList as ArrayList<ActivityTransition>).add(
+            ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.WALKING)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                .build()
+        )
+        (activityTransitionList as ArrayList<ActivityTransition>).add(
+            ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.WALKING)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                .build()
+        )
+        (activityTransitionList as ArrayList<ActivityTransition>).add(
+            ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.STILL)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                .build()
+        )
+        (activityTransitionList as ArrayList<ActivityTransition>).add(
+            ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.STILL)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                .build()
+        )
+
+        val intent: Intent = Intent(TRANSITIONS_RECEIVER_ACTION)
+        mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val viewModel = viewModel
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -102,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {return@setOnItemSelectedListener true}
         } }
+        mTransitionsReceiver = TransitionsReceiver()
         navigateToMapFragmentIfNeeded(intent)
         if (viewModel.allData.value?.size == null) {
             navGraph.setStartDestination(R.id.introductionFragment)
@@ -112,7 +153,60 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onStart() {
+        super.onStart()
+        registerReceiver(mTransitionsReceiver, IntentFilter(TRANSITIONS_RECEIVER_ACTION))
+    }
+
+    override fun onPause() {
+        if (activityTrackingEnabled) {
+            disableActivityTransitions()
+        }
+        super.onPause()
+    }
+
+    override fun onStop() {
+        unregisterReceiver(mTransitionsReceiver)
+        super.onStop()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (activityRecognitionPermissionApproved() && !activityTrackingEnabled) {
+            enableActivityTransitions()
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableActivityTransitions() {
+        val request = ActivityTransitionRequest(activityTransitionList)
+
+        val task: Task<Void> = ActivityRecognition.getClient(this).requestActivityTransitionUpdates(request,
+            mActivityTransitionsPendingIntent!!
+        )
+
+        task.addOnSuccessListener {
+            activityTrackingEnabled = true
+        }
+        task.addOnFailureListener { e ->
+            Log.e(TAG, "Transitions Api could NOT be registered: $e")
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun disableActivityTransitions() {
+        ActivityRecognition.getClient(this).removeActivityTransitionUpdates(
+            mActivityTransitionsPendingIntent!!
+        )
+            .addOnSuccessListener {
+                activityTrackingEnabled = false
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Transitions could not be unregistered: $e")
+            }
+    }
+
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         navigateToMapFragmentIfNeeded(intent)
     }
@@ -139,7 +233,7 @@ class MainActivity : AppCompatActivity() {
             locationPermissionRequest.launch(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACTIVITY_RECOGNITION
+                Manifest.permission.ACTIVITY_RECOGNITION,
             ))
         }
         else {
@@ -147,8 +241,57 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun activityRecognitionPermissionApproved(): Boolean {
+        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+            this, Manifest.permission.ACTIVITY_RECOGNITION)
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp()
+    }
+
+    fun onClickEnableOrDisableActivityRecognition(view: View?) {
+        if (activityRecognitionPermissionApproved()) {
+            if (activityTrackingEnabled) {
+                disableActivityTransitions()
+            } else {
+                enableActivityTransitions()
+            }
+        }
+        else {
+            checkLocationPermissions()
+        }
+    }
+
+    inner class TransitionsReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (ActivityTransitionResult.hasResult(intent)) {
+                val result = ActivityTransitionResult.extractResult(intent)
+
+                /*for (event in result!!.transitionEvents) {
+                    viewModel.setDetectedActivity(toActivityString(event.activityType))
+                }*/
+            }
+        }
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
+        private fun toActivityString(activity: Int): String {
+            return when (activity) {
+                DetectedActivity.STILL -> "STILL"
+                DetectedActivity.WALKING -> "WALKING"
+                else -> "UNKNOWN"
+            }
+        }
+
+        private fun toTransitionType(transitionType: Int): String {
+            return when (transitionType) {
+                ActivityTransition.ACTIVITY_TRANSITION_ENTER -> "ENTER"
+                ActivityTransition.ACTIVITY_TRANSITION_EXIT -> "EXIT"
+                else -> "UNKNOWN"
+            }
+        }
     }
 }
 

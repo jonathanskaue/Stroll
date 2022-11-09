@@ -110,6 +110,18 @@ dependencies {
     //Splash screen
     implementation 'androidx.core:core-splashscreen:1.0.0'
 
+    //RecyclerView
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
+
+    //Kotlin std-lib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.20"
+
+    //CameraX
+    implementation "androidx.camera:camera-camera2:1.1.0"
+    implementation "androidx.camera:camera-lifecycle:1.1.0"
+    implementation"androidx.camera:camera-view:1.1.0"
+
 
     /*
     // MPAndroidChart doesnt work; will have to find new dependencies.

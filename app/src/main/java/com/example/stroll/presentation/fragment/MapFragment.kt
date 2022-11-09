@@ -1,6 +1,7 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -8,6 +9,7 @@ import android.graphics.Paint
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.*
 import androidx.core.view.MenuHost
@@ -34,14 +36,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import org.osmdroid.api.IGeoPoint
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
@@ -51,6 +49,10 @@ import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 import kotlin.math.round
 
@@ -109,7 +111,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         controller.setZoom(18.0)
 
-        //mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
 
 
@@ -292,9 +294,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             for (polyline in pathPoints) {
                 distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
             }
+            saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
             val dateTimeStamp = Calendar.getInstance().timeInMillis
-            val hike = StrollDataEntity(pMapSnapshot.bitmap, dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
+            val hike = StrollDataEntity(pMapSnapshot.bitmap.toString().plus(".png"), dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
             viewModel.addDataToRoom(hike)
             Snackbar.make(
                 requireActivity().findViewById(R.id.mainFragment),
@@ -302,7 +305,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 Snackbar.LENGTH_LONG
             ).show()
             stopHike()
-        }, MapSnapshot.INCLUDE_FLAG_UPTODATE, mapView)
+        }, MapSnapshot.INCLUDE_FLAG_SCALED, mapView)
         Thread(mapSnapshot).start()
 
     }
@@ -338,7 +341,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             //polygon.fillPaint.color = 2
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
-            mapView?.overlayManager?.add(polygon)
+            mapView.overlayManager?.add(polygon)
         }
     }
 
@@ -351,6 +354,20 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     override fun onSnapToItem(x: Int, y: Int, snapPoint: Point?, mapView: IMapView?): Boolean {
 
         return true
+    }
+
+    private fun saveBitmapToInternalStorage(filename: String, bitmap: Bitmap): Boolean {
+        return try {
+            context?.openFileOutput("$filename.png", MODE_PRIVATE).use { stream ->
+                if(!bitmap.compress(Bitmap.CompressFormat.PNG, 95, stream)) {
+                    throw IOException("Couldn't save bitmap.")
+                }
+                true
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
+        }
     }
 }
 

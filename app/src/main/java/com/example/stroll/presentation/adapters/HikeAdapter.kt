@@ -1,5 +1,7 @@
 package com.example.stroll.presentation.adapters
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +9,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.ItemHikeBinding
@@ -46,7 +49,7 @@ class HikeAdapter: RecyclerView.Adapter<HikeAdapter.HikeViewHolder>() {
     override fun onBindViewHolder(holder: HikeViewHolder, position: Int) {
         val hike = differ.currentList[position]
         holder.itemView.apply {
-            Glide.with(this).load(hike.mapSnapShot).into(this.findViewById(R.id.hikeMapSnapShot))
+            Glide.with(this).load(BitmapFactory.decodeFile(context.filesDir.path + "/${hike.mapSnapShot}")).into(this.findViewById(R.id.hikeMapSnapShot))
             val calendar = Calendar.getInstance().apply {
                 timeInMillis = hike.timeStamp
             }

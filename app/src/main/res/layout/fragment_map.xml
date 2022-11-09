@@ -1,51 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
     tools:context=".presentation.fragment.MapFragment">
-
-    <org.osmdroid.views.MapView android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_gravity="center"
-        android:clickable="true"/>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.stroll.presentation.viewmodel.MainViewModel" />
+    </data>
 
     <LinearLayout
-        android:id="@+id/buttonHLL"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
-        <Button
-            android:id="@+id/toggleHikeBtn"
-            android:text="START HIKE"
+        <org.osmdroid.views.MapView android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
             android:layout_gravity="center"
+            android:clickable="true"/>
+
+        <LinearLayout
+            android:id="@+id/buttonHLL"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/toggleHikeBtn"
+                android:text="START HIKE"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/finishHikeBtn"
+                android:text="FINISH HIKE"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/cancelHikeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CANCEL HIKE"
+                android:visibility="gone"
+                tools:visibility="visible" />
+            <Button
+                android:id="@+id/hikeActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""/>
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/timerTV"
+            android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
-        <Button
-            android:id="@+id/finishHikeBtn"
-            android:text="FINISH HIKE"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <Button
-            android:id="@+id/cancelHikeBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CANCEL HIKE"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
     </LinearLayout>
-    <TextView
-        android:id="@+id/timerTV"
-        android:textSize="24sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+</layout>
