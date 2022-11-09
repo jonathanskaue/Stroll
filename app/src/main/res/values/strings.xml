@@ -54,4 +54,11 @@
     <string name="activity_update_request_failed">Requesting activity updates failed</string>
     <string name="activity_update_remove_success">Activity updates removed</string>
     <string name="activity_update_remove_failed">Removing activity updates failed</string>
+
+    <string-array name="filter_options">
+        <item>Date</item>
+        <item>Hiking Time</item>
+        <item>Distance</item>
+        <item>Average Speed</item>
+    </string-array>
 </resources>

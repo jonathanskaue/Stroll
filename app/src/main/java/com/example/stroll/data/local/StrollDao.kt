@@ -19,6 +19,15 @@ interface StrollDao {
     @Query("SELECT * FROM hike_table ORDER BY distanceInMeters DESC")
     fun selectAllHikesSortedByDistance(): LiveData<List<StrollDataEntity>>
 
+    @Query("SELECT * FROM hike_table ORDER BY timeInMillis DESC")
+    fun selectAllHikesSortedByTimeInMillis(): LiveData<List<StrollDataEntity>>
+
+    @Query("SELECT * FROM hike_table ORDER BY timeStamp DESC")
+    fun selectAllHikesSortedByDate(): LiveData<List<StrollDataEntity>>
+
+    @Query("SELECT * FROM hike_table ORDER BY averageSpeedInKMH DESC")
+    fun selectAllHikesSortedByAvgSpeed(): LiveData<List<StrollDataEntity>>
+
     @Query("SELECT * FROM hike_table")
     fun getAllData(): LiveData<List<StrollDataEntity>>
 }

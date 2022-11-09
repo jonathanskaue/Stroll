@@ -26,11 +26,8 @@ import com.example.stroll.other.Constants.FASTEST_LOCATION_INTERVAL
 import com.example.stroll.other.Constants.LOCATION_UPDATE_INTERVAL
 import com.example.stroll.other.Constants.TIMER_UPDATE_INTERVAL
 import com.example.stroll.other.Utility
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -34,6 +35,7 @@ import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentMainBinding
 import com.example.stroll.other.Constants.ACTION_START
+import com.example.stroll.other.SortType
 import com.example.stroll.presentation.adapters.HikeAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,7 +71,27 @@ class MainFragment() : BaseFragment() {
         val menuHost: MenuHost = requireActivity()
         setupRecyclerView()
 
-        viewModel.allData.observe(viewLifecycleOwner, Observer {
+        when(viewModel.sortType) {
+            SortType.DATE -> binding.spFilter.setSelection(0)
+            SortType.HIKE_TIME -> binding.spFilter.setSelection(1)
+            SortType.DISTANCE -> binding.spFilter.setSelection(2)
+            SortType.AVG_SPEED -> binding.spFilter.setSelection(3)
+        }
+
+        binding.spFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+                when(pos) {
+                    0 -> viewModel.sortHikes(SortType.DATE)
+                    1 -> viewModel.sortHikes(SortType.HIKE_TIME)
+                    2 -> viewModel.sortHikes(SortType.DISTANCE)
+                    3 -> viewModel.sortHikes(SortType.AVG_SPEED)
+                }
+            }
+        }
+
+        viewModel.hikes.observe(viewLifecycleOwner, Observer {
             hikeAdapter.submitList(it)
         })
         menuHost.addMenuProvider(object : MenuProvider {

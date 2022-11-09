@@ -10,15 +10,15 @@ import javax.inject.Singleton
 @Singleton
 class StrollRepositoryImpl @Inject constructor(
     private val dao: StrollDao,
-    override val readAllData: LiveData<List<StrollDataEntity>> = dao.getAllData()
+    override val readAllData: LiveData<List<StrollDataEntity>> = dao.getAllData(),
+    override val selectAllHikesSortedByDistance: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByDistance(),
+    override val selectAllHikesSortedByDate: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByDate(),
+    override val selectAllHikesSortedByTimeInMillis: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByTimeInMillis(),
+    override val selectAllHikesSortedByAvgSpeed: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByAvgSpeed()
 ): StrollRepository {
 
     override suspend fun insertData(data: StrollDataEntity) {
         dao.insertData(data)
-    }
-
-    override suspend fun selectAllHikesSortedByDistance() {
-        dao.selectAllHikesSortedByDistance()
     }
 
     override suspend fun deleteData(data: StrollDataEntity) {

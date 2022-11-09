@@ -289,9 +289,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         return BoundingBox(north, east, south, west)
     }
 
-    // If you're still moving fast and camera follows currentLocationMarker, the hike will be saved to db with bitmap,
-    // but you will not be taken to mainfragment. Will have to fix later.
-    @OptIn(DelicateCoroutinesApi::class)
     private fun endHikeAndSaveToDb() {
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
@@ -320,15 +317,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             ).show()
             stopHike()
         }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
-            Thread(mapSnapshot).start()
+        Thread(mapSnapshot).start()
     }
 
-    /*--
-        En funksjon som skal iterere mellom punktpar.
-        punkt 1 og 2 skal lage en linje mellom hverandre,
-        samme med punkt 2 og 3, samme med 3 og 4 osv..
-        Livedata fra viewmodel er bare å glemme
-    --*/
     private fun addAllPolyLines() {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             for (polyline in pathPoints) {
@@ -383,4 +374,3 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         }
     }
 }
-

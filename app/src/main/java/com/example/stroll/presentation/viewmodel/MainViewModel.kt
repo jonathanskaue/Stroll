@@ -1,15 +1,14 @@
 package com.example.stroll.presentation.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
+import com.example.stroll.other.SortType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,11 +20,46 @@ class MainViewModel @Inject constructor(
     private val strollRepo: StrollRepository
 ): ViewModel() {
 
-    private val _pathPoints = MutableLiveData<MutableList<Polyline?>>()
-    val pathPoints: LiveData<MutableList<Polyline?>> = _pathPoints
+    private val hikesSortedByDate = strollRepo.selectAllHikesSortedByDate
+    private val hikesSortedByDistance = strollRepo.selectAllHikesSortedByDistance
+    private val hikesSortedByTotalTimeInMillis = strollRepo.selectAllHikesSortedByTimeInMillis
+    private val hikesSortedByAvgSpeed = strollRepo.selectAllHikesSortedByAvgSpeed
 
-    fun insertPathPoints(pathPoints: MutableList<Polyline?>) {
-        _pathPoints.value = pathPoints
+
+    val hikes = MediatorLiveData<List<StrollDataEntity>>()
+
+    var sortType = SortType.DATE
+
+    init {
+        hikes.addSource(hikesSortedByDate) { result ->
+            if(sortType == SortType.DATE) {
+                result?.let { hikes.value = it }
+            }
+        }
+        hikes.addSource(hikesSortedByAvgSpeed) { result ->
+            if(sortType == SortType.AVG_SPEED) {
+                result?.let { hikes.value = it }
+            }
+        }
+        hikes.addSource(hikesSortedByDistance) { result ->
+            if(sortType == SortType.DISTANCE) {
+                result?.let { hikes.value = it }
+            }
+        }
+        hikes.addSource(hikesSortedByTotalTimeInMillis) { result ->
+            if(sortType == SortType.HIKE_TIME) {
+                result?.let { hikes.value = it }
+            }
+        }
+    }
+
+    fun sortHikes(sortType: SortType) = when(sortType) {
+        SortType.DATE -> hikesSortedByDate.value?.let { hikes.value = it }
+        SortType.HIKE_TIME -> hikesSortedByTotalTimeInMillis.value?.let { hikes.value = it }
+        SortType.AVG_SPEED -> hikesSortedByAvgSpeed.value?.let { hikes.value = it }
+        SortType.DISTANCE -> hikesSortedByDistance.value?.let { hikes.value = it }
+    }.also {
+        this.sortType = sortType
     }
 
     private val _isLoading = MutableStateFlow(true)
@@ -46,9 +80,6 @@ class MainViewModel @Inject constructor(
 
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
-    val hikesSortedByDistance = viewModelScope.launch {
-        strollRepo.selectAllHikesSortedByDistance()
-    }
 
     var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
     val accData: LiveData<List<List<Float>>> = _accData
@@ -64,3 +95,4 @@ class MainViewModel @Inject constructor(
     }
 
 }
+
