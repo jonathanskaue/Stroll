@@ -26,7 +26,7 @@ class DefaultLocationClient(
             if(!context.hasLocationPermission()) {
                 throw LocationClient.LocationException("Missing location permission")
             }
-
+            val kalmanProcessor = KalmanProcessor()
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
             val isNetworkEnables = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
