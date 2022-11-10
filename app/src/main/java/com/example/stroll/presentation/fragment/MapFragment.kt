@@ -378,4 +378,25 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             false
         }
     }
+
+    private fun makeFolderInInternalStorage(){
+        val folder = context?.filesDir
+        val children = folder?.listFiles()
+            ?.filter { it.isDirectory && !it.name.equals("osmdroid") }
+        if (children?.size!! > 0){
+            val folders = folder.listFiles()
+            folders?.sortByDescending { dir ->
+                dir.lastModified()
+            }
+
+            val newestFolder = folders?.first()
+
+            val folderToBeCreated = File(folder, "${newestFolder?.name?.toInt()?.plus(1)}")
+            folderToBeCreated.mkdir()
+        }
+        else {
+            val f = File(folder, "0")
+            f.mkdir()
+        }
+    }
 }
