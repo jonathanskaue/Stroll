@@ -65,6 +65,10 @@ class MainActivity : AppCompatActivity() {
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 Toast.makeText(applicationContext, "You have only given us access to your approximate location, we need your precise location", Toast.LENGTH_SHORT).show()
             }
+            permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
+                Toast.makeText(applicationContext, "you have given us access to your camera", Toast.LENGTH_SHORT).show()
+                navController.navigate(R.id.action_global_cameraFragment)
+            }
             else -> {
                 Toast.makeText(applicationContext, "You have chosen to not share your location, we need your precise location", Toast.LENGTH_SHORT).show()
             }
@@ -238,6 +242,21 @@ class MainActivity : AppCompatActivity() {
         }
         else {
             navController.navigate(R.id.action_global_mapFragment)
+        }
+    }
+
+    fun checkCameraPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.CAMERA
+        ) != PackageManager.PERMISSION_GRANTED
+        ){
+            locationPermissionRequest.launch(arrayOf(
+                Manifest.permission.CAMERA
+            ))
+        }
+        else {
+            navController.navigate(R.id.action_global_cameraFragment)
         }
     }
 

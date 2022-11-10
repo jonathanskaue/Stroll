@@ -1,5 +1,6 @@
 package com.example.stroll.presentation.viewmodel
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.stroll.backgroundlocationtracking.Polyline
@@ -84,8 +85,15 @@ class MainViewModel @Inject constructor(
     var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
     val accData: LiveData<List<List<Float>>> = _accData
 
+    var _hikePhotos = MutableLiveData<List<Bitmap>>()
+    val hikePhotos: LiveData<List<Bitmap>> = _hikePhotos
+
     fun getAccData(data: List<List<Float>>) {
         _accData.value = data
+    }
+
+    fun addPhotoToHike(data: Bitmap){
+        _hikePhotos.value?.plus(data)
     }
 
     fun addDataToRoom(hike: StrollDataEntity) {
