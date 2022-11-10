@@ -10,7 +10,7 @@
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/map"/>
     <item
-        android:id="@+id/graphFragment"
+        android:id="@+id/sensorFragment"
         android:icon="@drawable/ic_baseline_sensors_24"
         android:title="@string/sensors"/>
     <item

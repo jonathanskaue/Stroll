@@ -7,28 +7,24 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.findNavController
-import androidx.preference.PreferenceManager
-import com.example.stroll.MainActivity
 import com.example.stroll.R
-import com.example.stroll.databinding.FragmentGraphBinding
+import com.example.stroll.databinding.FragmentSensorBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.sqrt
 
 @AndroidEntryPoint
-class GraphFragment() : BaseFragment(), SensorEventListener {
+class SensorFragment() : BaseFragment(), SensorEventListener {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var _binding: FragmentGraphBinding? = null
+    private var _binding: FragmentSensorBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var sensorManager: SensorManager
@@ -47,7 +43,7 @@ class GraphFragment() : BaseFragment(), SensorEventListener {
     ): View? {
 
         // Inflate the layout for this fragment
-        _binding = FragmentGraphBinding.inflate(inflater, container, false)
+        _binding = FragmentSensorBinding.inflate(inflater, container, false)
 
         //Displays latest data in database
         /*viewModel.allData.observe(viewLifecycleOwner) { data ->
@@ -78,7 +74,7 @@ class GraphFragment() : BaseFragment(), SensorEventListener {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.settings -> {
-                        view.findNavController().navigate(GraphFragmentDirections.actionGraphFragmentToSettingsFragment())
+                        view.findNavController().navigate(SensorFragmentDirections.actionSensorFragmentToSettingsFragment())
                         true
                     }
                     else -> false

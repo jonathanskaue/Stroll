@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.example.stroll.R
-import com.example.stroll.backgroundlocationtracking.hasCameraPermission
 import com.example.stroll.databinding.FragmentCameraBinding
 import com.example.stroll.databinding.FragmentIntroductionBinding
 import com.example.stroll.databinding.FragmentMainBinding
@@ -47,16 +46,6 @@ class CameraFragment() : Fragment() {
             openCameraInterface()
         }
     }
-
-    private fun requestCameraPermission(): Boolean {
-        val permissionGranted = activity?.let {
-            ContextCompat.checkSelfPermission(
-                it.applicationContext,
-                android.Manifest.permission.CAMERA
-            )
-        } == PackageManager.PERMISSION_GRANTED
-        return permissionGranted
-        }
 
     private fun openCameraInterface(){
         val values = ContentValues()

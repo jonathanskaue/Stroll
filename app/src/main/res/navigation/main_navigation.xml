@@ -11,8 +11,8 @@
     <action android:id="@+id/action_global_introductionFragment"
         app:destination="@+id/introductionFragment"
         app:launchSingleTop="true"/>
-    <action android:id="@+id/action_global_graphFragment"
-        app:destination="@+id/graphFragment"
+    <action android:id="@+id/action_global_sensorFragment"
+        app:destination="@+id/sensorFragment"
         app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_mainFragment"
         app:destination="@+id/mainFragment"
@@ -39,8 +39,8 @@
             android:id="@+id/action_mainFragment_to_cameraFragment"
             app:destination="@id/cameraFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_graphFragment"
-            app:destination="@id/graphFragment" />
+            android:id="@+id/action_mainFragment_to_sensorFragment"
+            app:destination="@id/sensorFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -72,29 +72,29 @@
             android:id="@+id/action_introductionFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
         <action
-            android:id="@+id/action_introductionFragment_to_graphFragment"
-            app:destination="@id/graphFragment" />
+            android:id="@+id/action_introductionFragment_to_sensorFragment"
+            app:destination="@id/sensorFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.stroll.presentation.fragment.SettingsFragment"
         android:label="SettingsFragment" />
     <fragment
-        android:id="@+id/graphFragment"
-        android:name="com.example.stroll.presentation.fragment.GraphFragment"
-        android:label="fragment_graph"
-        tools:layout="@layout/fragment_graph" >
+        android:id="@+id/sensorFragment"
+        android:name="com.example.stroll.presentation.fragment.SensorFragment"
+        android:label="fragment_sensor"
+        tools:layout="@layout/fragment_sensor" >
         <action
-            android:id="@+id/action_graphFragment_to_settingsFragment"
+            android:id="@+id/action_sensorFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
-            android:id="@+id/action_graphFragment_to_mapFragment"
+            android:id="@+id/action_sensorFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
         <action
-            android:id="@+id/action_graphFragment_to_mainFragment"
+            android:id="@+id/action_sensorFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
         <action
-            android:id="@+id/action_graphFragment_to_introductionFragment"
+            android:id="@+id/action_sensorFragment_to_introductionFragment"
             app:destination="@id/introductionFragment" />
     </fragment>
     <fragment

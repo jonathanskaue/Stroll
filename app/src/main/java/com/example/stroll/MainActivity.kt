@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
         bottomNavBar = findViewById(R.id.bottomNav)
-        val bottomBarConfiguration = AppBarConfiguration(setOf(R.id.mainFragment, R.id.mapFragment, R.id.graphFragment, R.id.introductionFragment))
+        val bottomBarConfiguration = AppBarConfiguration(setOf(R.id.mainFragment, R.id.mapFragment, R.id.sensorFragment, R.id.introductionFragment))
         setupActionBarWithNavController(navController, bottomBarConfiguration)
 
         bottomNavBar.setupWithNavController(navController)
@@ -135,8 +135,8 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.action_global_mainFragment)
                     return@setOnItemSelectedListener true
                 }
-                R.id.graphFragment -> {
-                    navController.navigate(R.id.action_global_graphFragment)
+                R.id.sensorFragment -> {
+                    navController.navigate(R.id.action_global_sensorFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.cameraFragment -> {
