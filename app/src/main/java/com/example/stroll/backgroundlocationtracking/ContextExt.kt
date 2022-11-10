@@ -14,3 +14,10 @@ fun Context.hasLocationPermission(): Boolean {
                 android.Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 }
+
+fun Context.hasCameraPermission(): Boolean {
+    return ContextCompat.checkSelfPermission(
+            this,
+        android.Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+}

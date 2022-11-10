@@ -33,6 +33,9 @@
             android:id="@+id/action_mainFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
+            android:id="@+id/action_mainFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+        <action
             android:id="@+id/action_mainFragment_to_graphFragment"
             app:destination="@id/graphFragment" />
     </fragment>
