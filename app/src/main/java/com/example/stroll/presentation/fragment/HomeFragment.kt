@@ -1,13 +1,23 @@
 package com.example.stroll.presentation.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.stroll.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.example.stroll.other.Utility
+import com.example.stroll.presentation.viewmodel.StatisticsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Math.round
+
+@AndroidEntryPoint
+class HomeFragment : BaseFragment() {
+
+    private val viewModel: StatisticsViewModel by viewModels()
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -22,4 +32,35 @@ class HomeFragment : Fragment() {
 
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        subscribeToObservers()
+
+    }
+    private fun subscribeToObservers() {
+        viewModel.totalTimeInMillisHiked.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val totalTimeHiked = Utility.getFormattedStopWatchTime(it)
+                binding.tvTotalTime.text = totalTimeHiked
+            }
+        })
+        viewModel.totalDistanceHiked.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val km = it / 1000f
+                val totalDistance = round(km * 10f) / 10f
+                val totalDistanceString = "${totalDistance}km"
+                binding.tvTotalDistance.text = totalDistanceString
+            }
+        })
+        viewModel.totalAverageSpeed.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val avgSpeed = round(it * 10f) / 10f
+                val avgSpeedString = "${avgSpeed}km/h"
+                binding.tvAverageSpeed.text = avgSpeedString
+            }
+        })
+    }
+
+
 }

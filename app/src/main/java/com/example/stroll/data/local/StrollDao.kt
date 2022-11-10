@@ -30,4 +30,13 @@ interface StrollDao {
 
     @Query("SELECT * FROM hike_table")
     fun getAllData(): LiveData<List<StrollDataEntity>>
+
+    @Query("SELECT SUM(distanceInMeters) FROM hike_table")
+    fun getTotalDistanceHiked(): LiveData<Int>
+
+    @Query("SELECT SUM(timeInMillis) FROM hike_table")
+    fun getTotalTimeInMillis(): LiveData<Long>
+
+    @Query("SELECT SUM(averageSpeedInKMH) FROM hike_table")
+    fun getTotalAverageSpeed(): LiveData<Float>
 }

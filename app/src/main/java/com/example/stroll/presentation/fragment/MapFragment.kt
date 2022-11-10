@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -44,6 +45,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -63,7 +65,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
-    private var tester = "hello"
+    private var initializeViewModel = true
+    @set:Inject
+    var weight = 80f
+
+    @set:Inject
+    var name = "Default"
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -71,7 +78,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel.setTest(tester)
+        viewModel.initialize(initializeViewModel)
+        Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
 
         latLng = GeoPoint(10.0, 10.0)
 

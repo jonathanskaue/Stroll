@@ -14,6 +14,10 @@ interface StrollRepository {
     val selectAllHikesSortedByTimeInMillis: LiveData<List<StrollDataEntity>>
     val selectAllHikesSortedByAvgSpeed: LiveData<List<StrollDataEntity>>
 
+    val getTotalDistanceHiked: LiveData<Int>
+    val getTotalTimeInMillis: LiveData<Long>
+    val getTotalAverageSpeed: LiveData<Float>
+
     val readAllData: LiveData<List<StrollDataEntity>>
 
 }

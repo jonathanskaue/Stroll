@@ -81,11 +81,11 @@ class MainViewModel @Inject constructor(
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
 
-    var _test = MutableLiveData<String>()
-    val test: LiveData<String> = _test
+    var _initialize = MutableLiveData<Boolean>()
+    val initialize: LiveData<Boolean> = _initialize
 
-    fun setTest(test: String) {
-        _test.value = test
+    fun initialize(initialize: Boolean) {
+        _initialize.value = initialize
     }
 
     var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
