@@ -94,21 +94,6 @@ class MainFragment() : BaseFragment() {
         viewModel.hikes.observe(viewLifecycleOwner, Observer {
             hikeAdapter.submitList(it)
         })
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.toolbar, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.settings -> {
-                        view.findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun setupRecyclerView() = binding.rvHikes.apply {

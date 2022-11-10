@@ -5,15 +5,10 @@
     android:id="@+id/main_navigation"
     app:startDestination="@id/mapFragment">
 
+    <!-- Bottom bar actions -->
     <action android:id="@+id/action_global_mapFragment"
         app:destination="@id/mapFragment"
         app:launchSingleTop="true" />
-    <action android:id="@+id/action_global_introductionFragment"
-        app:destination="@+id/introductionFragment"
-        app:launchSingleTop="true"/>
-    <action android:id="@+id/action_global_sensorFragment"
-        app:destination="@+id/sensorFragment"
-        app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_mainFragment"
         app:destination="@+id/mainFragment"
         app:launchSingleTop="true"/>
@@ -21,60 +16,32 @@
         app:destination="@+id/cameraFragment"
         app:launchSingleTop="true"/>
 
+    <!-- Toolbar actions -->
+    <action android:id="@+id/action_global_settingsFragment"
+        app:destination="@+id/settingsFragment"
+        app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_sensorFragment"
+        app:destination="@+id/sensorFragment"
+        app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_introductionFragment"
+        app:destination="@+id/introductionFragment"
+        app:launchSingleTop="true"/>
+
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.stroll.presentation.fragment.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" >
-        <action
-            android:id="@+id/action_mainFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_introductionFragment"
-            app:destination="@id/introductionFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_cameraFragment"
-            app:destination="@id/cameraFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_sensorFragment"
-            app:destination="@id/sensorFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.stroll.presentation.fragment.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
-        <action
-            android:id="@+id/action_mapFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
-            android:id="@+id/action_mapFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_map"/>
     <fragment
         android:id="@+id/introductionFragment"
         android:name="com.example.stroll.presentation.fragment.IntroductionFragment"
         android:label="fragment_introduction"
-        tools:layout="@layout/fragment_introduction" >
-        <action
-            android:id="@+id/action_introductionFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
-            android:id="@+id/action_introductionFragment_to_mainFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/main_navigation"
-            app:popUpToInclusive="true"
-            app:destination="@id/mainFragment" />
-        <action
-            android:id="@+id/action_introductionFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_introductionFragment_to_sensorFragment"
-            app:destination="@id/sensorFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_introduction"/>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.stroll.presentation.fragment.SettingsFragment"
@@ -83,20 +50,7 @@
         android:id="@+id/sensorFragment"
         android:name="com.example.stroll.presentation.fragment.SensorFragment"
         android:label="fragment_sensor"
-        tools:layout="@layout/fragment_sensor" >
-        <action
-            android:id="@+id/action_sensorFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-        <action
-            android:id="@+id/action_sensorFragment_to_mapFragment"
-            app:destination="@id/mapFragment" />
-        <action
-            android:id="@+id/action_sensorFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
-        <action
-            android:id="@+id/action_sensorFragment_to_introductionFragment"
-            app:destination="@id/introductionFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_sensor"/>
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.example.stroll.presentation.fragment.CameraFragment"

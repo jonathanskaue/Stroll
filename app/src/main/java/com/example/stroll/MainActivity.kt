@@ -10,6 +10,9 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,7 +21,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -55,22 +62,42 @@ class MainActivity : AppCompatActivity() {
     ) { permissions ->
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) &&
-                    permissions.getOrDefault(Manifest.permission.ACTIVITY_RECOGNITION, false)-> {
-                Toast.makeText(applicationContext, "You have given us permission to use your precise location and activity", Toast.LENGTH_SHORT).show()
+                    permissions.getOrDefault(Manifest.permission.ACTIVITY_RECOGNITION, false) -> {
+                Toast.makeText(
+                    applicationContext,
+                    "You have given us permission to use your precise location and activity",
+                    Toast.LENGTH_SHORT
+                ).show()
                 navController.navigate(R.id.action_global_mapFragment)
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                Toast.makeText(applicationContext, "you have given us permission to use your precise location, but we need your permissionto use your activity too", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "you have given us permission to use your precise location, but we need your permissionto use your activity too",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                Toast.makeText(applicationContext, "You have only given us access to your approximate location, we need your precise location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "You have only given us access to your approximate location, we need your precise location",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
-                Toast.makeText(applicationContext, "you have given us access to your camera", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "you have given us access to your camera",
+                    Toast.LENGTH_SHORT
+                ).show()
                 navController.navigate(R.id.action_global_cameraFragment)
             }
             else -> {
-                Toast.makeText(applicationContext, "You have chosen to not share your location, we need your precise location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "You have chosen to not share your location, we need your precise location",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -113,16 +140,26 @@ class MainActivity : AppCompatActivity() {
         )
 
         val intent: Intent = Intent(TRANSITIONS_RECEIVER_ACTION)
-        mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        mActivityTransitionsPendingIntent =
+            PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val viewModel = viewModel
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
         bottomNavBar = findViewById(R.id.bottomNav)
-        val bottomBarConfiguration = AppBarConfiguration(setOf(R.id.mainFragment, R.id.mapFragment, R.id.sensorFragment, R.id.introductionFragment))
+        val bottomBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.mainFragment,
+                R.id.mapFragment,
+                R.id.sensorFragment,
+                R.id.introductionFragment
+            )
+        )
         setupActionBarWithNavController(navController, bottomBarConfiguration)
+
 
         bottomNavBar.setupWithNavController(navController)
         bottomNavBar.setOnItemSelectedListener {
@@ -147,17 +184,36 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.action_global_introductionFragment)
                     return@setOnItemSelectedListener true
                 }
-                else -> {return@setOnItemSelectedListener true}
-        } }
+                else -> {
+                    return@setOnItemSelectedListener true
+                }
+            }
+        }
         mTransitionsReceiver = TransitionsReceiver()
         navigateToMapFragmentIfNeeded(intent)
         if (viewModel.allData.value?.size == null) {
             navGraph.setStartDestination(R.id.introductionFragment)
-        }
-        else {
+        } else {
             navGraph.setStartDestination(R.id.mainFragment)
         }
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.toolbar, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.toolbar_settings ->
+                navController.navigate(MainFragmentDirections.actionGlobalSettingsFragment())
+            R.id.toolbar_sensors ->
+                navController.navigate(MainFragmentDirections.actionGlobalSensorFragment())
+            R.id.toolbar_introduction ->
+                navController.navigate(MainFragmentDirections.actionGlobalIntroductionFragment())
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onStart() {
@@ -188,7 +244,8 @@ class MainActivity : AppCompatActivity() {
     private fun enableActivityTransitions() {
         val request = ActivityTransitionRequest(activityTransitionList)
 
-        val task: Task<Void> = ActivityRecognition.getClient(this).requestActivityTransitionUpdates(request,
+        val task: Task<Void> = ActivityRecognition.getClient(this).requestActivityTransitionUpdates(
+            request,
             mActivityTransitionsPendingIntent!!
         )
 
@@ -219,8 +276,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToMapFragmentIfNeeded(intent: Intent?) {
-        if(intent?.action == ACTION_SHOW_MAP_FRAGMENT) {
-            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        if (intent?.action == ACTION_SHOW_MAP_FRAGMENT) {
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             navController = navHostFragment.navController
             navController.navigate(R.id.action_global_mapFragment)
         }
@@ -231,19 +289,20 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            )  != PackageManager.PERMISSION_GRANTED ||
+            ) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.ACTIVITY_RECOGNITION
-            )  != PackageManager.PERMISSION_GRANTED
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACTIVITY_RECOGNITION,
-            ))
-        }
-        else {
+            locationPermissionRequest.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACTIVITY_RECOGNITION,
+                )
+            )
+        } else {
             navController.navigate(R.id.action_global_mapFragment)
         }
     }
@@ -252,20 +311,22 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.CAMERA
-        ) != PackageManager.PERMISSION_GRANTED
-        ){
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.CAMERA
-            ))
-        }
-        else {
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            locationPermissionRequest.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA
+                )
+            )
+        } else {
             navController.navigate(R.id.action_global_cameraFragment)
         }
     }
 
     private fun activityRecognitionPermissionApproved(): Boolean {
         return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACTIVITY_RECOGNITION)
+            this, Manifest.permission.ACTIVITY_RECOGNITION
+        )
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -279,8 +340,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 enableActivityTransitions()
             }
-        }
-        else {
+        } else {
             checkLocationPermissions()
         }
     }

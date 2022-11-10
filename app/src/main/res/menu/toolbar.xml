@@ -2,12 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/settings"
-          android:title="Settings" />
-
-    <item android:id="@+id/cancelHike"
-        android:icon="@drawable/ic_baseline_close_24"
-        android:visible="false"
-        app:showAsAction="always"
-        android:title="Cancel Hike"/>
+    <item android:id="@+id/toolbar_settings"
+        android:title="@string/settings"/>
+    <item android:id="@+id/toolbar_sensors"
+        android:title="@string/sensors"/>
+    <item android:id="@+id/toolbar_introduction"
+        android:title="@string/introduction"/>
 </menu>

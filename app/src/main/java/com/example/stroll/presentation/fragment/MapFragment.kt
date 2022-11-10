@@ -148,22 +148,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             (activity as MainActivity).checkCameraPermissions()
         }
 
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.toolbar, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.settings -> {
-                        view.findNavController().navigate(MapFragmentDirections.actionMapFragmentToSettingsFragment())
-                        true
-                    }
-                    else -> false
-                }
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     override fun onResume() {
