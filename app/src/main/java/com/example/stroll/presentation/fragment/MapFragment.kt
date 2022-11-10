@@ -20,7 +20,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
@@ -142,6 +144,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             myLocationOverlay.disableFollowLocation()
             myLocationOverlay.disableMyLocation()
         }
+        binding.btnCamera.setOnClickListener{
+            (activity as MainActivity).checkCameraPermissions()
+        }
 
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
@@ -236,6 +241,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         } else {
             binding.toggleHikeBtn.text = "PAUSE"
             binding.finishHikeBtn.isVisible = false
+            binding.btnCamera.isVisible = true
         }
     }
 
@@ -295,7 +301,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 Log.d("endHikeAndSaveToDb","Det funker ikke")
                 return@MapSnapshotable
             }
-            //val bitmap: Bitmap = Bitmap.createBitmap(pMapSnapshot.bitmap)
             var distanceInMeters = 0
             Log.d("endHikeAndSaveToDb","Distance in meters = $distanceInMeters")
 

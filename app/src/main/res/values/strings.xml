@@ -54,6 +54,8 @@
     <string name="activity_update_request_failed">Requesting activity updates failed</string>
     <string name="activity_update_remove_success">Activity updates removed</string>
     <string name="activity_update_remove_failed">Removing activity updates failed</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="camera">Camera</string>
 
     <string-array name="filter_options">
         <item>Date</item>
