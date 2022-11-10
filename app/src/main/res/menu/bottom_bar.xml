@@ -10,15 +10,7 @@
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/map"/>
     <item
-        android:id="@+id/sensorFragment"
-        android:icon="@drawable/ic_baseline_sensors_24"
-        android:title="@string/sensors"/>
-    <item
         android:id="@+id/cameraFragment"
         android:icon="@drawable/ic_baseline_camera_alt_24"
         android:title="@string/camera"/>
-    <item
-        android:id="@+id/introductionFragment"
-        android:icon="@drawable/ic_baseline_help_24"
-        android:title="@string/introduction"/>
 </menu>

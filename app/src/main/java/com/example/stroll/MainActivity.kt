@@ -21,11 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -37,12 +33,11 @@ import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 
 //It works!!!!!!!!
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -139,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                 .build()
         )
 
-        val intent: Intent = Intent(TRANSITIONS_RECEIVER_ACTION)
+        val intent = Intent(TRANSITIONS_RECEIVER_ACTION)
         mActivityTransitionsPendingIntent =
             PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
@@ -154,8 +149,7 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.mainFragment,
                 R.id.mapFragment,
-                R.id.sensorFragment,
-                R.id.introductionFragment
+                R.id.cameraFragment
             )
         )
         setupActionBarWithNavController(navController, bottomBarConfiguration)
@@ -172,16 +166,8 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.action_global_mainFragment)
                     return@setOnItemSelectedListener true
                 }
-                R.id.sensorFragment -> {
-                    navController.navigate(R.id.action_global_sensorFragment)
-                    return@setOnItemSelectedListener true
-                }
                 R.id.cameraFragment -> {
                     checkCameraPermissions()
-                    return@setOnItemSelectedListener true
-                }
-                R.id.introductionFragment -> {
-                    navController.navigate(R.id.action_global_introductionFragment)
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -233,6 +219,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (activityRecognitionPermissionApproved() && !activityTrackingEnabled) {
             enableActivityTransitions()
