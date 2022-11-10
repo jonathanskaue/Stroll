@@ -1,6 +1,7 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -35,16 +36,6 @@ class CameraFragment() : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
-
-        val permissionGranted = requestCameraPermission()
-        if (permissionGranted){
-            openCameraInterface()
-        }
-
-
-
-
-
         return binding.root
     }
 
@@ -52,9 +43,9 @@ class CameraFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*binding.openCamera.setOnClickListener {
-            openCamera()
-        }*/
+        binding.btnTakePhoto.setOnClickListener {
+            openCameraInterface()
+        }
     }
 
     private fun requestCameraPermission(): Boolean {
@@ -79,6 +70,20 @@ class CameraFragment() : Fragment() {
 
         // Launch intent
         startActivityForResult(intent, IMAGE_CAPTURE_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Callback from camera intent
+        if (resultCode == Activity.RESULT_OK){
+            // Set image captured to image view
+            binding.imageviewPicture.setImageURI(imageUri)
+        }
+        else {
+            // Failed to take picture
+            // showAlert("Failed to take camera picture")
+        }
     }
 
 }

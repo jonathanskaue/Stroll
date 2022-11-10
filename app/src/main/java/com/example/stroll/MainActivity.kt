@@ -138,7 +138,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.graphFragment -> {
                     navController.navigate(R.id.action_global_graphFragment)
                     return@setOnItemSelectedListener true
-
+                }
+                R.id.cameraFragment -> {
+                    checkCameraPermissions()
+                    return@setOnItemSelectedListener true
                 }
                 R.id.introductionFragment -> {
                     navController.navigate(R.id.action_global_introductionFragment)
