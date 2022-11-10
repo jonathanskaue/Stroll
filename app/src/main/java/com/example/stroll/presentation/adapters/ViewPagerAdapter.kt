@@ -1,7 +1,6 @@
 package com.example.stroll.presentation.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +9,8 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.viewpager.widget.PagerAdapter
 import com.example.stroll.R
-import com.example.stroll.domain.repository.StrollRepository
-import com.example.stroll.presentation.fragment.IntroductionFragmentDirections
-import com.example.stroll.presentation.fragment.MainFragmentDirections
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import java.util.*
 

@@ -4,23 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.view.*
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.MainActivity
 import com.example.stroll.R
@@ -38,14 +29,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
@@ -56,13 +42,8 @@ import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Thread.MAX_PRIORITY
 import java.util.*
-import kotlin.concurrent.thread
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -82,11 +63,15 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
+    private var tester = "hello"
+
     @SuppressLint("MissingPermission")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        viewModel.setTest(tester)
 
         latLng = GeoPoint(10.0, 10.0)
 
@@ -209,7 +194,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun stopHike() {
         sendCommandToService(ACTION_STOP)
-        view?.findNavController()?.navigate(R.id.action_global_mainFragment)
+        view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
     }
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
@@ -282,25 +267,20 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private fun endHikeAndSaveToDb() {
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
-                Log.d("endHikeAndSaveToDb","Det funker ikke")
                 return@MapSnapshotable
             }
             var distanceInMeters = 0
-            Log.d("endHikeAndSaveToDb","Distance in meters = $distanceInMeters")
 
             for (polyline in pathPoints) {
                 distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
             }
-            Log.d("endHikeAndSaveToDb","Distance in meters after loop = $distanceInMeters")
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
-            Log.d("endHikeAndSaveToDb","Average speed in km/h = $averageSpeed")
             val dateTimeStamp = Calendar.getInstance().timeInMillis
-            Log.d("endHikeAndSaveToDb","Date = $dateTimeStamp")
             val hike = StrollDataEntity(pMapSnapshot.bitmap.toString().plus(".png"), dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
             viewModel.addDataToRoom(hike)
             Snackbar.make(
-                requireActivity().findViewById(R.id.mainFragment),
+                requireActivity().findViewById(R.id.hikesFragment),
                 "Hike saved successfully",
                 Snackbar.LENGTH_LONG
             ).show()

@@ -9,8 +9,8 @@
     <action android:id="@+id/action_global_mapFragment"
         app:destination="@id/mapFragment"
         app:launchSingleTop="true" />
-    <action android:id="@+id/action_global_mainFragment"
-        app:destination="@+id/mainFragment"
+    <action android:id="@+id/action_global_hikesFragment"
+        app:destination="@+id/hikesFragment"
         app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_cameraFragment"
         app:destination="@+id/cameraFragment"
@@ -28,10 +28,10 @@
         app:launchSingleTop="true"/>
 
     <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.example.stroll.presentation.fragment.MainFragment"
+        android:id="@+id/hikesFragment"
+        android:name="com.example.stroll.presentation.fragment.HikesFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_hikes"/>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.stroll.presentation.fragment.MapFragment"

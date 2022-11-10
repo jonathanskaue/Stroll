@@ -31,7 +31,17 @@ class MainViewModel @Inject constructor(
 
     var sortType = SortType.DATE
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
+
+    private val _isStarted = MutableStateFlow(false)
+    val isStarted = _isStarted
+
     init {
+        viewModelScope.launch {
+            _isLoading.value = false
+        }
         hikes.addSource(hikesSortedByDate) { result ->
             if(sortType == SortType.DATE) {
                 result?.let { hikes.value = it }
@@ -63,17 +73,6 @@ class MainViewModel @Inject constructor(
         this.sortType = sortType
     }
 
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading = _isLoading.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            _isLoading.value = false
-        }
-    }
-
-    private val _isStarted = MutableStateFlow(false)
-    val isStarted = _isStarted
 
     fun checkStarted() {
         _isStarted.value = true
@@ -81,6 +80,13 @@ class MainViewModel @Inject constructor(
 
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
+
+    var _test = MutableLiveData<String>()
+    val test: LiveData<String> = _test
+
+    fun setTest(test: String) {
+        _test.value = test
+    }
 
     var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
     val accData: LiveData<List<List<Float>>> = _accData

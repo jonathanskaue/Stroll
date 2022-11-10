@@ -15,8 +15,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentCameraBinding
-import com.example.stroll.databinding.FragmentIntroductionBinding
-import com.example.stroll.databinding.FragmentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

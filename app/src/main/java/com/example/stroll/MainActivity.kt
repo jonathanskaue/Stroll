@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -47,7 +46,6 @@ class MainActivity : AppCompatActivity() {
     private val TRANSITIONS_RECEIVER_ACTION: String =
         BuildConfig.APPLICATION_ID + "TRANSITIONS_RECEIVER_ACTION"
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
-    private var mTransitionsReceiver: TransitionsReceiver? = null
 
     private lateinit var navController: NavController
     lateinit var bottomNavBar: BottomNavigationView
@@ -147,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavBar = findViewById(R.id.bottomNav)
         val bottomBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.mainFragment,
+                R.id.hikesFragment,
                 R.id.mapFragment,
                 R.id.cameraFragment
             )
@@ -162,8 +160,8 @@ class MainActivity : AppCompatActivity() {
                     checkLocationPermissions()
                     return@setOnItemSelectedListener true
                 }
-                R.id.mainFragment -> {
-                    navController.navigate(R.id.action_global_mainFragment)
+                R.id.hikesFragment -> {
+                    navController.navigate(R.id.action_global_hikesFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.cameraFragment -> {
@@ -175,12 +173,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        mTransitionsReceiver = TransitionsReceiver()
+
         navigateToMapFragmentIfNeeded(intent)
         if (viewModel.allData.value?.size == null) {
             navGraph.setStartDestination(R.id.introductionFragment)
         } else {
-            navGraph.setStartDestination(R.id.mainFragment)
+            navGraph.setStartDestination(R.id.hikesFragment)
         }
     }
 
@@ -193,18 +191,17 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.toolbar_settings ->
-                navController.navigate(MainFragmentDirections.actionGlobalSettingsFragment())
+                navController.navigate(HikesFragmentDirections.actionGlobalSettingsFragment())
             R.id.toolbar_sensors ->
-                navController.navigate(MainFragmentDirections.actionGlobalSensorFragment())
+                navController.navigate(HikesFragmentDirections.actionGlobalSensorFragment())
             R.id.toolbar_introduction ->
-                navController.navigate(MainFragmentDirections.actionGlobalIntroductionFragment())
+                navController.navigate(HikesFragmentDirections.actionGlobalIntroductionFragment())
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onStart() {
         super.onStart()
-        registerReceiver(mTransitionsReceiver, IntentFilter(TRANSITIONS_RECEIVER_ACTION))
     }
 
     override fun onPause() {
@@ -215,7 +212,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        unregisterReceiver(mTransitionsReceiver)
         super.onStop()
     }
 
@@ -298,22 +294,20 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            locationPermissionRequest.launch(
-                arrayOf(
-                    Manifest.permission.CAMERA
-                )
-            )
-        } else {
+        ) != PackageManager.PERMISSION_GRANTED
+        ){
+            locationPermissionRequest.launch(arrayOf(
+                Manifest.permission.CAMERA
+            ))
+        }
+        else {
             navController.navigate(R.id.action_global_cameraFragment)
         }
     }
 
     private fun activityRecognitionPermissionApproved(): Boolean {
         return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACTIVITY_RECOGNITION
-        )
+            this, Manifest.permission.ACTIVITY_RECOGNITION)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -327,7 +321,8 @@ class MainActivity : AppCompatActivity() {
             } else {
                 enableActivityTransitions()
             }
-        } else {
+        }
+        else {
             checkLocationPermissions()
         }
     }

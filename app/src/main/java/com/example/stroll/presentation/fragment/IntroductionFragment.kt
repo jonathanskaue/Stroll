@@ -1,30 +1,21 @@
 package com.example.stroll.presentation.fragment
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.databinding.DataBindingUtil.setContentView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentIntroductionBinding
 import com.example.stroll.presentation.adapters.ViewPagerAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
-import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class IntroductionFragment() : BaseFragment() {
@@ -73,7 +64,7 @@ class IntroductionFragment() : BaseFragment() {
         lifecycleScope.launch {
             viewModel.isStarted.collect {
                 if (viewModel.isStarted.value) {
-                    view?.findNavController()?.navigate(R.id.action_global_mainFragment)
+                    view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
                 }
             }
         }
