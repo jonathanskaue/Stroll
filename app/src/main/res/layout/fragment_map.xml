@@ -1,66 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".presentation.fragment.MapFragment">
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.stroll.presentation.viewmodel.MainViewModel" />
     </data>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <org.osmdroid.views.MapView android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_gravity="center"
-            android:clickable="true"/>
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:contentDescription="map"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="0dp">
 
-        <LinearLayout
-            android:id="@+id/buttonHLL"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        </org.osmdroid.views.MapView>
 
-            <Button
-                android:id="@+id/toggleHikeBtn"
-                android:text="START HIKE"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:id="@+id/finishHikeBtn"
-                android:text="FINISH HIKE"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:id="@+id/cancelHikeBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CANCEL HIKE"
-                android:visibility="gone"
-                tools:visibility="visible" />
-            <Button
-                android:id="@+id/btnCamera"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/camera"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-
-        </LinearLayout>
         <TextView
             android:id="@+id/timerTV"
-            android:textSize="24sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/toggleHikeBtn"
+            app:layout_constraintEnd_toEndOf="@+id/toggleHikeBtn"
+            app:layout_constraintStart_toStartOf="@+id/toggleHikeBtn" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/toggleHikeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="start hike"
+            android:src="@drawable/ic_baseline_play_arrow_24"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/finishHikeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_baseline_flag_24"
+            android:text="FINISH HIKE"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/toggleHikeBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toggleHikeBtn"
+            tools:visibility="visible" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/cancelHikeBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_baseline_cancel_24"
+            android:text="CANCEL HIKE"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/toggleHikeBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toggleHikeBtn"
+            tools:visibility="visible" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

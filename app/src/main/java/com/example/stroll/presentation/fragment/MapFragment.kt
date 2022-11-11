@@ -137,9 +137,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             myLocationOverlay.disableFollowLocation()
             myLocationOverlay.disableMyLocation()
         }
-        binding.btnCamera.setOnClickListener{
-            (activity as MainActivity).checkCameraPermissions()
-        }
 
     }
 
@@ -191,7 +188,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             .setMessage("Are you sure you want to cancel the hike and delete data for current hike?")
             .setIcon(R.drawable.group_1)
             .setPositiveButton("YES") {_,_ ->
-                stopHike()
+                sendCommandToService(ACTION_STOP)               // another idea: calling stopHike() with parameter
             }
             .setNegativeButton("NO") { dialogInterface, _ ->
                 dialogInterface.cancel()
@@ -204,21 +201,21 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         sendCommandToService(ACTION_STOP)
         view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
     }
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
         if (!isTracking) {
             if (currentTimeInMillis == 0L) {
-                binding.toggleHikeBtn.text = "START"
+                binding.toggleHikeBtn.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_play_arrow_24))
             }
             else {
-                binding.toggleHikeBtn.text = "RESUME"
-                binding.finishHikeBtn.isVisible = true
+                binding.toggleHikeBtn.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_play_arrow_24))
+                binding.finishHikeBtn.show()
             }
 
         } else {
-            binding.toggleHikeBtn.text = "PAUSE"
-            binding.finishHikeBtn.isVisible = false
-            binding.btnCamera.isVisible = true
+            binding.toggleHikeBtn.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24))
+            binding.finishHikeBtn.hide()
         }
     }
 
