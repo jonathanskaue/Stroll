@@ -1,6 +1,7 @@
 package com.example.stroll.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.stroll.data.local.StrollDao
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
@@ -29,7 +30,5 @@ class StrollRepositoryImpl @Inject constructor(
         dao.deleteData(data)
     }
 
-    override suspend fun getHikeById(id: Int) {
-        dao.getHikeById(id)
-    }
+    override fun getHikeById(id: Int): LiveData<StrollDataEntity> = dao.getHikeById(id)
 }

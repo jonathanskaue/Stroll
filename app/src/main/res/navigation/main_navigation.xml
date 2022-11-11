@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/registerFragment">
 
     <!-- Bottom bar actions -->
     <action android:id="@+id/action_global_homeFragment"
@@ -54,6 +54,9 @@
             android:id="@+id/action_hikesFragment_to_hikeDetailsFragment"
             app:destination="@id/hikeDetailsFragment" >
         </action>
+        <action
+            android:id="@+id/action_hikesFragment_to_statisticsFragment"
+            app:destination="@id/statisticsFragment" />
     </fragment>
     <fragment
         android:id="@+id/hikeDetailsFragment"
@@ -73,7 +76,11 @@
         android:id="@+id/statisticsFragment"
         android:name="com.example.stroll.presentation.fragment.StatisticsFragment"
         android:label="fragment_statistics"
-        tools:layout="@layout/fragment_statistics"/>
+        tools:layout="@layout/fragment_statistics">
+        <action
+            android:id="@+id/action_statisticsFragment_to_hikesFragment"
+            app:destination="@id/hikesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/introductionFragment"
         android:name="com.example.stroll.presentation.fragment.IntroductionFragment"

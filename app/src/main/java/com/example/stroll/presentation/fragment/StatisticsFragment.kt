@@ -8,11 +8,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentStatisticsBinding
 import com.example.stroll.other.CustomMarkerView
-import com.example.stroll.other.Utility
-import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.example.stroll.presentation.viewmodel.StatisticsViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -43,6 +42,10 @@ class StatisticsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObservers()
         setupBarChart()
+        binding.toggleViewButton.setOnClickListener {
+            val action = StatisticsFragmentDirections.actionStatisticsFragmentToHikesFragment()
+            findNavController().navigate(action)
+        }
 
     }
 
@@ -71,7 +74,7 @@ class StatisticsFragment : BaseFragment() {
     }
 
     private fun subscribeToObservers() {
-        viewModel.hikeSortedByDatte.observe(viewLifecycleOwner, Observer {
+        viewModel.hikeSortedByDate.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val allAvgSpeeds = it.indices.map { i -> BarEntry(i.toFloat(), it[i].averageSpeedInKMH) }
                 val bardataSet = BarDataSet(allAvgSpeeds, "Avg Speed Over Time").apply {

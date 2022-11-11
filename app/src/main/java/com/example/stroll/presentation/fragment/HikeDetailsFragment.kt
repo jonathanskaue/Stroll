@@ -17,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
+import com.example.stroll.R
 import com.example.stroll.data.local.InternalStoragePhoto
 import com.example.stroll.databinding.FragmentHikeDetailsBinding
 import com.example.stroll.other.Utility
@@ -54,18 +56,34 @@ class HikeDetailsFragment : BaseFragment() {
         _binding = FragmentHikeDetailsBinding.inflate(inflater, container, false)
         setUpPhotoRecyclerView()
         loadHikePhotosIntoRecyclerView()
+        viewModel.getHikeById(args.id)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("args", "onViewCreated: $args")
+        viewModel.hikeById.observe(viewLifecycleOwner) {
+            if (it == null) {
+                Log.d("gethikebyid", "onViewCreated: ${args.id}")
+                Log.d("gethikebyid", "onViewCreated: hikeEntity is null")
+            }
+            else {
+                loadImage()
+                Log.d("gethikebyid", "onViewCreated: ${it}")
+            }
+        }
 
+    }
+
+    private fun loadImage() {
+        Glide.with(this)
+            .load(BitmapFactory.decodeFile(context?.filesDir?.path + "/${viewModel.hikeById.value?.mapSnapShot}"))
+            .into(binding.hikeMapSnapShot)
     }
 
     private fun setUpPhotoRecyclerView() = binding.rvPrivatePhotos.apply {
         adapter = photoAdapter
-        layoutManager = StaggeredGridLayoutManager(3, RecyclerView.VERTICAL)
+        layoutManager = StaggeredGridLayoutManager(1, RecyclerView.HORIZONTAL)
     }
 
     private fun loadHikePhotosIntoRecyclerView(){

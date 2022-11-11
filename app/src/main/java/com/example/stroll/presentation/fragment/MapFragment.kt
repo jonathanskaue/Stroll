@@ -107,7 +107,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         myLocationOverlay.isDrawAccuracyEnabled = true
         mapView.overlays.add(myLocationOverlay)
 
-
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
                 latLng = GeoPoint(latLng.latitude, latLng.longitude)
@@ -119,8 +118,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
-
-
 
         return binding.root
     }
@@ -199,7 +196,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             .setIcon(R.drawable.group_1)
             .setPositiveButton("YES") {_,_ ->
                 deleteFolderWhenCancellingHike()
-                sendCommandToService(ACTION_STOP)               // another idea: calling stopHike() with parameter
+                sendCommandToService(ACTION_STOP) // another idea: calling stopHike() with parameter
             }
             .setNegativeButton("NO") { dialogInterface, _ ->
                 dialogInterface.cancel()

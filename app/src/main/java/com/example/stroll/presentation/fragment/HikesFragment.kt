@@ -10,6 +10,7 @@ import androidx.core.view.MenuHost
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
@@ -45,6 +46,11 @@ class HikesFragment() : BaseFragment(), RVClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.toggleViewButton.setOnClickListener {
+            val action = HikesFragmentDirections.actionHikesFragmentToStatisticsFragment()
+            findNavController().navigate(action)
+        }
 
         val menuHost: MenuHost = requireActivity()
         setupRecyclerView()

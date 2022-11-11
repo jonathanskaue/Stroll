@@ -15,6 +15,6 @@
         android:title="@string/camera"/>
     <item
         android:id="@+id/hikesFragment"
-        android:icon="@drawable/ic_baseline_show_chart_24"
+        android:icon="@drawable/ic_baseline_hiking_24"
         android:title="@string/statistics"/>
 </menu>

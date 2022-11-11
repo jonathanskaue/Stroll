@@ -21,6 +21,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as MainActivity).bottomNavBar.visibility = View.GONE
+
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {

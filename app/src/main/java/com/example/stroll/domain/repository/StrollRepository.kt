@@ -1,6 +1,7 @@
 package com.example.stroll.domain.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.stroll.data.local.StrollDataEntity
 
 interface StrollRepository {
@@ -9,7 +10,7 @@ interface StrollRepository {
 
     suspend fun deleteData(data: StrollDataEntity)
 
-    suspend fun getHikeById(id: Int)
+    fun getHikeById(id: Int): LiveData<StrollDataEntity>
 
     val selectAllHikesSortedByDistance: LiveData<List<StrollDataEntity>>
     val selectAllHikesSortedByDate: LiveData<List<StrollDataEntity>>
