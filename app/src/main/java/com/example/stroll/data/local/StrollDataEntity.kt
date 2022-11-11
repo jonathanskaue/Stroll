@@ -11,7 +11,8 @@ data class StrollDataEntity(
     var timeStamp: Long = 0L,
     var averageSpeedInKMH: Float = 0f,
     var distanceInMeters: Int = 0,
-    var timeInMillis: Long = 0L
+    var timeInMillis: Long = 0L,
+    var folderPath: String = ""
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null

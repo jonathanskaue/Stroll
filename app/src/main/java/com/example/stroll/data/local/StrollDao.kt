@@ -30,4 +30,8 @@ interface StrollDao {
 
     @Query("SELECT * FROM hike_table")
     fun getAllData(): LiveData<List<StrollDataEntity>>
+
+    /*@Query("SELECT id FROM hike_table ORDER BY id DESC LIMIT 1")*/
+    @Query("SELECT MAX(id) FROM hike_table")
+    fun getHighestHikeId(): LiveData<Int>
 }

@@ -28,6 +28,7 @@ class MainViewModel @Inject constructor(
 
 
     val hikes = MediatorLiveData<List<StrollDataEntity>>()
+    val highestHikeId: LiveData<Int>
 
     var sortType = SortType.DATE
 
@@ -62,6 +63,8 @@ class MainViewModel @Inject constructor(
                 result?.let { hikes.value = it }
             }
         }
+
+        highestHikeId = strollRepo.highestHikeId
     }
 
     fun sortHikes(sortType: SortType) = when(sortType) {

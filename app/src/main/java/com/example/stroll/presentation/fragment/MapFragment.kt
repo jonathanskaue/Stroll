@@ -7,9 +7,11 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
@@ -32,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapController
@@ -42,8 +45,10 @@ import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import java.io.File
 import java.io.IOException
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -59,6 +64,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
     private var currentTimeInMillis = 0L
+    private var highestHikeId = MutableLiveData<Int>()
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -105,7 +111,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         controller.setZoom(18.0)
 
-        //mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
 
 
@@ -132,6 +138,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         binding.btnCamera.setOnClickListener{
             (activity as MainActivity).checkCameraPermissions()
         }
+        viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                highestHikeId.value = it
+            }
+            else highestHikeId.value = 0
+        })
 
     }
 
@@ -184,6 +196,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             .setIcon(R.drawable.group_1)
             .setPositiveButton("YES") {_,_ ->
                 stopHike()
+                deleteFolderWhenCancellingHike()
             }
             .setNegativeButton("NO") { dialogInterface, _ ->
                 dialogInterface.cancel()
@@ -219,6 +232,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             sendCommandToService(ACTION_PAUSE)
         } else {
             sendCommandToService(ACTION_START)
+            makeFolderInInternalStorage()
         }
     }
 
@@ -277,7 +291,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
             val dateTimeStamp = Calendar.getInstance().timeInMillis
-            val hike = StrollDataEntity(pMapSnapshot.bitmap.toString().plus(".png"), dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis)
+            val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
+            val hike = StrollDataEntity(pMapSnapshot.bitmap.toString().plus(".png"), dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis, folderPath)
             viewModel.addDataToRoom(hike)
             Snackbar.make(
                 requireActivity().findViewById(R.id.hikesFragment),
@@ -341,5 +356,38 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             e.printStackTrace()
             false
         }
+    }
+
+    private fun makeFolderInInternalStorage(){
+        val folder = context?.filesDir
+        val children = folder?.listFiles()
+            ?.filter { it.isDirectory && !it.name.equals("osmdroid") }
+        if (children?.size!! > 0){
+            val newHikeId = highestHikeId.value?.plus(1)
+            if(newHikeId != null){
+                val folderToBeCreated = File(folder, "$newHikeId")
+                if (!folderToBeCreated.exists()){
+                    folderToBeCreated.mkdir()
+                }
+            }
+        }
+        else {
+            val f = File(folder, "1")
+            f.mkdir()
+        }
+    }
+
+    private fun deleteFolderWhenCancellingHike(){
+        val folder = context?.filesDir
+        val children = folder?.listFiles()
+            ?.filter { it.isDirectory && !it.name.equals("osmdroid") }
+
+        val folders = folder?.listFiles()
+        folders?.sortByDescending { dir ->
+            dir.lastModified()
+        }
+
+        val newestFolder = folders?.first()
+        newestFolder?.delete()
     }
 }

@@ -14,7 +14,8 @@ class StrollRepositoryImpl @Inject constructor(
     override val selectAllHikesSortedByDistance: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByDistance(),
     override val selectAllHikesSortedByDate: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByDate(),
     override val selectAllHikesSortedByTimeInMillis: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByTimeInMillis(),
-    override val selectAllHikesSortedByAvgSpeed: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByAvgSpeed()
+    override val selectAllHikesSortedByAvgSpeed: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByAvgSpeed(),
+    override val highestHikeId: LiveData<Int> = dao.getHighestHikeId()
 ): StrollRepository {
 
     override suspend fun insertData(data: StrollDataEntity) {
