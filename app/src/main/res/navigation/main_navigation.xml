@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/registerFragment">
+    app:startDestination="@id/homeFragment">
 
     <!-- Bottom bar actions -->
     <action android:id="@+id/action_global_mapFragment"
