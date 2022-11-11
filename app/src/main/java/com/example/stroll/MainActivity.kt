@@ -156,16 +156,20 @@ class MainActivity : AppCompatActivity() {
         bottomNavBar.setupWithNavController(navController)
         bottomNavBar.setOnItemSelectedListener {
             when (it.itemId) {
+                R.id.homeFragment -> {
+                    navController.navigate(R.id.action_global_homeFragment)
+                    return@setOnItemSelectedListener true
+                }
                 R.id.mapFragment -> {
                     checkLocationPermissions()
                     return@setOnItemSelectedListener true
                 }
-                R.id.hikesFragment -> {
-                    navController.navigate(R.id.action_global_hikesFragment)
-                    return@setOnItemSelectedListener true
-                }
                 R.id.cameraFragment -> {
                     checkCameraPermissions()
+                    return@setOnItemSelectedListener true
+                }
+                R.id.hikesFragment -> {
+                    navController.navigate(R.id.action_global_hikesFragment)
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -175,11 +179,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         navigateToMapFragmentIfNeeded(intent)
-        if (viewModel.allData.value?.size == null) {
+/*        if (viewModel.allData.value?.size == null) {
             navGraph.setStartDestination(R.id.introductionFragment)
         } else {
             navGraph.setStartDestination(R.id.hikesFragment)
-        }
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

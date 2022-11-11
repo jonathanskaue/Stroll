@@ -9,11 +9,17 @@ interface StrollRepository {
 
     suspend fun deleteData(data: StrollDataEntity)
 
+    suspend fun getHikeById(id: Int)
+
     val selectAllHikesSortedByDistance: LiveData<List<StrollDataEntity>>
     val selectAllHikesSortedByDate: LiveData<List<StrollDataEntity>>
     val selectAllHikesSortedByTimeInMillis: LiveData<List<StrollDataEntity>>
     val selectAllHikesSortedByAvgSpeed: LiveData<List<StrollDataEntity>>
     val highestHikeId: LiveData<Int>
+
+    val getTotalDistanceHiked: LiveData<Int>
+    val getTotalTimeInMillis: LiveData<Long>
+    val getTotalAverageSpeed: LiveData<Float>
 
     val readAllData: LiveData<List<StrollDataEntity>>
 

@@ -69,7 +69,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
-    private var tester = "hello"
+    private var initializeViewModel = true
+    @set:Inject
+    var weight = 80f
+
+    @set:Inject
+    var name = "Default"
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -77,7 +82,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel.setTest(tester)
+        viewModel.initialize(initializeViewModel)
+        Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
 
         latLng = GeoPoint(10.0, 10.0)
 

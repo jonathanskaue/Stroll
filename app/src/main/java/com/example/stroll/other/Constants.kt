@@ -16,4 +16,10 @@ object Constants {
     const val FILE_NAME_FORMAT = "yy-MM-dd-HH-mm-ss-SSS"
     const val CAMERA_REQUEST_CODE_PERMISSIONS = 123
     val CAMERA_REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+
+    //SHARED PREFERENCES
+    const val SHARED_PREFERENCES_NAME = "sharedPref"
+    const val KEY_FIRST_TIME_TOGGLE = "KEY_FIRST_TIME_TOGGLE"
+    const val KEY_NAME = "KEY_NAME"
+    const val KEY_WEIGHT = "KEY_WEIGHT"
 }

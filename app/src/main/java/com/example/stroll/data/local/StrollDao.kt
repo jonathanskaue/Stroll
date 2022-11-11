@@ -34,4 +34,16 @@ interface StrollDao {
     /*@Query("SELECT id FROM hike_table ORDER BY id DESC LIMIT 1")*/
     @Query("SELECT MAX(id) FROM hike_table")
     fun getHighestHikeId(): LiveData<Int>
+
+    @Query("SELECT SUM(distanceInMeters) FROM hike_table")
+    fun getTotalDistanceHiked(): LiveData<Int>
+
+    @Query("SELECT SUM(timeInMillis) FROM hike_table")
+    fun getTotalTimeInMillis(): LiveData<Long>
+
+    @Query("SELECT AVG(averageSpeedInKMH) FROM hike_table")
+    fun getTotalAverageSpeed(): LiveData<Float>
+
+    @Query("SELECT * FROM hike_table WHERE id= :id")
+    fun getHikeById(id: Int): LiveData<StrollDataEntity>
 }

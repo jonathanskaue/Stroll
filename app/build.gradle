@@ -122,6 +122,9 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:1.1.0"
     implementation"androidx.camera:camera-view:1.1.0"
 
+    //MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 
     /*
     // MPAndroidChart doesnt work; will have to find new dependencies.
