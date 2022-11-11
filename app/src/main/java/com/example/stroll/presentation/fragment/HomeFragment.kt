@@ -13,9 +13,14 @@ import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.StatisticsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Math.round
+import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment() {
+
+    @set:Inject
+    var name = ""
 
     private val viewModel: StatisticsViewModel by viewModels()
 
@@ -36,6 +41,7 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObservers()
+        binding.tvUserName.text = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
     }
     private fun subscribeToObservers() {
