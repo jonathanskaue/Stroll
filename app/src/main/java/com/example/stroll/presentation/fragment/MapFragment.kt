@@ -141,9 +141,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             myLocationOverlay.disableFollowLocation()
             myLocationOverlay.disableMyLocation()
         }
-        binding.btnCamera.setOnClickListener{
-            (activity as MainActivity).checkCameraPermissions()
-        }
         viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 highestHikeId.value = it
