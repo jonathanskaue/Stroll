@@ -9,17 +9,19 @@ import android.widget.AdapterView
 import androidx.core.view.MenuHost
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentHikesBinding
+import com.example.stroll.domain.repository.RVClickListener
 import com.example.stroll.other.SortType
 import com.example.stroll.presentation.adapters.HikeAdapter
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HikesFragment() : BaseFragment() {
+class HikesFragment() : BaseFragment(), RVClickListener {
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -29,7 +31,7 @@ class HikesFragment() : BaseFragment() {
     private var _binding: FragmentHikesBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var hikeAdapter: HikeAdapter
+    private val hikeAdapter by lazy { HikeAdapter(this) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,7 +95,6 @@ class HikesFragment() : BaseFragment() {
     }
 
     private fun setupRecyclerView() = binding.rvHikes.apply {
-        hikeAdapter = HikeAdapter()
         adapter = hikeAdapter
         layoutManager = LinearLayoutManager(requireContext())
     }
@@ -103,6 +104,14 @@ class HikesFragment() : BaseFragment() {
             it.action = action
             requireContext().startService(it)
         }
+
+    override fun onClick(position: Int) {
+        val id = hikeAdapter.differ.currentList[position].id
+        val action = id?.let { HikesFragmentDirections.actionHikesFragmentToHikeDetailsFragment(it) }
+        if (action != null) {
+            view?.findNavController()?.navigate(action)
+        }
+    }
 
 }
 

@@ -17,7 +17,7 @@ class StrollRepositoryImpl @Inject constructor(
     override val selectAllHikesSortedByAvgSpeed: LiveData<List<StrollDataEntity>> = dao.selectAllHikesSortedByAvgSpeed(),
     override val getTotalDistanceHiked: LiveData<Int> = dao.getTotalDistanceHiked(),
     override val getTotalTimeInMillis: LiveData<Long> = dao.getTotalTimeInMillis(),
-    override val getTotalAverageSpeed: LiveData<Float> = dao.getTotalAverageSpeed()
+    override val getTotalAverageSpeed: LiveData<Float> = dao.getTotalAverageSpeed(),
 ): StrollRepository {
 
     override suspend fun insertData(data: StrollDataEntity) {
@@ -26,5 +26,9 @@ class StrollRepositoryImpl @Inject constructor(
 
     override suspend fun deleteData(data: StrollDataEntity) {
         dao.deleteData(data)
+    }
+
+    override suspend fun getHikeById(id: Int) {
+        dao.getHikeById(id)
     }
 }

@@ -49,7 +49,21 @@
         android:id="@+id/hikesFragment"
         android:name="com.example.stroll.presentation.fragment.HikesFragment"
         android:label="fragment_hikes"
-        tools:layout="@layout/fragment_hikes"/>
+        tools:layout="@layout/fragment_hikes">
+        <action
+            android:id="@+id/action_hikesFragment_to_hikeDetailsFragment"
+            app:destination="@id/hikeDetailsFragment" >
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/hikeDetailsFragment"
+        android:name="com.example.stroll.presentation.fragment.HikeDetailsFragment"
+        android:label="fragment_detail_hikes"
+        tools:layout="@layout/fragment_hike_details">
+        <argument
+            android:name="id"
+            app:argType="integer"/>
+    </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.stroll.presentation.fragment.MapFragment"

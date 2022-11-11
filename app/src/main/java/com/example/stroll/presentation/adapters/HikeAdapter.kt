@@ -13,13 +13,21 @@ import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.ItemHikeBinding
+import com.example.stroll.domain.repository.RVClickListener
 import com.example.stroll.other.Utility
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HikeAdapter: RecyclerView.Adapter<HikeAdapter.HikeViewHolder>() {
+class HikeAdapter(var listener: RVClickListener): RecyclerView.Adapter<HikeAdapter.HikeViewHolder>() {
 
-    inner class HikeViewHolder(var binding: ItemHikeBinding): RecyclerView.ViewHolder(binding.root)
+    inner class HikeViewHolder(var binding: ItemHikeBinding): RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener {
+                val position = absoluteAdapterPosition
+                listener.onClick(position)
+            }
+        }
+    }
 
     val diffCallback = object : DiffUtil.ItemCallback<StrollDataEntity>() {
         override fun areItemsTheSame(
@@ -49,7 +57,11 @@ class HikeAdapter: RecyclerView.Adapter<HikeAdapter.HikeViewHolder>() {
     override fun onBindViewHolder(holder: HikeViewHolder, position: Int) {
         val hike = differ.currentList[position]
         holder.itemView.apply {
-            Glide.with(this).load(BitmapFactory.decodeFile(context.filesDir.path + "/${hike.mapSnapShot}")).into(this.findViewById(R.id.hikeMapSnapShot))
+            Glide.with(this)
+                .load(BitmapFactory.decodeFile(context.filesDir.path + "/${hike.mapSnapShot}"))
+                .override(250, 250)
+                .circleCrop()
+                .into(this.findViewById(R.id.hikeMapSnapShot))
             val calendar = Calendar.getInstance().apply {
                 timeInMillis = hike.timeStamp
             }

@@ -37,6 +37,9 @@ interface StrollDao {
     @Query("SELECT SUM(timeInMillis) FROM hike_table")
     fun getTotalTimeInMillis(): LiveData<Long>
 
-    @Query("SELECT SUM(averageSpeedInKMH) FROM hike_table")
+    @Query("SELECT AVG(averageSpeedInKMH) FROM hike_table")
     fun getTotalAverageSpeed(): LiveData<Float>
+
+    @Query("SELECT * FROM hike_table WHERE id= :id")
+    fun getHikeById(id: Int): LiveData<StrollDataEntity>
 }
