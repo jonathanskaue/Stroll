@@ -6,14 +6,17 @@
     app:startDestination="@id/homeFragment">
 
     <!-- Bottom bar actions -->
+    <action android:id="@+id/action_global_homeFragment"
+        app:destination="@+id/homeFragment"
+        app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_mapFragment"
         app:destination="@id/mapFragment"
         app:launchSingleTop="true" />
-    <action android:id="@+id/action_global_hikesFragment"
-        app:destination="@+id/hikesFragment"
-        app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_cameraFragment"
         app:destination="@+id/cameraFragment"
+        app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_hikesFragment"
+        app:destination="@+id/hikesFragment"
         app:launchSingleTop="true"/>
 
     <!-- Toolbar actions -->
@@ -26,6 +29,7 @@
     <action android:id="@+id/action_global_introductionFragment"
         app:destination="@+id/introductionFragment"
         app:launchSingleTop="true"/>
+
 
     <fragment
         android:id="@+id/registerFragment"

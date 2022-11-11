@@ -21,6 +21,7 @@
     <string name="map">Map</string>
     <string name="home">Home</string>
     <string name="camera">Camera</string>
+    <string name="statistics">Statistics</string>
 
     <!-- Toolbar names -->
     <string name="settings">Settings</string>
