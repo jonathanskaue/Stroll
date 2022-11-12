@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.stroll.presentation.fragment.RegisterFragment"
-        android:label="fragment_main"
+        android:label="Register"
         tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_homeFragment"
@@ -43,12 +43,12 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.stroll.presentation.fragment.HomeFragment"
-        android:label="fragment_home"
+        android:label="Home"
         tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/hikesFragment"
         android:name="com.example.stroll.presentation.fragment.HikesFragment"
-        android:label="fragment_hikes"
+        android:label="Hikes"
         tools:layout="@layout/fragment_hikes">
         <action
             android:id="@+id/action_hikesFragment_to_hikeDetailsFragment"
@@ -61,7 +61,7 @@
     <fragment
         android:id="@+id/hikeDetailsFragment"
         android:name="com.example.stroll.presentation.fragment.HikeDetailsFragment"
-        android:label="fragment_detail_hikes"
+        android:label="Details"
         tools:layout="@layout/fragment_hike_details">
         <argument
             android:name="id"
@@ -70,12 +70,12 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.stroll.presentation.fragment.MapFragment"
-        android:label="fragment_map"
+        android:label="Map"
         tools:layout="@layout/fragment_map"/>
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.stroll.presentation.fragment.StatisticsFragment"
-        android:label="fragment_statistics"
+        android:label="Statistics"
         tools:layout="@layout/fragment_statistics">
         <action
             android:id="@+id/action_statisticsFragment_to_hikesFragment"
@@ -84,20 +84,20 @@
     <fragment
         android:id="@+id/introductionFragment"
         android:name="com.example.stroll.presentation.fragment.IntroductionFragment"
-        android:label="fragment_introduction"
+        android:label="Introduction"
         tools:layout="@layout/fragment_introduction"/>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.stroll.presentation.fragment.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="Settings" />
     <fragment
         android:id="@+id/sensorFragment"
         android:name="com.example.stroll.presentation.fragment.SensorFragment"
-        android:label="fragment_sensor"
+        android:label="Sensors"
         tools:layout="@layout/fragment_sensor"/>
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.example.stroll.presentation.fragment.CameraFragment"
-        android:label="fragment_camera"
+        android:label="Camera"
         tools:layout="@layout/fragment_camera" />
 </navigation>

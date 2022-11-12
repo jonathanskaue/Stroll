@@ -106,7 +106,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun addDataToRoom(hike: StrollDataEntity) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             strollRepo.insertData(hike)
         }
     }

@@ -3,6 +3,7 @@ package com.example.stroll.presentation.fragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.lang.Math.round
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -40,17 +42,19 @@ class HikeDetailsFragment : BaseFragment() {
     var name = ""
 
     val args: HikeDetailsFragmentArgs by navArgs()
-    private var photoAdapter = PhotoAdapter()
 
+    private var photoAdapter = PhotoAdapter()
     private val viewModel: StatisticsViewModel by viewModels()
 
     private var _binding: FragmentHikeDetailsBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var geocoder: Geocoder
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        geocoder = Geocoder(this.requireContext(), Locale.getDefault())
 
         // Inflate the layout for this fragment
         _binding = FragmentHikeDetailsBinding.inflate(inflater, container, false)
@@ -68,11 +72,24 @@ class HikeDetailsFragment : BaseFragment() {
                 Log.d("gethikebyid", "onViewCreated: hikeEntity is null")
             }
             else {
+                viewModel.getDetailsByLatLng(geocoder, it.startLatitude, it.startLongitude)
                 loadImage()
+                binding.tvLocation.text = viewModel.address.value
+                binding.tvDistance.append("${it.distanceInMeters/1000f}km")
+                binding.tvAverageSpeed.append("${it.averageSpeedInKMH}km/h")
+                binding.tvTime.text = Utility.getFormattedStopWatchTime(it.timeInMillis)
+                val calendar = Calendar.getInstance().apply {
+                    timeInMillis = it.timeStamp
+                }
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                binding.tvHikeDate.text = dateFormat.format(calendar.time)
+
                 Log.d("gethikebyid", "onViewCreated: ${it}")
+                Log.d("gethikebyid", "onViewCreated: ${viewModel.address.value}")
+                Log.d("gethikebyid", "onViewCreated: ${viewModel.city.value}")
+
             }
         }
-
     }
 
     private fun loadImage() {

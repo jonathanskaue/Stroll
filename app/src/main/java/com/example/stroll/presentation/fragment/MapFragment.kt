@@ -28,6 +28,7 @@ import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -284,15 +285,26 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 return@MapSnapshotable
             }
             var distanceInMeters = 0
-
+            var latLng = LatLng(0.0,0.0)
             for (polyline in pathPoints) {
                 distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
+                latLng = polyline.first()
             }
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
             val dateTimeStamp = Calendar.getInstance().timeInMillis
             val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
-            val hike = StrollDataEntity(pMapSnapshot.bitmap.toString().plus(".png"), dateTimeStamp, averageSpeed, distanceInMeters, currentTimeInMillis, folderPath)
+            Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
+            val hike = StrollDataEntity(
+                pMapSnapshot.bitmap.toString().plus(".png"),
+                dateTimeStamp,
+                averageSpeed,
+                distanceInMeters,
+                currentTimeInMillis,
+                folderPath,
+                latLng.latitude,
+                latLng.longitude
+            )
             viewModel.addDataToRoom(hike)
             Snackbar.make(
                 requireActivity().findViewById(R.id.hikesFragment),

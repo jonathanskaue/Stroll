@@ -6,9 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_bg"
-    android:paddingTop="16dp"
-    android:paddingEnd="16dp"
-    android:paddingStart="16dp">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -46,13 +44,12 @@
         android:id="@+id/clTotals"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="250dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/home_layout_bg"
         android:backgroundTint="?attr/colorOnPrimary"
         android:padding="32dp"
-        android:layout_marginBottom="-16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
