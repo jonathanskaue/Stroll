@@ -103,6 +103,21 @@ class MainActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        val actionBar = supportActionBar
+        // providing title for the ActionBar
+        actionBar!!.title = "       Stroll"
+        // providing subtitle for the ActionBar
+        actionBar.subtitle = "      Hiking like a troll"
+
+        // adding icon in the ActionBar
+        actionBar.setIcon(R.drawable.group_1_2)
+
+        // methods to display the icon in the ActionBar
+        actionBar.setDisplayUseLogoEnabled(true)
+        actionBar.setDisplayShowHomeEnabled(true)
+
         activityTrackingEnabled = false
 
         activityTransitionList = ArrayList()
@@ -187,8 +202,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.toolbar, menu)
+        menuInflater.inflate(R.menu.toolbar, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
