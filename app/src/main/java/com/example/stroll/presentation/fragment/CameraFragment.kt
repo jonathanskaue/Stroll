@@ -59,6 +59,9 @@ class CameraFragment() : Fragment() {
         binding.btnTakePhoto.setOnClickListener {
             openCameraInterface()
         }
+        binding.btnAR.setOnClickListener {
+            openAR()
+        }
 
         viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
             Log.d("hikeId", "$it")
@@ -120,5 +123,8 @@ class CameraFragment() : Fragment() {
         }
     }
 
+    private fun openAR(){
+
+    }
 }
 
