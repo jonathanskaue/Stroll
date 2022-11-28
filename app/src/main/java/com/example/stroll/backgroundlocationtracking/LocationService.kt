@@ -4,22 +4,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.other.Constants.ACTION_PAUSE
-import com.example.stroll.other.Constants.ACTION_SHOW_MAP_FRAGMENT
 import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.other.Constants.ACTION_STOP
 import com.example.stroll.other.Constants.FASTEST_LOCATION_INTERVAL
@@ -34,7 +29,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 typealias Polyline = MutableList<LatLng>
@@ -43,7 +37,7 @@ typealias Polylines = MutableList<Polyline>
 @AndroidEntryPoint
 class LocationService : LifecycleService() {
 
-    var isFirstRun = true
+    var isFirstHike = true
     var serviceStopped = false
     private val timeHikedInSeconds = MutableLiveData<Long>()
 
@@ -83,9 +77,9 @@ class LocationService : LifecycleService() {
         intent?.let {
             when (it.action) {
                 ACTION_START -> {
-                    if(isFirstRun) {
+                    if(isFirstHike) {
                         startForegroundService()
-                        isFirstRun = false
+                        isFirstHike = false
                     } else {
                         startTimer()
                         Log.d("LOCATIONSERVICE", "startForegroundService: RESUMING SERVICE")
@@ -137,7 +131,7 @@ class LocationService : LifecycleService() {
 
     private fun stopService() {
         serviceStopped = true
-        isFirstRun = true
+        isFirstHike = true
         pauseService()
         postInitialValues()
         stopForeground(STOP_FOREGROUND_REMOVE)

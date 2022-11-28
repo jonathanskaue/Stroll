@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
@@ -34,13 +35,11 @@ import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -54,7 +53,6 @@ import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
-import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
@@ -322,9 +320,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 "Hike saved successfully",
                 Snackbar.LENGTH_LONG
             ).show()
-            stopHike()
+            //sendCommandToService(ACTION_STOP)
         }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
         Thread(mapSnapshot).start()
+        stopHike()
     }
 
     private fun addAllPolyLines() {
@@ -416,22 +415,26 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun myMarker() {
         lifecycleScope.launch {
-            var myPhoto = loadMyPhoto().first()
-            val myDrawable = BitmapDrawable(resources, myPhoto.bmp)
             val startPoint: GeoPoint = GeoPoint(68.43448,17.44367)
             var startMarker: Marker = Marker(mapView)
             startMarker.position = startPoint
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             startMarker.title = "SATAN I HELVETTE"
-            startMarker.image = myDrawable
+
             startMarker.subDescription = "FYFAEN DRIT OSM DROID"
+            var myPhoto: InternalStoragePhoto
+            if (loadMyPhoto().isNotEmpty()) {
+                myPhoto = loadMyPhoto().first()
+                val myDrawable = BitmapDrawable(resources, myPhoto.bmp)
+                startMarker.image = myDrawable
+            }
             mapView.overlays.add(startMarker)
         }
     }
 
     private suspend fun loadMyPhoto(): List<InternalStoragePhoto>{
         return withContext(Dispatchers.IO) {
-            val path = context?.filesDir?.absolutePath + "/3/"
+            val path = context?.filesDir?.absolutePath + "/1/"
             val dir = File(path).listFiles()
             dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
                 val bytes = it.readBytes()
