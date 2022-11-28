@@ -4,21 +4,27 @@ import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Point
+import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.withContext
 import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
+import com.example.stroll.data.local.InternalStoragePhoto
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
@@ -32,6 +38,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -42,8 +51,10 @@ import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
@@ -119,6 +130,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
+        myMarker()
 
         return binding.root
     }
@@ -285,10 +297,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 return@MapSnapshotable
             }
             var distanceInMeters = 0
-            var latLng = LatLng(0.0,0.0)
+            var latLng = pathPoints.first().first()
             for (polyline in pathPoints) {
                 distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
-                latLng = polyline.first()
             }
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
             val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
@@ -402,4 +413,32 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         val newestFolder = folders?.first()
         newestFolder?.delete()
     }
+
+    private fun myMarker() {
+        lifecycleScope.launch {
+            var myPhoto = loadMyPhoto().first()
+            val myDrawable = BitmapDrawable(resources, myPhoto.bmp)
+            val startPoint: GeoPoint = GeoPoint(68.43448,17.44367)
+            var startMarker: Marker = Marker(mapView)
+            startMarker.position = startPoint
+            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            startMarker.title = "SATAN I HELVETTE"
+            startMarker.image = myDrawable
+            startMarker.subDescription = "FYFAEN DRIT OSM DROID"
+            mapView.overlays.add(startMarker)
+        }
+    }
+
+    private suspend fun loadMyPhoto(): List<InternalStoragePhoto>{
+        return withContext(Dispatchers.IO) {
+            val path = context?.filesDir?.absolutePath + "/3/"
+            val dir = File(path).listFiles()
+            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
+                val bytes = it.readBytes()
+                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                InternalStoragePhoto(it.name, bmp)
+            }
+        }
+    }
 }
+
