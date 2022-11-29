@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.MainActivity
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -135,7 +137,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         binding.finishHikeBtn.setOnClickListener {
 
             zoomToSeeWholeTrack()
-            endHikeAndSaveToDb()
+            lifecycleScope.launch {
+                endHikeAndSaveToDb()
+                stopHike()
+            }
             myLocationOverlay.disableFollowLocation()
             myLocationOverlay.disableMyLocation()
         }
@@ -279,7 +284,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         return BoundingBox(north, east, south, west)
     }
 
-    private fun endHikeAndSaveToDb() {
+    private suspend fun endHikeAndSaveToDb() {
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
                 return@MapSnapshotable
@@ -311,7 +316,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 "Hike saved successfully",
                 Snackbar.LENGTH_LONG
             ).show()
-            stopHike()
+            //stopHike()
         }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
         Thread(mapSnapshot).start()
     }
