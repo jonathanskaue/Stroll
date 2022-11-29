@@ -36,6 +36,7 @@ import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
 import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.other.Constants.ACTION_STOP
+import com.example.stroll.other.MapEventsReceiverImpl
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -55,6 +56,7 @@ import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
@@ -77,6 +79,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var latLng: GeoPoint
     private lateinit var myLocationOverlay: MyLocationNewOverlay
+    private lateinit var mapEventsReceiver: MapEventsReceiverImpl
     private val viewModel: MainViewModel by viewModels()
 
     private var isTracking = false
@@ -94,13 +97,17 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     @set:Inject
     var name = "Default"
 
+
+
     @SuppressLint("MissingPermission")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         viewModel.initialize(initializeViewModel)
         Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
+
 
         latLng = GeoPoint(10.0, 10.0)
 
@@ -116,6 +123,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         mapView.setMultiTouchControls(true)
 
         controller = mapView.controller as MapController
+        mapEventsReceiver = MapEventsReceiverImpl()
+        val mapEventsOverLay = MapEventsOverlay(mapEventsReceiver)
+        mapView.overlays.add(mapEventsOverLay)
 
         myLocationOverlay =
             MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
@@ -268,12 +278,16 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     }
 
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        TODO("not implemented")
+        Log.d("Single tap", "singleTapConfirmedHelper: $p")
+        return false
     }
 
     override fun longPressHelper(p: GeoPoint?): Boolean {
-        TODO("Not yet implemented")
+        Log.d("Single tap", "singleTapConfirmedHelper: $p")
+        return false
     }
+
+
 
     private fun zoomToSeeWholeTrack() {
         val firstAndLastLocation = mutableListOf<GeoPoint>()
@@ -443,6 +457,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             startMarker.title = title
             startMarker.subDescription = subDescription
+            startMarker.setOnMarkerClickListener { marker, mapView ->
+                Log.d("onclick", "myMarker: Hello world")
+                false
+            }
             var myPhoto: InternalStoragePhoto
             if (loadMyPhoto(id).isNotEmpty()) {
                 myPhoto = loadMyPhoto(id).first()
