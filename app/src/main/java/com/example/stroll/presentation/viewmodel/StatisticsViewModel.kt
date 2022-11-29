@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +33,11 @@ class StatisticsViewModel @Inject constructor(
     fun getHikeById(id: Int) {
         viewModelScope.launch {
             hikeById = strollRepo.getHikeById(id)
+        }
+    }
+    fun deleteHikeById(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            strollRepo.deleteHikeById(id)
         }
     }
 

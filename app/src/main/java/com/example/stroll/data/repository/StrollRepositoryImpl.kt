@@ -30,5 +30,9 @@ class StrollRepositoryImpl @Inject constructor(
         dao.deleteData(data)
     }
 
+    override suspend fun deleteHikeById(id: Int) {
+        dao.deleteHikeById(id)
+    }
+
     override fun getHikeById(id: Int): LiveData<StrollDataEntity> = dao.getHikeById(id)
 }

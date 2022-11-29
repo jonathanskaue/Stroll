@@ -95,6 +95,8 @@ class MainViewModel @Inject constructor(
 
 
 
+
+
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
 
     var _initialize = MutableLiveData<Boolean>()

@@ -12,14 +12,17 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.R
+import com.example.stroll.presentation.viewmodel.MainViewModel
 
 abstract class BaseFragment : Fragment() {
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +36,19 @@ abstract class BaseFragment : Fragment() {
     private fun loadSettings() {
         val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val dark_mode = sp?.getBoolean("dark_mode", false)
+        val heatMap = sp?.getBoolean("heat_map", false)
 
         if (dark_mode == true) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+
+        if (heatMap!!) {
+            viewModel.isHeatMap()
+        }
+        if (!heatMap!!) {
+            viewModel.isNotHeatMap()
         }
     }
 

@@ -99,8 +99,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        settings()
-
         viewModel.initialize(initializeViewModel)
         Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
 
@@ -151,8 +149,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             viewModel.allData.observe(viewLifecycleOwner) {
                 it.forEach { pos ->
                     myHeatMap(pos.startLatitude, pos.startLongitude, 0.001)
-                    //myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.id.toString(), pos.timeStamp.toString())
-                    Log.d("allData", "onViewCreated: ${pos.startLatitude}, ${pos.startLongitude}")
                 }
                 it.forEach { pos ->
                     myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
@@ -487,16 +483,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 InternalStoragePhoto(it.name, bmp)
             }
-        }
-    }
-    private fun settings() {
-        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
-        val heatMap = sp?.getBoolean("heat_map", false)
-        if (heatMap!!) {
-            viewModel.isHeatMap()
-        }
-        if (!heatMap!!) {
-            viewModel.isNotHeatMap()
         }
     }
 }

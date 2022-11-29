@@ -46,4 +46,7 @@ interface StrollDao {
 
     @Query("SELECT * FROM hike_table WHERE id= :id")
     fun getHikeById(id: Int): LiveData<StrollDataEntity>
+
+    @Query("DELETE FROM hike_table WHERE id= :id")
+    fun deleteHikeById(id: Int)
 }
