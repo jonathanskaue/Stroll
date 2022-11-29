@@ -1,17 +1,22 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -53,13 +58,16 @@ import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.cos
 import kotlin.math.round
+import kotlin.math.sin
 
 @AndroidEntryPoint
 class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
@@ -91,6 +99,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        settings()
 
         viewModel.initialize(initializeViewModel)
         Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
@@ -127,8 +136,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         controller.setZoom(18.0)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
+        if (resources.getString(R.string.mode) == "Night") {
+            mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS)
+        }
         subscribeToObservers()
-        myMarker()
 
         return binding.root
     }
@@ -136,6 +147,19 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (viewModel.isHeatMap.value) {
+            viewModel.allData.observe(viewLifecycleOwner) {
+                it.forEach { pos ->
+                    myHeatMap(pos.startLatitude, pos.startLongitude, 0.001)
+                    //myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.id.toString(), pos.timeStamp.toString())
+                    Log.d("allData", "onViewCreated: ${pos.startLatitude}, ${pos.startLongitude}")
+                }
+                it.forEach { pos ->
+                    myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
+                }
+            }
+        }
+
         binding.toggleHikeBtn.setOnClickListener {
             toggleHike()
         }
@@ -334,6 +358,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                     var polygon = Polygon()
                     val position = polyline[i] // LATLNG
                     val position2 = polyline[i + 1]
+                    polygon.outlinePaint.color = Color.parseColor("#99" + "1E90FF")
                     polygon.addPoint(GeoPoint(position.latitude, position.longitude))
                     polygon.addPoint(GeoPoint(position2.latitude, position2.longitude))
                     mapView.overlayManager.add((polygon))
@@ -346,9 +371,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
             val lastLatLng = pathPoints.last().last()
-            val polygon = Polygon()
-            polygon.strokeWidth = 8f
-            polygon.fillPaint.color = 2
+            val polygon = Polygon(mapView)
+            polygon.strokeWidth = 12f
+            polygon.fillPaint.color = Color.parseColor("#55"+ "FFFF00")
+            polygon.outlinePaint.color = Color.parseColor("#99" + "1E90FF")
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
             mapView.overlayManager?.add(polygon)
@@ -413,34 +439,64 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         newestFolder?.delete()
     }
 
-    private fun myMarker() {
+    private fun myMarker(lat: Double, lon: Double, id: String, title: String, subDescription: String) {
         lifecycleScope.launch {
-            val startPoint: GeoPoint = GeoPoint(68.43448,17.44367)
             var startMarker: Marker = Marker(mapView)
-            startMarker.position = startPoint
+            startMarker.position = GeoPoint(lat, lon)
+            startMarker.icon = resources.getDrawable(R.drawable.ic_baseline_hiking_24)
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            startMarker.title = "SATAN I HELVETTE"
-
-            startMarker.subDescription = "FYFAEN DRIT OSM DROID"
+            startMarker.title = title
+            startMarker.subDescription = subDescription
             var myPhoto: InternalStoragePhoto
-            if (loadMyPhoto().isNotEmpty()) {
-                myPhoto = loadMyPhoto().first()
+            if (loadMyPhoto(id).isNotEmpty()) {
+                myPhoto = loadMyPhoto(id).first()
                 val myDrawable = BitmapDrawable(resources, myPhoto.bmp)
                 startMarker.image = myDrawable
             }
-            mapView.overlays.add(startMarker)
+            mapView.overlayManager?.add(startMarker)
         }
     }
 
-    private suspend fun loadMyPhoto(): List<InternalStoragePhoto>{
+    private fun myHeatMap(
+        lat: Double,
+        lon: Double,
+        radius: Double,
+    ) {
+        val steps = 50
+        val polygon = Polygon(mapView)
+        var centerX = mutableListOf<Double>()
+        var centerY = mutableListOf<Double>()
+        polygon.fillPaint.color = Color.parseColor("#10"+ "FF0000")
+        polygon.strokeWidth = 0f
+        polygon.outlinePaint.color = Color.parseColor("#50"+ "FF0000")
+        for (i in 0..steps) {
+            centerX.add((lat + radius * cos(2*Math.PI * i / steps)))
+            centerY.add((lon + radius * sin(2*Math.PI * i/ steps)*2.5))
+            polygon.addPoint(GeoPoint(centerX[i], centerY[i]))
+        }
+        mapView.overlayManager?.add(polygon)
+    }
+
+
+    private suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto>{
         return withContext(Dispatchers.IO) {
-            val path = context?.filesDir?.absolutePath + "/1/"
+            val path = context?.filesDir?.absolutePath + "/$id/"
             val dir = File(path).listFiles()
             dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
                 val bytes = it.readBytes()
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 InternalStoragePhoto(it.name, bmp)
             }
+        }
+    }
+    private fun settings() {
+        val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
+        val heatMap = sp?.getBoolean("heat_map", false)
+        if (heatMap!!) {
+            viewModel.isHeatMap()
+        }
+        if (!heatMap!!) {
+            viewModel.isNotHeatMap()
         }
     }
 }

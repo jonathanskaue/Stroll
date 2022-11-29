@@ -1,16 +1,21 @@
 package com.example.stroll.presentation.fragment
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.example.stroll.MainActivity
 import com.example.stroll.R
+import com.example.stroll.other.Constants
+import com.example.stroll.presentation.viewmodel.MainViewModel
+import javax.inject.Inject
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -30,6 +35,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun loadSettings() {
+
         val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val dark_mode = sp?.getBoolean("dark_mode", false)
 

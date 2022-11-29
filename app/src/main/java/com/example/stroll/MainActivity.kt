@@ -40,6 +40,7 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+
     private var activityTrackingEnabled = false
     private lateinit var activityTransitionList: List<ActivityTransition>
 
