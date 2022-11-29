@@ -147,7 +147,8 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.hikesFragment,
                 R.id.mapFragment,
-                R.id.cameraFragment
+                R.id.cameraFragment,
+                R.id.arFragment
             )
         )
         setupActionBarWithNavController(navController, bottomBarConfiguration)
@@ -166,6 +167,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.cameraFragment -> {
                     checkCameraPermissions()
+                    return@setOnItemSelectedListener true
+                }
+                R.id.arFragment -> {
+                    navController.navigate(R.id.action_global_arFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.hikesFragment -> {
