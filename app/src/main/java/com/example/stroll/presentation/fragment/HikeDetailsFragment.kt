@@ -41,7 +41,7 @@ class HikeDetailsFragment : BaseFragment() {
     @set:Inject
     var name = ""
 
-    val args: HikeDetailsFragmentArgs by navArgs()
+    private val args: HikeDetailsFragmentArgs by navArgs()
 
     private var photoAdapter = PhotoAdapter()
     private val viewModel: StatisticsViewModel by viewModels()
@@ -60,7 +60,8 @@ class HikeDetailsFragment : BaseFragment() {
         _binding = FragmentHikeDetailsBinding.inflate(inflater, container, false)
         setUpPhotoRecyclerView()
         loadHikePhotosIntoRecyclerView()
-        viewModel.getHikeById(args.id)
+        val hikeId = args.id
+        viewModel.getHikeById(hikeId)
         return binding.root
     }
 
