@@ -12,9 +12,6 @@
     <action android:id="@+id/action_global_mapFragment"
         app:destination="@id/mapFragment"
         app:launchSingleTop="true" />
-    <action android:id="@+id/action_global_cameraFragment"
-        app:destination="@+id/cameraFragment"
-        app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_hikesFragment"
         app:destination="@+id/hikesFragment"
         app:launchSingleTop="true"/>
@@ -98,11 +95,6 @@
         android:name="com.example.stroll.presentation.fragment.SensorFragment"
         android:label="Sensors"
         tools:layout="@layout/fragment_sensor"/>
-    <fragment
-        android:id="@+id/cameraFragment"
-        android:name="com.example.stroll.presentation.fragment.CameraFragment"
-        android:label="Camera"
-        tools:layout="@layout/fragment_camera" />
     <fragment
         android:id="@+id/ARFragment"
         android:name="com.example.stroll.presentation.fragment.ARFragment"

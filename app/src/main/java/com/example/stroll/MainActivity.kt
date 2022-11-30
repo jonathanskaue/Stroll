@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                     "you have given us access to your camera",
                     Toast.LENGTH_SHORT
                 ).show()
-                navController.navigate(R.id.action_global_cameraFragment)
+                navController.navigate(R.id.action_global_arFragment)
             }
             else -> {
                 Toast.makeText(
@@ -147,7 +147,6 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.hikesFragment,
                 R.id.mapFragment,
-                R.id.cameraFragment,
                 R.id.arFragment
             )
         )
@@ -165,12 +164,8 @@ class MainActivity : AppCompatActivity() {
                     checkLocationPermissions()
                     return@setOnItemSelectedListener true
                 }
-                R.id.cameraFragment -> {
-                    checkCameraPermissions()
-                    return@setOnItemSelectedListener true
-                }
                 R.id.arFragment -> {
-                    navController.navigate(R.id.action_global_arFragment)
+                    checkCameraPermissions()
                     return@setOnItemSelectedListener true
                 }
                 R.id.hikesFragment -> {
@@ -310,7 +305,7 @@ class MainActivity : AppCompatActivity() {
             ))
         }
         else {
-            navController.navigate(R.id.action_global_cameraFragment)
+            navController.navigate(R.id.action_global_arFragment)
         }
     }
 

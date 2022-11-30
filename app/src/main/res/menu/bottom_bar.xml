@@ -10,10 +10,6 @@
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/map"/>
     <item
-        android:id="@+id/cameraFragment"
-        android:icon="@drawable/ic_baseline_camera_alt_24"
-        android:title="@string/camera"/>
-    <item
         android:id="@+id/arFragment"
         android:icon="@drawable/ic_baseline_view_in_ar_24"
         android:title="@string/ar"/>
