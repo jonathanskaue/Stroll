@@ -143,12 +143,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         }
         binding.finishHikeBtn.setOnClickListener {
             lifecycleScope.launch {
+                myLocationOverlay.disableFollowLocation()
+                myLocationOverlay.disableMyLocation()
                 zoomToSeeWholeTrack()
                 endHikeAndSaveToDb()
                 stopHike()
             }
-            myLocationOverlay.disableFollowLocation()
-            myLocationOverlay.disableMyLocation()
         }
         viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -192,6 +192,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
             currentTimeInMillis = it
+            Log.d("tilesstate", "endHikeAndSaveToDb: ${mapView.overlayManager.tilesOverlay.tileStates.total}")
             val formattedTime = Utility.getFormattedStopWatchTime(currentTimeInMillis, true)
             binding.timerTV.text = formattedTime
             if (currentTimeInMillis > 0L) {
@@ -299,13 +300,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         val dateTimeStamp = Calendar.getInstance().timeInMillis
         val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
         Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
-        val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
-            if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
-                return@MapSnapshotable
-            }
-            saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
+        mapView.isDrawingCacheEnabled = true
+        val mapSnapShot = mapView.drawingCache
+            saveBitmapToInternalStorage(mapSnapShot.toString(), mapSnapShot)
             val hike = StrollDataEntity(
-                pMapSnapshot.bitmap.toString().plus(".png"),
+                mapSnapShot.toString().plus(".png"),
                 dateTimeStamp,
                 averageSpeed,
                 distanceInMeters,
@@ -320,10 +319,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 "Hike saved successfully",
                 Snackbar.LENGTH_LONG
             ).show()
-            //stopHike()
-        }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
-        Thread(mapSnapshot).start()
-    }
+        mapView.isDrawingCacheEnabled = false
+
+        //stopHike()
+        }
 
     private fun addAllPolyLines(color: String) {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
