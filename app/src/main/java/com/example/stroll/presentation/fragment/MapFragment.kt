@@ -248,7 +248,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun stopHike() {
         sendCommandToService(ACTION_STOP)
-        view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
+        //view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
     }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateTracking(isTracking: Boolean) {
@@ -324,20 +324,23 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     }
 
     private fun endHikeAndSaveToDb() {
+        val latLng = pathPoints.first().first()
+        var distanceInMeters = 0
+        for (polyline in pathPoints) {
+            distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
+        }
+        val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+        val dateTimeStamp = Calendar.getInstance().timeInMillis
+        val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
+        Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
                 return@MapSnapshotable
             }
-            var distanceInMeters = 0
-            var latLng = pathPoints.first().first()
-            for (polyline in pathPoints) {
-                distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
-            }
+
+            Log.d("myPathPoints", "endHikeAndSaveToDb: $pathPoints")
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
-            val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
-            val dateTimeStamp = Calendar.getInstance().timeInMillis
-            val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
-            Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
+
             val hike = StrollDataEntity(
                 pMapSnapshot.bitmap.toString().plus(".png"),
                 dateTimeStamp,

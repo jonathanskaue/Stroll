@@ -156,7 +156,7 @@ class LocationService : LifecycleService() {
         }
     }
 
-    val locationCallback = object : LocationCallback() {
+    private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             if(isTracking.value!!) {
@@ -173,6 +173,7 @@ class LocationService : LifecycleService() {
 
     private fun addPathPoint(location: Location?) {
         location?.let {
+            Log.d("NEW LOCATION2:", "${location.latitude}, ${location.longitude}")
             val pos = LatLng(location.latitude, location.longitude)
             pathPoints.value?.apply {
                 last().add(pos)
