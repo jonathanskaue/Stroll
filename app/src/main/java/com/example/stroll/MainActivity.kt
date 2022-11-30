@@ -349,7 +349,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "MainActivity"
+        const val TAG = "MainActivity"
         private fun toActivityString(activity: Int): String {
             return when (activity) {
                 DetectedActivity.STILL -> "STILL"

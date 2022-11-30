@@ -8,10 +8,9 @@
     android:padding="30dp">
 
     <TextView
-        android:id="@+id/textViewT"
+        android:id="@+id/textView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is an example layout."
         android:background="#111B55"
         android:textColor="#fff" />
 

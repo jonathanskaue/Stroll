@@ -1,7 +1,6 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
@@ -19,12 +18,14 @@ import com.example.stroll.databinding.FragmentARBinding
 import com.example.stroll.other.ARUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.ar.core.Plane
+import com.google.ar.core.Session
 import com.google.ar.core.TrackingState
+import com.google.ar.core.exceptions.CameraNotAvailableException
+import com.google.ar.core.exceptions.UnavailableException
 import com.google.ar.sceneform.ArSceneView
 import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.rendering.ViewRenderable
-import kotlinx.serialization.json.JsonNull.content
 import uk.co.appoly.arcorelocation.LocationMarker
 import uk.co.appoly.arcorelocation.LocationScene
 import uk.co.appoly.arcorelocation.rendering.LocationNodeRender
@@ -37,7 +38,7 @@ class ARFragment : Fragment() {
 
     private val TAG = "ARCoreCamera"
     private val MIN_OPENGL_VERSION = 3.0
-    private val installRequested = false
+    private var installRequested = false
     private var hasFinishedLoading = false
 
     private var loadingMessageSnackbar: Snackbar? = null
@@ -144,7 +145,7 @@ class ARFragment : Fragment() {
                         val eView = exampleLayoutRenderable!!.view
                         val distanceTextView = eView.findViewById<TextView>(R.id.textView2)
                         distanceTextView.text = node.distance.toString() + "M"
-                        val nameView = eView.findViewById<TextView>(R.id.textViewT)
+                        val nameView = eView.findViewById<TextView>(R.id.textView1)
                         nameView.text = "Fagernesfjellet i Narvik"
                     }
                 layoutLocationMarker2.renderEvent =
@@ -152,6 +153,8 @@ class ARFragment : Fragment() {
                         val eView = exampleLayoutRenderable2!!.view
                         val distanceTextView = eView.findViewById<TextView>(R.id.textView2)
                         distanceTextView.text = node.distance.toString() + "M"
+                        val nameView = eView.findViewById<TextView>(R.id.textView1)
+                        nameView.text = "Narvikfjellet"
                     }
                 // Adding the marker
                 locationScene!!.mLocationMarkers.add(layoutLocationMarker)
@@ -182,6 +185,61 @@ class ARFragment : Fragment() {
         ARLocationPermissionHelper.requestPermission(requireActivity())
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (locationScene != null) {
+            Log.d("ARCoreCamera", "resume locationscene")
+            locationScene!!.resume()
+        }
+        if (arSceneView!!.session == null) {
+            // If the session wasn't created yet, don't resume rendering.
+            // This can happen if ARCore needs to be updated or permissions are not granted yet.
+            try {
+                Log.d("ARCoreCamera", "demoutils create session")
+                val session: Session? = ARUtils().createArSession((activity as MainActivity), installRequested)
+                if (session == null) {
+                    Log.d("ARCoreCamera", "session==null")
+                    installRequested = ARLocationPermissionHelper.hasPermission((activity as MainActivity))
+                    return
+                } else {
+                    Log.d("ARCoreCamera", "setupSession")
+                    arSceneView!!.setupSession(session)
+                    Log.d("ARCoreCamera", "setupSession done")
+                }
+            } catch (e: UnavailableException) {
+                Log.d("ARCoreCamera", "exception in demoutils")
+                ARUtils().handleSessionException((activity as MainActivity), e)
+            }
+        }
+
+        try {
+            Log.d("ARCoreCamera", "resume arsceneview")
+            arSceneView!!.resume()
+        } catch (ex: CameraNotAvailableException) {
+            Log.d("ARCoreCamera", "cameranotaveilable exception")
+            ARUtils().displayError(requireContext(), "Unable to get camera", ex)
+            return
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause")
+
+        if (locationScene != null) {
+            Log.d(TAG, "onPause = null")
+            locationScene!!.pause()
+        }
+
+        arSceneView!!.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+        arSceneView!!.destroy()
     }
 
     @SuppressLint("ClickableViewAccessibility")
