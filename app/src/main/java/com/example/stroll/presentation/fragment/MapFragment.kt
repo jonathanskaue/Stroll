@@ -94,7 +94,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
-
+        Configuration.getInstance().userAgentValue = context?.packageName;
         Configuration.getInstance().load(context,
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
 
@@ -135,9 +135,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             showCancelHikeDialog()
         }
         binding.finishHikeBtn.setOnClickListener {
-
-            zoomToSeeWholeTrack()
             lifecycleScope.launch {
+                zoomToSeeWholeTrack()
                 endHikeAndSaveToDb()
                 stopHike()
             }
@@ -150,7 +149,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             }
             else highestHikeId.value = 0
         })
-
     }
 
     override fun onResume() {

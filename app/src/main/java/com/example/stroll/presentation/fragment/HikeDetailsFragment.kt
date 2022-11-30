@@ -41,7 +41,7 @@ class HikeDetailsFragment : BaseFragment() {
     @set:Inject
     var name = ""
 
-    val args: HikeDetailsFragmentArgs by navArgs()
+    private val args: HikeDetailsFragmentArgs by navArgs()
 
     private var photoAdapter = PhotoAdapter()
     private val viewModel: StatisticsViewModel by viewModels()
