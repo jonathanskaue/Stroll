@@ -60,7 +60,8 @@ class HikeDetailsFragment : BaseFragment() {
         _binding = FragmentHikeDetailsBinding.inflate(inflater, container, false)
         setUpPhotoRecyclerView()
         loadHikePhotosIntoRecyclerView()
-        viewModel.getHikeById(args.id)
+        val hikeId = args.id
+        viewModel.getHikeById(hikeId)
         return binding.root
     }
 

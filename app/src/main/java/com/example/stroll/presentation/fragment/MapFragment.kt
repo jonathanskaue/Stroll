@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
 import android.os.Bundle
@@ -46,6 +47,7 @@ import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
@@ -68,6 +70,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private var pathPoints = mutableListOf<Polyline>()
     private var currentTimeInMillis = 0L
     private var highestHikeId = MutableLiveData<Int>()
+    private var polygonColor = "#00B7FF"
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -99,6 +102,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
 
         mapView = binding.map
+        if (resources.getString(R.string.mode) == "Night") {
+            polygonColor = "#D74177"
+            mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS)
+        }
         mapView.setMultiTouchControls(true)
 
         controller = mapView.controller as MapController
@@ -154,7 +161,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     override fun onResume() {
         super.onResume()
         mapView?.onResume()
-        addAllPolyLines()
+        addAllPolyLines(polygonColor)
 
     }
 
@@ -178,7 +185,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
-            addLatestPolyline()
+            addLatestPolyline(polygonColor)
             //addAllPolyLines()
 
         })
@@ -211,7 +218,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun stopHike() {
         sendCommandToService(ACTION_STOP)
-        view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
+        //view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
     }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateTracking(isTracking: Boolean) {
@@ -283,21 +290,20 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     }
 
     private suspend fun endHikeAndSaveToDb() {
+        var distanceInMeters = 0
+        var latLng = pathPoints.first().first()
+        for (polyline in pathPoints) {
+            distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
+        }
+        val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+        val dateTimeStamp = Calendar.getInstance().timeInMillis
+        val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
+        Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
                 return@MapSnapshotable
             }
-            var distanceInMeters = 0
-            var latLng = LatLng(0.0,0.0)
-            for (polyline in pathPoints) {
-                distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
-                latLng = polyline.first()
-            }
             saveBitmapToInternalStorage(pMapSnapshot.bitmap.toString(), pMapSnapshot.bitmap)
-            val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
-            val dateTimeStamp = Calendar.getInstance().timeInMillis
-            val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
-            Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
             val hike = StrollDataEntity(
                 pMapSnapshot.bitmap.toString().plus(".png"),
                 dateTimeStamp,
@@ -319,7 +325,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         Thread(mapSnapshot).start()
     }
 
-    private fun addAllPolyLines() {
+    private fun addAllPolyLines(color: String) {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             for (polyline in pathPoints) {
 
@@ -327,6 +333,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                     var polygon = Polygon()
                     val position = polyline[i] // LATLNG
                     val position2 = polyline[i + 1]
+                    polygon.outlinePaint.color = Color.parseColor(color)
                     polygon.addPoint(GeoPoint(position.latitude, position.longitude))
                     polygon.addPoint(GeoPoint(position2.latitude, position2.longitude))
                     mapView.overlayManager.add((polygon))
@@ -335,13 +342,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         }
     }
 
-    private fun addLatestPolyline() {
+    private fun addLatestPolyline(color: String) {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
             val lastLatLng = pathPoints.last().last()
             val polygon = Polygon()
             polygon.strokeWidth = 8f
             polygon.fillPaint.color = 2
+            polygon.outlinePaint.color = Color.parseColor(color)
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
             mapView.overlayManager?.add(polygon)
