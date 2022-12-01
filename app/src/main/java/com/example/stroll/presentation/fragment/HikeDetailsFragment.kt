@@ -15,6 +15,7 @@ import com.example.stroll.databinding.FragmentHomeBinding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -25,6 +26,7 @@ import com.example.stroll.databinding.FragmentHikeDetailsBinding
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.adapters.PhotoAdapter
 import com.example.stroll.presentation.viewmodel.StatisticsViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,6 +69,9 @@ class HikeDetailsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.fabDeleteHike.setOnClickListener {
+            showDeleteHikeDialog()
+        }
         viewModel.hikeById.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d("gethikebyid", "onViewCreated: ${args.id}")
@@ -107,6 +112,12 @@ class HikeDetailsFragment : BaseFragment() {
     private fun loadHikePhotosIntoRecyclerView(){
         lifecycleScope.launch{
             val photos = loadHikePhotos()
+            if (photos.isEmpty()) {
+                binding.PhotosTitle.text = "No Photos"
+            }
+            else {
+                binding.PhotosTitle.text = "Photos"
+            }
             photoAdapter.submitList(photos)
         }
     }
@@ -122,5 +133,23 @@ class HikeDetailsFragment : BaseFragment() {
                 InternalStoragePhoto(it.name, bmp)
             }
         }
+    }
+    private fun showDeleteHikeDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
+            .setTitle("Delete Hike?")
+            .setMessage("Are you sure you want to delete the hike and delete data for this hike?")
+            .setIcon(R.drawable.group_1)
+            .setPositiveButton("YES") {_,_ ->
+                lifecycleScope.launch {
+                    viewModel.deleteHikeById(args.id)
+                }
+                val action = HikeDetailsFragmentDirections.actionGlobalHikesFragment()
+                findNavController().navigate(action)
+            }
+            .setNegativeButton("NO") { dialogInterface, _ ->
+                dialogInterface.cancel()
+            }
+            .create()
+        dialog.show()
     }
 }

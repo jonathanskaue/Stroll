@@ -18,12 +18,16 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import androidx.annotation.MainThread
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.MainActivity
 import com.example.stroll.R
@@ -35,6 +39,7 @@ import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
 import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.other.Constants.ACTION_STOP
+import com.example.stroll.other.MapEventsReceiverImpl
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -51,12 +56,14 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
+import org.osmdroid.util.Delay
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
@@ -74,14 +81,15 @@ import kotlin.math.round
 import kotlin.math.sin
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
+class MapFragment() : BaseFragment(), Snappable {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var latLng: GeoPoint
     private lateinit var myLocationOverlay: MyLocationNewOverlay
-    private val viewModel: MainViewModel by viewModels()
+    private lateinit var mapEventsReceiver: MapEventsReceiverImpl
+    private val viewModel: MainViewModel by activityViewModels()
 
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
@@ -112,7 +120,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         viewModel.initialize(initializeViewModel)
         Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
 
-        latLng = GeoPoint(10.0, 10.0)
+        latLng = GeoPoint(10.0,10.0)
 
         // Inflate the layout for this fragment
         _binding = FragmentMapBinding.inflate(inflater, container, false)
@@ -132,6 +140,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         controller = mapView.controller as MapController
 
+        mapEventsReceiver = MapEventsReceiverImpl()
+        val mapEventsOverLay = MapEventsOverlay(mapEventsReceiver)
+        mapView.overlays.add(mapEventsOverLay)
+
         myLocationOverlay =
             MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
         myLocationOverlay.enableMyLocation()
@@ -146,6 +158,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             }
         }
 
+
+
         controller.setZoom(18.0)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
@@ -157,6 +171,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getAllMarkers.observe(viewLifecycleOwner) {
+            it.forEach { poi ->
+                myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+            }
+        }
             viewModel.allData.observe(viewLifecycleOwner) {
                 if (viewModel.isHeatMap.value) {
                     it.forEach { pos ->
@@ -168,6 +187,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                         myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
                     }
                 }
+        }
+        binding.btnAddMarker.setOnClickListener {
+            viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
+            Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
+            findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
         }
         binding.toggleHikeBtn.setOnClickListener {
             toggleHike()
@@ -295,14 +319,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         }
     }
 
-    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        TODO("not implemented")
-    }
-
-    override fun longPressHelper(p: GeoPoint?): Boolean {
-        TODO("Not yet implemented")
-    }
-
     private fun zoomToSeeWholeTrack() {
         myLocationOverlay.disableFollowLocation()
         myLocationOverlay.disableMyLocation()
@@ -339,6 +355,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         return BoundingBox(north, east, south, west)
     }
 
+    @MainThread
     private suspend fun endHikeAndSaveToDb() {
         Log.d("timeInMillis", "endHikeAndSaveToDb: $currentTimeInMillis")
         var distanceInMeters = 0
@@ -372,7 +389,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 Snackbar.LENGTH_LONG
             ).show()
             sendCommandToService(ACTION_STOP)
-            view?.findNavController()?.navigate(R.id.action_mapFragment_to_hikesFragment)
+            findNavController().navigate(R.id.action_mapFragment_to_hikesFragment)
         }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
         Thread(mapSnapshot).start()
     }
@@ -431,6 +448,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         }
     }
 
+
     private fun myHeatMap(
         lat: Double,
         lon: Double,
@@ -452,6 +470,26 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             polygon.addPoint(GeoPoint(centerX[i], centerY[i]))
         }
         mapView.overlayManager?.add(polygon)
+    }
+
+    private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double) {
+        lifecycleScope.launch {
+            var poiMarker: Marker = Marker(mapView)
+            poiMarker.position = GeoPoint(lat, lon)
+            when(category) {
+                "Mountain" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_play_arrow_24)
+                "Fishing" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_delete_forever_24)
+                "Attraction" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_house_24)
+                "Misc" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_help_24)
+            }
+            poiMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            poiMarker.setOnMarkerClickListener { marker, mapView ->
+                poiMarker.title = name
+                poiMarker.showInfoWindow()
+                false
+            }
+            mapView.overlayManager?.add(poiMarker)
+        }
     }
 
     private suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {

@@ -75,6 +75,9 @@
         <action
             android:id="@+id/action_mapFragment_to_hikesFragment"
             app:destination="@id/hikesFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_addMarkerFragment"
+            app:destination="@id/addMarkerFragment" />
     </fragment>
     <fragment
         android:id="@+id/statisticsFragment"
@@ -104,4 +107,13 @@
         android:name="com.example.stroll.presentation.fragment.ARFragment"
         android:label="fragment_a_r"
         tools:layout="@layout/fragment_a_r" />
+    <fragment
+        android:id="@+id/addMarkerFragment"
+        android:name="com.example.stroll.presentation.fragment.AddMarkerFragment"
+        android:label="fragment_add_marker"
+        tools:layout="@layout/fragment_add_marker" >
+        <action
+            android:id="@+id/action_addMarkerFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>

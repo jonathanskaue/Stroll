@@ -2,15 +2,20 @@ package com.example.stroll.domain.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.stroll.data.local.MarkerEntity
 import com.example.stroll.data.local.StrollDataEntity
 
 interface StrollRepository {
 
     suspend fun insertData(data: StrollDataEntity)
+    suspend fun insertMarkerData(markerData: MarkerEntity)
+    suspend fun deleteMarkerById(id: Int)
 
     suspend fun deleteData(data: StrollDataEntity)
+    suspend fun deleteHikeById(id: Int)
 
     fun getHikeById(id: Int): LiveData<StrollDataEntity>
+    fun getMarkersByCategory(category: String): LiveData<List<MarkerEntity>>
 
     val selectAllHikesSortedByDistance: LiveData<List<StrollDataEntity>>
     val selectAllHikesSortedByDate: LiveData<List<StrollDataEntity>>
@@ -23,5 +28,7 @@ interface StrollRepository {
     val getTotalAverageSpeed: LiveData<Float>
 
     val readAllData: LiveData<List<StrollDataEntity>>
+
+    val getAllMarkers: LiveData<List<MarkerEntity>>
 
 }

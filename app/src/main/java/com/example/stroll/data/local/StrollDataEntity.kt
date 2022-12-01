@@ -20,3 +20,14 @@ data class StrollDataEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
 }
+
+@Entity(tableName = "marker_table")
+data class MarkerEntity(
+    var name: String? = "",
+    var category: String? = "",
+    var lat: Double = 0.0,
+    var lon: Double = 0.0,
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int? = null
+}

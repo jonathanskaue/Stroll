@@ -75,4 +75,11 @@
         <item>Distance</item>
         <item>Average Speed</item>
     </string-array>
+
+    <string-array name="marker_categories">
+        <item>Mountain</item>
+        <item>Fishing</item>
+        <item>Attraction</item>
+        <item>Misc</item>
+    </string-array>
 </resources>

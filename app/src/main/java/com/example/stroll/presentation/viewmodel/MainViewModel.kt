@@ -4,9 +4,11 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.stroll.backgroundlocationtracking.Polyline
+import com.example.stroll.data.local.MarkerEntity
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
 import com.example.stroll.other.SortType
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.osmdroid.util.GeoPoint
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +28,7 @@ class MainViewModel @Inject constructor(
     private val hikesSortedByDistance = strollRepo.selectAllHikesSortedByDistance
     private val hikesSortedByTotalTimeInMillis = strollRepo.selectAllHikesSortedByTimeInMillis
     private val hikesSortedByAvgSpeed = strollRepo.selectAllHikesSortedByAvgSpeed
+    val getAllMarkers = strollRepo.getAllMarkers
 
 
     val hikes = MediatorLiveData<List<StrollDataEntity>>()
@@ -61,6 +65,8 @@ class MainViewModel @Inject constructor(
     fun isNotMarker() {
         _isMarker.value = false
     }
+
+
 
     init {
         viewModelScope.launch {
@@ -115,20 +121,45 @@ class MainViewModel @Inject constructor(
     var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
     val accData: LiveData<List<List<Float>>> = _accData
 
-    var _hikePhotos = MutableLiveData<List<Bitmap>>()
-    val hikePhotos: LiveData<List<Bitmap>> = _hikePhotos
-
     fun getAccData(data: List<List<Float>>) {
         _accData.value = data
     }
+
+    var _hikePhotos = MutableLiveData<List<Bitmap>>()
+    val hikePhotos: LiveData<List<Bitmap>> = _hikePhotos
 
     fun addPhotoToHike(data: Bitmap){
         _hikePhotos.value?.plus(data)
     }
 
+    private var _currentLatLng = MutableLiveData<LatLng>()
+    val currentLatLng: LiveData<LatLng> = _currentLatLng
+
+    fun getCurrentLatLng(latLng: LatLng) {
+        _currentLatLng.value = latLng
+    }
+
     fun addDataToRoom(hike: StrollDataEntity) {
         viewModelScope.launch(Dispatchers.Main) {
             strollRepo.insertData(hike)
+        }
+    }
+
+    fun addMarkerDataToRoom(markerData: MarkerEntity) {
+        viewModelScope.launch {
+            strollRepo.insertMarkerData(markerData)
+        }
+    }
+
+    fun deleteMarkerById(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            strollRepo.deleteMarkerById(id)
+        }
+    }
+
+    fun getMarkersByCategory(category: String) {
+        viewModelScope.launch {
+            strollRepo.getMarkersByCategory(category)
         }
     }
 

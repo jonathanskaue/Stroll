@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [StrollDataEntity::class],
+    entities = [StrollDataEntity::class, MarkerEntity::class],
     version = 1
 )
 

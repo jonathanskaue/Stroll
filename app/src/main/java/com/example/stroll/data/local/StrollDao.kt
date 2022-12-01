@@ -13,8 +13,23 @@ interface StrollDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertData(data: StrollDataEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertMarkerData(markerData: MarkerEntity)
+
+    @Query("DELETE FROM marker_table WHERE id= :id")
+    suspend fun deleteMarkerById(id: Int)
+
+    @Query("SELECT * FROM marker_table")
+    fun getAllMarkers(): LiveData<List<MarkerEntity>>
+
+    @Query("SELECT * FROM marker_table WHERE category= :category")
+    fun getMarkersByCategory(category: String): LiveData<List<MarkerEntity>>
+
     @Delete
     suspend fun deleteData(data: StrollDataEntity)
+
+    @Query("DELETE FROM hike_table WHERE id= :id")
+    fun deleteHikeById(id: Int)
 
     @Query("SELECT * FROM hike_table ORDER BY distanceInMeters DESC")
     fun selectAllHikesSortedByDistance(): LiveData<List<StrollDataEntity>>
