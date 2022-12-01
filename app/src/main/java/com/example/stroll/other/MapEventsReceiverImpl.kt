@@ -1,10 +1,16 @@
 package com.example.stroll.other
 
+import android.content.Context
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.stroll.presentation.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.withContext
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.MapEventsOverlay
 
 class MapEventsReceiverImpl: MapEventsReceiver {
     override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {

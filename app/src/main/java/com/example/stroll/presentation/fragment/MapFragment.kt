@@ -7,11 +7,7 @@ import android.content.ContentValues
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.ImageDecoder
-import android.graphics.Point
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.net.Uri
@@ -22,22 +18,20 @@ import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
-import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.data.local.InternalStoragePhoto
+import com.example.stroll.data.local.LatLong
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
@@ -58,7 +52,6 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
-import org.osmdroid.util.Delay
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapController
@@ -70,6 +63,8 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.TilesOverlay
+import org.osmdroid.views.overlay.infowindow.InfoWindow
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.ByteArrayOutputStream
@@ -82,8 +77,9 @@ import kotlin.math.cos
 import kotlin.math.round
 import kotlin.math.sin
 
+
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), Snappable {
+class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -157,8 +153,10 @@ class MapFragment() : BaseFragment(), Snappable {
 
         controller = mapView.controller as MapController
 
+
+
         mapEventsReceiver = MapEventsReceiverImpl()
-        val mapEventsOverLay = MapEventsOverlay(mapEventsReceiver)
+        val mapEventsOverLay = MapEventsOverlay(this)
         mapView.overlays.add(mapEventsOverLay)
 
         myLocationOverlay =
@@ -247,6 +245,13 @@ class MapFragment() : BaseFragment(), Snappable {
         })
         binding.btnTakePhoto.setOnClickListener {
             checkCameraPermissions()
+        }
+
+        viewModel.isInfoWindowOpen.observe(viewLifecycleOwner) {
+            if (it == true){
+                binding.btnShowMarkerInAr.visibility = View.VISIBLE
+            }
+            else binding.btnShowMarkerInAr.visibility = View.GONE
         }
 
     }
@@ -481,7 +486,9 @@ class MapFragment() : BaseFragment(), Snappable {
                 startMarker.subDescription = subDescription
                 startMarker.showInfoWindow()
                 if (startMarker.isInfoWindowOpen) {
-
+                }
+                else{
+                    binding.btnShowMarkerInAr.visibility = View.GONE
                 }
                 Log.d("onclick", "myMarker: Hello world")
                 false
@@ -533,7 +540,13 @@ class MapFragment() : BaseFragment(), Snappable {
             poiMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             poiMarker.setOnMarkerClickListener { marker, mapView ->
                 poiMarker.title = name
+                viewModel.isInfoWindowOpen()
                 poiMarker.showInfoWindow()
+                binding.btnShowMarkerInAr.visibility = View.VISIBLE
+                binding.btnShowMarkerInAr.setOnClickListener{
+                    val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon))
+                    findNavController().navigate(action)
+                }
                 false
             }
             mapView.overlayManager?.add(poiMarker)
@@ -573,7 +586,6 @@ class MapFragment() : BaseFragment(), Snappable {
         }
 
     override fun onSnapToItem(x: Int, y: Int, snapPoint: Point?, mapView: IMapView?): Boolean {
-
         return true
     }
 
@@ -642,5 +654,14 @@ class MapFragment() : BaseFragment(), Snappable {
             e.printStackTrace()
             false
         }
+    }
+
+    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+        return true
+    }
+
+    override fun longPressHelper(p: GeoPoint?): Boolean {
+        viewModel.isNotInfoWindowOpen()
+        return false
     }
 }

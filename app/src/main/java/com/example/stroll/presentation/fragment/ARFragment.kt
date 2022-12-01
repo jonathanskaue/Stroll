@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentARBinding
@@ -54,6 +55,8 @@ class ARFragment : Fragment() {
     private var exampleLayoutRenderable2: ViewRenderable? = null
     private var locationScene: LocationScene? = null
 
+    private val args: ARFragmentArgs by navArgs()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -89,7 +92,7 @@ class ARFragment : Fragment() {
                 }
                 try {
                     exampleLayoutRenderable = exampleLayout.get()
-                    exampleLayoutRenderable2 = exampleLayout2.get()
+                    /*exampleLayoutRenderable2 = exampleLayout2.get()*/
                     //    private void initModel() {
 //
 //        Log.d("ARtag", "Init model");
@@ -127,16 +130,16 @@ class ARFragment : Fragment() {
                 // First, a layout
                 val layoutLocationMarker =
                     LocationMarker(
-                        17.481728, 68.4212189, getExampleView(
+                        args.latLng.long, args.latLng.lat, getExampleView(
                             exampleLayoutRenderable!!
                         )
                     )
-                val layoutLocationMarker2 =
+                /*val layoutLocationMarker2 =
                     LocationMarker(
                         17.0140646,
                         68.5586197,
                         getExampleView(exampleLayoutRenderable2!!)
-                    )
+                    )*/
 
                 // An example "onRender" event, called every frame
                 // Updates the layout with the markers distance
@@ -146,19 +149,19 @@ class ARFragment : Fragment() {
                         val distanceTextView = eView.findViewById<TextView>(R.id.textView2)
                         distanceTextView.text = node.distance.toString() + "M"
                         val nameView = eView.findViewById<TextView>(R.id.textView1)
-                        nameView.text = "Fagernesfjellet i Narvik"
+                        nameView.text = args.poiName
                     }
-                layoutLocationMarker2.renderEvent =
+                /*layoutLocationMarker2.renderEvent =
                     LocationNodeRender { node ->
                         val eView = exampleLayoutRenderable2!!.view
                         val distanceTextView = eView.findViewById<TextView>(R.id.textView2)
                         distanceTextView.text = node.distance.toString() + "M"
                         val nameView = eView.findViewById<TextView>(R.id.textView1)
                         nameView.text = "Narvikfjellet"
-                    }
+                    }*/
                 // Adding the marker
                 locationScene!!.mLocationMarkers.add(layoutLocationMarker)
-                locationScene!!.mLocationMarkers.add(layoutLocationMarker2)
+                /*locationScene!!.mLocationMarkers.add(layoutLocationMarker2)*/
 
                 // Adding a simple location marker of a 3D model
 //                        locationScene.mLocationMarkers.add(new LocationMarker(-0.119677, 51.478494, getAndy()));
