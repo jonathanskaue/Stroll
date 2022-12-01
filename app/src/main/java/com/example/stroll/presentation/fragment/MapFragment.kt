@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Point
+import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.annotation.MainThread
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -21,6 +24,7 @@ import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
+import com.example.stroll.data.local.InternalStoragePhoto
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
@@ -34,17 +38,21 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.TilesOverlay
@@ -54,7 +62,9 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.cos
 import kotlin.math.round
+import kotlin.math.sin
 
 @AndroidEntryPoint
 class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
@@ -107,6 +117,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             mapView.overlayManager.tilesOverlay.setColorFilter(TilesOverlay.INVERT_COLORS)
         }
         mapView.setMultiTouchControls(true)
+        mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
 
         controller = mapView.controller as MapController
 
@@ -135,6 +146,18 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+            viewModel.allData.observe(viewLifecycleOwner) {
+                if (viewModel.isHeatMap.value) {
+                    it.forEach { pos ->
+                        myHeatMap(pos.startLatitude, pos.startLongitude, 0.001)
+                    }
+                }
+                if (viewModel.isMarker.value) {
+                    it.forEach { pos ->
+                        myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
+                    }
+                }
+        }
         binding.toggleHikeBtn.setOnClickListener {
             toggleHike()
         }
@@ -145,10 +168,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             lifecycleScope.launch {
                 zoomToSeeWholeTrack()
                 endHikeAndSaveToDb()
-                stopHike()
             }
-            myLocationOverlay.disableFollowLocation()
-            myLocationOverlay.disableMyLocation()
         }
         viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
             if (it != null) {
@@ -186,7 +206,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
             addLatestPolyline(polygonColor)
-            //addAllPolyLines()
 
         })
 
@@ -218,7 +237,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     private fun stopHike() {
         sendCommandToService(ACTION_STOP)
-        //view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
+        view?.findNavController()?.navigate(R.id.action_mapFragment_to_hikesFragment)
     }
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateTracking(isTracking: Boolean) {
@@ -256,6 +275,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     }
 
     private fun zoomToSeeWholeTrack() {
+        myLocationOverlay.disableFollowLocation()
+        myLocationOverlay.disableMyLocation()
         val firstAndLastLocation = mutableListOf<GeoPoint>()
         for (polyline in pathPoints) {
             for (position in polyline) {
@@ -290,6 +311,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     }
 
     private suspend fun endHikeAndSaveToDb() {
+        Log.d("timeInMillis", "endHikeAndSaveToDb: $currentTimeInMillis")
         var distanceInMeters = 0
         var latLng = pathPoints.first().first()
         for (polyline in pathPoints) {
@@ -320,7 +342,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
                 "Hike saved successfully",
                 Snackbar.LENGTH_LONG
             ).show()
-            //stopHike()
+            sendCommandToService(ACTION_STOP)
+            view?.findNavController()?.navigate(R.id.action_mapFragment_to_hikesFragment)
         }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
         Thread(mapSnapshot).start()
     }
@@ -353,6 +376,64 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
             mapView.overlayManager?.add(polygon)
+        }
+    }
+
+    private fun myMarker(lat: Double, lon: Double, id: String, title: String, subDescription: String) {
+        lifecycleScope.launch {
+            var startMarker: Marker = Marker(mapView)
+            startMarker.position = GeoPoint(lat, lon)
+            startMarker.icon = resources.getDrawable(R.drawable.ic_baseline_hiking_24)
+            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            startMarker.setOnMarkerClickListener { marker, mapView ->
+                startMarker.title = title
+                startMarker.subDescription = subDescription
+                startMarker.showInfoWindow()
+                Log.d("onclick", "myMarker: Hello world")
+                false
+            }
+            var myPhoto: InternalStoragePhoto
+            if (loadMyPhoto(id).isNotEmpty()) {
+                myPhoto = loadMyPhoto(id).first()
+                val myDrawable = BitmapDrawable(resources, myPhoto.bmp)
+                startMarker.image = myDrawable
+            }
+            mapView.overlayManager?.add(startMarker)
+        }
+    }
+
+    private fun myHeatMap(
+        lat: Double,
+        lon: Double,
+        radius: Double,
+    ) {
+        val steps = 50
+        val polygon = Polygon(mapView)
+        var centerX = mutableListOf<Double>()
+        var centerY = mutableListOf<Double>()
+        polygon.fillPaint.color = Color.parseColor("#10"+ "FF0000")
+        polygon.strokeWidth = 0f
+        polygon.outlinePaint.color = Color.parseColor("#50"+ "FF0000")
+        polygon.setOnClickListener { polygon, mapView, eventPos ->
+            false
+        }
+        for (i in 0..steps) {
+            centerX.add((lat + radius * cos(2*Math.PI * i / steps)))
+            centerY.add((lon + radius * sin(2*Math.PI * i/ steps)*2.5))
+            polygon.addPoint(GeoPoint(centerX[i], centerY[i]))
+        }
+        mapView.overlayManager?.add(polygon)
+    }
+
+    private suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {
+        return withContext(Dispatchers.IO) {
+            val path = context?.filesDir?.absolutePath + "/$id/"
+            val dir = File(path).listFiles()
+            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
+                val bytes = it.readBytes()
+                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                InternalStoragePhoto(it.name, bmp)
+            }
         }
     }
 

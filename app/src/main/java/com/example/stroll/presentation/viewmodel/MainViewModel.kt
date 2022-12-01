@@ -35,9 +35,32 @@ class MainViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
-
     private val _isStarted = MutableStateFlow(false)
     val isStarted = _isStarted
+
+    fun checkStarted() {
+        _isStarted.value = true
+    }
+
+    private val _isHeatMap = MutableStateFlow(false)
+    val isHeatMap = _isHeatMap
+
+    fun isHeatMap() {
+        _isHeatMap.value = true
+    }
+    fun isNotHeatMap() {
+        _isHeatMap.value = false
+    }
+
+    private val _isMarker = MutableStateFlow(false)
+    val isMarker = _isMarker
+
+    fun isMarker() {
+        _isMarker.value = true
+    }
+    fun isNotMarker() {
+        _isMarker.value = false
+    }
 
     init {
         viewModelScope.launch {
@@ -77,9 +100,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun checkStarted() {
-        _isStarted.value = true
-    }
+
 
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
