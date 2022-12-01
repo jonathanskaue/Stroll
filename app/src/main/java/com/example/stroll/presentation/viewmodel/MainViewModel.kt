@@ -134,6 +134,17 @@ class MainViewModel @Inject constructor(
         _isStartingPos.value = false
     }
 
+    private val _isInfoWindowOpen = MutableLiveData<Boolean>(false)
+    val isInfoWindowOpen: LiveData<Boolean> = _isInfoWindowOpen
+
+    fun isInfoWindowOpen() {
+        _isInfoWindowOpen.value = true
+    }
+    fun isNotInfoWindowOpen() {
+        _isInfoWindowOpen.value = false
+    }
+
+
 
 
     init {

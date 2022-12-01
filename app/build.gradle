@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id "dagger.hilt.android.plugin"
     id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -105,6 +106,9 @@ dependencies {
     implementation 'org.mapsforge:mapsforge-map-android:0.18.0'
     implementation 'org.mapsforge:mapsforge-map:0.18.0'
     implementation 'org.mapsforge:mapsforge-themes:0.18.0'
+
+    //osmBonusPack
+    implementation 'com.github.MKergall:osmbonuspack:6.9.0'
 
     //Dotsindicator
     implementation 'com.tbuonomo:dotsindicator:4.3'

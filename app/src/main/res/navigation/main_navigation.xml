@@ -78,6 +78,9 @@
         <action
             android:id="@+id/action_mapFragment_to_addMarkerFragment"
             app:destination="@id/addMarkerFragment" />
+        <action
+            android:id="@+id/action_mapFragment_to_ARFragment"
+            app:destination="@id/ARFragment" />
     </fragment>
     <fragment
         android:id="@+id/statisticsFragment"
@@ -106,7 +109,14 @@
         android:id="@+id/ARFragment"
         android:name="com.example.stroll.presentation.fragment.ARFragment"
         android:label="fragment_a_r"
-        tools:layout="@layout/fragment_a_r" />
+        tools:layout="@layout/fragment_a_r">
+        <argument
+            android:name="poiName"
+            app:argType="string"/>
+        <argument
+            android:name="latLng"
+            app:argType="com.example.stroll.data.local.LatLong"/>
+    </fragment>
     <fragment
         android:id="@+id/addMarkerFragment"
         android:name="com.example.stroll.presentation.fragment.AddMarkerFragment"
