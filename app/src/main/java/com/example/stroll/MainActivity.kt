@@ -166,6 +166,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.arFragment -> {
                     checkCameraPermissions()
+                    navController.navigate(R.id.action_global_arFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.hikesFragment -> {
