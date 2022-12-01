@@ -66,6 +66,56 @@ class MainViewModel @Inject constructor(
         _isMarker.value = false
     }
 
+    private val _isMountain = MutableStateFlow(false)
+    val isMountain = _isMountain
+
+    fun isMountain() {
+        _isMountain.value = true
+    }
+    fun isNotMountain() {
+        _isMountain.value = false
+    }
+
+    private val _isFishing = MutableStateFlow(false)
+    val isFishing = _isFishing
+
+    fun isFishing() {
+        _isFishing.value = true
+    }
+    fun isNotFishing() {
+        _isFishing.value = false
+    }
+
+    private val _isAttraction = MutableStateFlow(false)
+    val isAttraction = _isAttraction
+
+    fun isAttraction() {
+        _isAttraction.value = true
+    }
+    fun isNotAttraction() {
+        _isAttraction.value = false
+    }
+
+    private val _isMisc = MutableStateFlow(false)
+    val isMisc = _isMisc
+
+    fun isMisc() {
+        _isMisc.value = true
+    }
+    fun isNotMisc() {
+        _isMisc.value = false
+    }
+
+    private val _isStartingPos = MutableStateFlow(false)
+    val isStartingPos = _isStartingPos
+
+    fun isStartingPos() {
+        _isStartingPos.value = true
+    }
+    fun isNotStartingPos() {
+        _isStartingPos.value = false
+    }
+
 
 
     init {

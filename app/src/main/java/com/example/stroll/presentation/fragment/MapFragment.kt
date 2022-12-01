@@ -189,8 +189,21 @@ class MapFragment() : BaseFragment(), Snappable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getAllMarkers.observe(viewLifecycleOwner) {
-            it.forEach { poi ->
-                myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+            if (viewModel.isMarker.value) {
+                it.forEach { poi ->
+                    if (viewModel.isMountain.value && poi.category.toString() == "Mountain") {
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                    }
+                    if (viewModel.isFishing.value && poi.category.toString() == "Fishing") {
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                    }
+                    if (viewModel.isAttraction.value && poi.category.toString() == "Attraction") {
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                    }
+                    if (viewModel.isMisc.value && poi.category.toString() == "Misc") {
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                    }
+                }
             }
         }
             viewModel.allData.observe(viewLifecycleOwner) {
@@ -199,7 +212,7 @@ class MapFragment() : BaseFragment(), Snappable {
                         myHeatMap(pos.startLatitude, pos.startLongitude, 0.001)
                     }
                 }
-                if (viewModel.isMarker.value) {
+                if (viewModel.isMarker.value && viewModel.isStartingPos.value) {
                     it.forEach { pos ->
                         myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
                     }

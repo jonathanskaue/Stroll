@@ -1,23 +1,61 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="Settings">
+        <PreferenceCategory
+            app:title="Mode"
+            android:icon="@drawable/ic_baseline_light_mode_24">
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="dark_mode"
-            android:title="Dark mode"/>
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="dark_mode"
+                android:title="Dark mode"/>
+        </PreferenceCategory>
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="marker_map"
-            android:title="Markers"/>
+        <PreferenceCategory
+            android:title="Map"
+            app:icon="@drawable/ic_baseline_my_location_24">
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="heat_map"
-            android:title="Heat map"/>
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="heat_map"
+                android:title="Heat map"/>
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="marker_map"
+                android:title="Markers"/>
+        </PreferenceCategory>
 
-    </PreferenceCategory>
+        <PreferenceCategory
+            android:defaultValue="map_poi"
+            android:title="Point of interest"
+            app:icon="@drawable/ic_baseline_location_on_24"
+            android:key="map_poi">
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="poi_mountain"
+                android:title="Mountains"/>
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="poi_fishing"
+                android:title="Fishing"/>
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="poi_attraction"
+                android:title="Attractions"/>
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="poi_misc"
+                android:title="Misc"/>
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="poi_starting"
+                android:title="Starting position"/>
+        </PreferenceCategory>
+
+
+
 
 </PreferenceScreen>
