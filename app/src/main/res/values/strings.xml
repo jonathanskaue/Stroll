@@ -80,6 +80,8 @@
         <item>Mountain</item>
         <item>Fishing</item>
         <item>Attraction</item>
+        <item>Camping</item>
+        <item>Canoe</item>
         <item>Misc</item>
     </string-array>
 </resources>

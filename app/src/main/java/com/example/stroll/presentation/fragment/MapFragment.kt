@@ -15,8 +15,11 @@ import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.*
 import android.widget.Toast
@@ -203,6 +206,12 @@ class MapFragment() : BaseFragment(), Snappable {
                     if (viewModel.isMisc.value && poi.category.toString() == "Misc") {
                         myPOIs(poi.name, poi.category, poi.lat, poi.lon)
                     }
+                    if (viewModel.isCamping.value && poi.category.toString() == "Camping") {
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                    }
+                    if (viewModel.isCanoe.value && poi.category.toString() == "Canoe") {
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                    }
                 }
             }
         }
@@ -217,6 +226,21 @@ class MapFragment() : BaseFragment(), Snappable {
                         myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
                     }
                 }
+        }
+        binding.arrowButton.setOnClickListener {
+            // If the CardView is already expanded, set its visibility
+            // to gone and change the expand less icon to expand more.
+            if (binding.hiddenView.visibility == View.VISIBLE) {
+                // The transition of the hiddenView is carried out by the TransitionManager class.
+                // Here we use an object of the AutoTransition Class to create a default transition
+                TransitionManager.beginDelayedTransition(binding.baseCardview, AutoTransition())
+                binding.hiddenView.visibility = View.GONE
+                binding.arrowButton.setImageResource(R.drawable.expand_more)
+            } else {
+                TransitionManager.beginDelayedTransition(binding.baseCardview, AutoTransition())
+                binding.hiddenView.visibility = View.VISIBLE
+                binding.arrowButton.setImageResource(R.drawable.expand_less)
+            }
         }
         binding.btnAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
@@ -474,7 +498,7 @@ class MapFragment() : BaseFragment(), Snappable {
         lifecycleScope.launch {
             var startMarker: Marker = Marker(mapView)
             startMarker.position = GeoPoint(lat, lon)
-            startMarker.icon = resources.getDrawable(R.drawable.ic_baseline_hiking_24)
+            startMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.location)
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             startMarker.setOnMarkerClickListener { marker, mapView ->
                 startMarker.title = title
@@ -525,10 +549,12 @@ class MapFragment() : BaseFragment(), Snappable {
             var poiMarker: Marker = Marker(mapView)
             poiMarker.position = GeoPoint(lat, lon)
             when(category) {
-                "Mountain" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_play_arrow_24)
-                "Fishing" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_delete_forever_24)
-                "Attraction" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_house_24)
-                "Misc" -> poiMarker.icon = resources.getDrawable(R.drawable.ic_baseline_help_24)
+                "Mountain" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.mountain)
+                "Fishing" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.fishing)
+                "Attraction" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.attraction)
+                "Camping" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.tent)
+                "Canoe" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.canoe)
+                "Misc" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.map)
             }
             poiMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             poiMarker.setOnMarkerClickListener { marker, mapView ->

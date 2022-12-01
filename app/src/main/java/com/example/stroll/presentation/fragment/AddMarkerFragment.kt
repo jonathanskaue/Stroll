@@ -50,6 +50,12 @@ class AddMarkerFragment : BaseFragment() {
                         markerCategory = "Attraction"
                     }
                     3 -> {
+                        markerCategory = "Camping"
+                    }
+                    4 -> {
+                        markerCategory = "Canoe"
+                    }
+                    5 -> {
                         markerCategory = "Misc"
                     }
                 }

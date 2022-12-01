@@ -95,6 +95,24 @@ class MainViewModel @Inject constructor(
     fun isNotAttraction() {
         _isAttraction.value = false
     }
+    private val _isCamping = MutableStateFlow(false)
+    val isCamping = _isCamping
+
+    fun isCamping() {
+        _isCamping.value = true
+    }
+    fun isNotCamping() {
+        _isCamping.value = false
+    }
+    private val _isCanoe = MutableStateFlow(false)
+    val isCanoe = _isCanoe
+
+    fun isCanoe() {
+        _isCanoe.value = true
+    }
+    fun isNotCanoe() {
+        _isCanoe.value = false
+    }
 
     private val _isMisc = MutableStateFlow(false)
     val isMisc = _isMisc

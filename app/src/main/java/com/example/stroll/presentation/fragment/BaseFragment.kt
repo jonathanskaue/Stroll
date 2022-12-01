@@ -45,6 +45,8 @@ abstract class BaseFragment : Fragment() {
         val mountains = sp?.getBoolean("poi_mountain", true)
         val fishing = sp?.getBoolean("poi_fishing", true)
         val attractions = sp?.getBoolean("poi_attraction", true)
+        val camping = sp?.getBoolean("poi_camping", true)
+        val canoe = sp?.getBoolean("poi_canoe", true)
         val misc = sp?.getBoolean("poi_misc", true)
         val startingPos = sp?.getBoolean("poi_starting", false)
 
@@ -82,6 +84,18 @@ abstract class BaseFragment : Fragment() {
         }
         if (!attractions) {
             viewModel.isNotAttraction()
+        }
+        if (camping!!) {
+            viewModel.isCamping()
+        }
+        if (!camping) {
+            viewModel.isNotCamping()
+        }
+        if (canoe!!) {
+            viewModel.isCanoe()
+        }
+        if (!canoe) {
+            viewModel.isNotCanoe()
         }
         if (misc!!) {
             viewModel.isMisc()
