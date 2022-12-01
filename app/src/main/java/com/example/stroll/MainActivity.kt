@@ -83,7 +83,6 @@ class MainActivity : AppCompatActivity() {
                     "you have given us access to your camera",
                     Toast.LENGTH_SHORT
                 ).show()
-                navController.navigate(R.id.action_global_arFragment)
             }
             else -> {
                 Toast.makeText(
@@ -166,6 +165,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.arFragment -> {
                     checkCameraPermissions()
+                    navController.navigate(R.id.action_global_arFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.hikesFragment -> {
@@ -305,7 +305,6 @@ class MainActivity : AppCompatActivity() {
             ))
         }
         else {
-            navController.navigate(R.id.action_global_arFragment)
         }
     }
 

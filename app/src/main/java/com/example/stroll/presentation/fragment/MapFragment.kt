@@ -1,10 +1,12 @@
 package com.example.stroll.presentation.fragment
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -17,13 +19,18 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.example.stroll.MainActivity
 import com.example.stroll.R
@@ -43,9 +50,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -102,6 +107,21 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
     @set:Inject
     var name = "Default"
+
+    private val cameraPermissionResult = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
+                Toast.makeText(
+                    requireContext(),
+                    "You have given us permission to use your camera",
+                    Toast.LENGTH_SHORT
+                ).show()
+                openCameraInterface()
+            }
+        }
+    }
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -192,9 +212,23 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
             }
         })
         binding.btnTakePhoto.setOnClickListener {
-            openCameraInterface()
+            checkCameraPermissions()
         }
 
+    }
+    fun checkCameraPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ){
+            cameraPermissionResult.launch(arrayOf(
+                Manifest.permission.CAMERA
+            ))
+        }
+        else {
+            openCameraInterface()
+        }
     }
 
     override fun onResume() {
@@ -203,6 +237,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         addAllPolyLines(polygonColor)
 
     }
+
 
     override fun onPause() {
         super.onPause()
