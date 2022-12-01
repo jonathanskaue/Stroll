@@ -1,15 +1,20 @@
 package com.example.stroll.presentation.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ContentValues
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.ImageDecoder
 import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import androidx.annotation.MainThread
@@ -58,7 +63,9 @@ import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
@@ -81,6 +88,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
     private var currentTimeInMillis = 0L
     private var highestHikeId = MutableLiveData<Int>()
     private var polygonColor = "#00B7FF"
+
+    private val IMAGE_CAPTURE_CODE = 1001
+    private var imageUri: Uri? = null
+    private var folder: String = ""
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
@@ -173,9 +184,17 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 highestHikeId.value = it
+                folder = context?.filesDir?.absolutePath + "/${it.plus(1)}/"
             }
-            else highestHikeId.value = 0
+            else {
+                highestHikeId.value = 0
+                folder = context?.filesDir?.absolutePath + "/1/"
+            }
         })
+        binding.btnTakePhoto.setOnClickListener {
+            openCameraInterface()
+        }
+
     }
 
     override fun onResume() {
@@ -190,12 +209,22 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         mapView?.onPause()
     }
 
-    override fun onLowMemory() {
-        super.onLowMemory()
-    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+        // Callback from camera intent
+        if (resultCode == Activity.RESULT_OK){
+            // Set image captured to image view
+            val source = imageUri?.let { ImageDecoder.createSource(requireActivity().contentResolver, it) }
+            val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
+            if (bitmap != null) {
+                saveBitmapToSpecificFolder(bitmap.toString().plus(".png"), bitmap)
+            }
+        }
+        else {
+            // Failed to take picture
+            // showAlert("Failed to take camera picture")
+        }
     }
 
     private fun subscribeToObservers() {
@@ -437,6 +466,20 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
         }
     }
 
+    private fun openCameraInterface(){
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, R.string.take_picture)
+        values.put(MediaStore.Images.Media.DESCRIPTION, R.string.take_picture_description)
+        imageUri = activity?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        // Create camera intent
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+
+        // Launch intent
+        startActivityForResult(intent, IMAGE_CAPTURE_CODE)
+    }
+
     private fun sendCommandToService(action: String) =
         Intent(requireContext(), LocationService::class.java).also {
             it.action = action
@@ -493,5 +536,25 @@ class MapFragment() : BaseFragment(), MapEventsReceiver, Snappable {
 
         val newestFolder = folders?.first()
         newestFolder?.delete()
+    }
+
+    private fun saveBitmapToSpecificFolder(filename: String, bitmap: Bitmap): Boolean {
+        return try {
+            val file = File(folder + File.separator + filename)
+            file.createNewFile()
+            val bos = ByteArrayOutputStream()
+            if(!bitmap.compress(Bitmap.CompressFormat.PNG, 95, bos)) {
+                throw IOException("Couldn't save bitmap.")
+            }
+            val bitmapData = bos.toByteArray()
+            val fos = FileOutputStream(file)
+            fos.write(bitmapData)
+            fos.flush()
+            fos.close()
+            true
+        } catch (e: IOException) {
+            e.printStackTrace()
+            false
+        }
     }
 }

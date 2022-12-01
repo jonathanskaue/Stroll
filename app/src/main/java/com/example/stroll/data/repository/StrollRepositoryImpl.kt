@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.stroll.data.local.StrollDao
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

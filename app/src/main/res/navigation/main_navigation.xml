@@ -12,9 +12,6 @@
     <action android:id="@+id/action_global_mapFragment"
         app:destination="@id/mapFragment"
         app:launchSingleTop="true" />
-    <action android:id="@+id/action_global_cameraFragment"
-        app:destination="@+id/cameraFragment"
-        app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_hikesFragment"
         app:destination="@+id/hikesFragment"
         app:launchSingleTop="true"/>
@@ -28,6 +25,9 @@
         app:launchSingleTop="true"/>
     <action android:id="@+id/action_global_introductionFragment"
         app:destination="@+id/introductionFragment"
+        app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_arFragment"
+        app:destination="@+id/ARFragment"
         app:launchSingleTop="true"/>
 
 
@@ -100,8 +100,8 @@
         android:label="Sensors"
         tools:layout="@layout/fragment_sensor"/>
     <fragment
-        android:id="@+id/cameraFragment"
-        android:name="com.example.stroll.presentation.fragment.CameraFragment"
-        android:label="Camera"
-        tools:layout="@layout/fragment_camera" />
+        android:id="@+id/ARFragment"
+        android:name="com.example.stroll.presentation.fragment.ARFragment"
+        android:label="fragment_a_r"
+        tools:layout="@layout/fragment_a_r" />
 </navigation>

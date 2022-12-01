@@ -66,6 +66,8 @@
 
     <string name="take_picture">Take Picture</string>
     <string name="take_picture_description">Take a snapshot with the camera</string>
+    <string name="plane_finding">Plane not found</string>
+    <string name="ar">AR</string>
 
     <string-array name="filter_options">
         <item>Date</item>
