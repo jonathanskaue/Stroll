@@ -480,6 +480,9 @@ class MapFragment() : BaseFragment(), Snappable {
                 startMarker.title = title
                 startMarker.subDescription = subDescription
                 startMarker.showInfoWindow()
+                if (startMarker.isInfoWindowOpen) {
+
+                }
                 Log.d("onclick", "myMarker: Hello world")
                 false
             }
