@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                     "you have given us access to your camera",
                     Toast.LENGTH_SHORT
                 ).show()
+                navController.navigate(R.id.action_global_arFragment)
             }
             else -> {
                 Toast.makeText(
@@ -305,6 +306,7 @@ class MainActivity : AppCompatActivity() {
             ))
         }
         else {
+            navController.navigate(R.id.action_global_arFragment)
         }
     }
 
