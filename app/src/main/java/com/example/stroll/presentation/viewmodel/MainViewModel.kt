@@ -14,6 +14,7 @@ import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
 import com.example.stroll.other.SortType
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -149,8 +150,12 @@ class MainViewModel @Inject constructor(
         _isInfoWindowOpen.value = false
     }
 
+    private var _currentMarker = MutableLiveData<org.osmdroid.views.overlay.Marker>()
+    val currentMarker: LiveData<org.osmdroid.views.overlay.Marker> = _currentMarker
 
-
+    fun setMarker(marker: org.osmdroid.views.overlay.Marker) {
+        _currentMarker.value = marker
+    }
 
     init {
         viewModelScope.launch {

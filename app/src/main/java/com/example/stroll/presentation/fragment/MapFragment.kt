@@ -322,6 +322,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             val source = imageUri?.let { ImageDecoder.createSource(requireActivity().contentResolver, it) }
             val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
             if (bitmap != null) {
+
                 saveBitmapToSpecificFolder(bitmap.toString().plus(".png"), bitmap)
             }
         }
@@ -562,7 +563,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         val arButton = infoWindow.view.findViewById<ImageButton>(R.id.ibShowARInfoWindow)
         var adresses = geocoder.getFromLocation(lat, lon, 1)
         lifecycleScope.launch {
-            var poiMarker: Marker = Marker(mapView)
+            val poiMarker: Marker = Marker(mapView)
             poiMarker.position = GeoPoint(lat, lon)
             when(category) {
                 "Mountain" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.mountain)
@@ -606,7 +607,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
-    suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {
+    private suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {
         return withContext(Dispatchers.IO) {
             val path = context?.filesDir?.absolutePath + "/$id/"
             val dir = File(path).listFiles()
@@ -720,6 +721,7 @@ class MarkerWindow(mapView: MapView) :
 
     override fun onOpen(item: Any?) {
         closeAllInfoWindowsOn(mapView)
+
         mView.setOnClickListener{
             close()
         }

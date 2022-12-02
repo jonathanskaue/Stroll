@@ -27,6 +27,7 @@ data class MarkerEntity(
     var category: String? = "",
     var lat: Double = 0.0,
     var lon: Double = 0.0,
+    var photo: String? = null
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null

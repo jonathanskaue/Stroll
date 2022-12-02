@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="Create Point of interest" />
+        android:text="@string/create_point_of_interest" />
 
     <EditText
         android:id="@+id/markerName"
@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:helperText="Marker Name"
-        android:hint="Marker Name"
+        android:hint="@string/marker_name"
         />
     <Spinner
         android:id="@+id/markerCategory"
@@ -47,7 +47,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Create Marker"
+        android:text="@string/create_marker"
         />
+
+    <Button
+        android:id="@+id/btnAddPhotoToMarker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/markerCategory"
+        android:text="@string/add_photo"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
