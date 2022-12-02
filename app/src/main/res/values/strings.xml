@@ -72,6 +72,7 @@
     <string name="create_marker">Create Marker</string>
     <string name="create_point_of_interest">Create Point of interest</string>
     <string name="marker_name">Marker Name</string>
+    <string name="history">History</string>
 
     <string-array name="filter_options">
         <item>Date</item>
