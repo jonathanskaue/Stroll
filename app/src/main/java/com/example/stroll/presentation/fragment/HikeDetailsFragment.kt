@@ -4,11 +4,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.example.stroll.databinding.FragmentHomeBinding
 
 
@@ -90,10 +92,6 @@ class HikeDetailsFragment : BaseFragment() {
                 val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
                 binding.tvHikeDate.text = dateFormat.format(calendar.time)
 
-                Log.d("gethikebyid", "onViewCreated: ${it}")
-                Log.d("gethikebyid", "onViewCreated: ${viewModel.address.value}")
-                Log.d("gethikebyid", "onViewCreated: ${viewModel.city.value}")
-
             }
         }
     }
@@ -112,11 +110,8 @@ class HikeDetailsFragment : BaseFragment() {
     private fun loadHikePhotosIntoRecyclerView(){
         lifecycleScope.launch{
             val photos = loadHikePhotos()
-            if (photos.isEmpty()) {
-                binding.PhotosTitle.text = "No Photos"
-            }
-            else {
-                binding.PhotosTitle.text = "Photos"
+            if (photos.isNotEmpty()) {
+                binding.cvPrivatePhotos.isVisible = true
             }
             photoAdapter.submitList(photos)
         }

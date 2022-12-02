@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -20,6 +21,8 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
@@ -32,6 +35,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
@@ -75,6 +81,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 import kotlin.math.cos
 import kotlin.math.round
 import kotlin.math.sin
@@ -88,6 +95,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var latLng: GeoPoint
     private lateinit var myLocationOverlay: MyLocationNewOverlay
+    private lateinit var geocoder: Geocoder
     private val viewModel: MainViewModel by activityViewModels()
 
     private var isTracking = false
@@ -171,12 +179,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             }
         }
 
-
-
         controller.setZoom(18.0)
 
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
+        geocoder = Geocoder(this.requireContext(), Locale.getDefault())
 
         return binding.root
     }
@@ -188,22 +195,22 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             if (viewModel.isMarker.value) {
                 it.forEach { poi ->
                     if (viewModel.isMountain.value && poi.category.toString() == "Mountain") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
                     }
                     if (viewModel.isFishing.value && poi.category.toString() == "Fishing") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
                     }
                     if (viewModel.isAttraction.value && poi.category.toString() == "Attraction") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
                     }
                     if (viewModel.isMisc.value && poi.category.toString() == "Misc") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
                     }
                     if (viewModel.isCamping.value && poi.category.toString() == "Camping") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
                     }
                     if (viewModel.isCanoe.value && poi.category.toString() == "Canoe") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon)
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
                     }
                 }
             }
@@ -456,16 +463,16 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 latLng.latitude,
                 latLng.longitude
             )
-            viewModel.addDataToRoom(hike)
+            viewModel.addDataToRoom(hike, findNavController())
             Snackbar.make(
                 requireActivity().findViewById(R.id.hikesFragment),
                 "Hike saved successfully",
                 Snackbar.LENGTH_LONG
             ).show()
             sendCommandToService(ACTION_STOP)
-            findNavController().navigate(R.id.action_mapFragment_to_hikesFragment)
         }, MapSnapshot.INCLUDE_FLAG_UPTODATE + INCLUDE_FLAG_SCALED, mapView)
         Thread(mapSnapshot).start()
+
     }
 
     private fun addAllPolyLines(color: String) {
@@ -546,7 +553,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         mapView.overlayManager?.add(polygon)
     }
 
-    private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double) {
+    private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double, id: String) {
+        val infoWindow = MarkerWindow(mapView)
+        val infoImage = infoWindow.view.findViewById<ImageView>(R.id.ivInfoWindow)
+        val titleText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowTitle)
+        val locationText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowDestination)
+        val categoryText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowCategory)
+        val arButton = infoWindow.view.findViewById<ImageButton>(R.id.ibShowARInfoWindow)
+        var adresses = geocoder.getFromLocation(lat, lon, 1)
         lifecycleScope.launch {
             var poiMarker: Marker = Marker(mapView)
             poiMarker.position = GeoPoint(lat, lon)
@@ -558,14 +572,26 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 "Canoe" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.canoe)
                 "Misc" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.map)
             }
-            val infoWindow = MarkerWindow(mapView)
+            var myPhoto: InternalStoragePhoto
+            var myDrawable: Bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+            if (loadMyPhoto(id).isNotEmpty()) {
+                myPhoto = loadMyPhoto(id).first()
+                myDrawable = BitmapDrawable(resources, myPhoto.bmp).bitmap
+            }
+            Glide.with(requireContext())
+                .load(myDrawable)
+                .transform(CircleCrop())
+                .into(infoImage)
+            titleText.text = name
+            locationText.text = adresses?.first()?.getAddressLine(0)
+            categoryText.text = category
             poiMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             poiMarker.setOnMarkerClickListener { marker, mapView ->
                 poiMarker.title = name
                 poiMarker.infoWindow = infoWindow
-                val moveButton = poiMarker.infoWindow.view.findViewById<ImageButton>(R.id.move_button)
-                moveButton.setOnClickListener{
-                    Log.d("Sup", "myPOIs: moveButton clicked ")
+                arButton.setOnClickListener{
+                    val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon))
+                    findNavController().navigate(action)
                 }
                 viewModel.isInfoWindowOpen()
                 poiMarker.showInfoWindow()
@@ -580,7 +606,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
-    private suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {
+    suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {
         return withContext(Dispatchers.IO) {
             val path = context?.filesDir?.absolutePath + "/$id/"
             val dir = File(path).listFiles()
@@ -694,16 +720,11 @@ class MarkerWindow(mapView: MapView) :
 
     override fun onOpen(item: Any?) {
         closeAllInfoWindowsOn(mapView)
-        val moveButton = mView.findViewById<ImageButton>(R.id.move_button)
-        val deleteButton = mView.findViewById<Button>(R.id.delete_button)
-
         mView.setOnClickListener{
             close()
         }
     }
 
     override fun onClose() {
-        val moveButton = mView.findViewById<ImageButton>(R.id.move_button)
     }
-
 }

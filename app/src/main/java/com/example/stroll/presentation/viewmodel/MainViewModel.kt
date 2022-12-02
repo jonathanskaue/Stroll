@@ -1,8 +1,13 @@
 package com.example.stroll.presentation.viewmodel
 
 import android.graphics.Bitmap
+import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.data.local.MarkerEntity
 import com.example.stroll.data.local.StrollDataEntity
@@ -218,9 +223,10 @@ class MainViewModel @Inject constructor(
         _currentLatLng.value = latLng
     }
 
-    fun addDataToRoom(hike: StrollDataEntity) {
+    fun addDataToRoom(hike: StrollDataEntity, controller: NavController) {
         viewModelScope.launch(Dispatchers.Main) {
             strollRepo.insertData(hike)
+            controller.navigate(R.id.action_mapFragment_to_hikesFragment)
         }
     }
 
