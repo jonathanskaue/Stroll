@@ -109,7 +109,7 @@ class AddMarkerFragment : BaseFragment() {
                             category = markerCategory,
                             lat = viewModel.currentLatLng.value!!.latitude,
                             lon = viewModel.currentLatLng.value!!.longitude,
-                            photo = bitmapForMarker.toString()
+                            photo = bitmapForMarker.toString().plus(".png")
                         )
                     )
                 }

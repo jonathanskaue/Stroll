@@ -6,7 +6,6 @@
     tools:context=".presentation.fragment.MapFragment">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.example.stroll.presentation.viewmodel.MainViewModel" />
@@ -32,6 +31,7 @@
             android:layout_marginBottom="16dp"
             android:text="start hike"
             android:src="@drawable/ic_baseline_play_arrow_24"
+            android:backgroundTint="?attr/colorOnPrimaryContainer"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,25 +43,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:src="@drawable/ic_baseline_flag_24"
+            android:backgroundTint="?attr/colorOnPrimaryContainer"
             android:text="FINISH HIKE"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/toggleHikeBtn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/toggleHikeBtn"
             tools:visibility="visible" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/cancelHikeBtn2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_baseline_cancel_24"
-            android:text="CANCEL HIKE"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/toggleHikeBtn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/toggleHikeBtn"
-            tools:visibility="gone" />
         <!-- This is ImageButton for the expansion icon -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/arrow_button"
@@ -69,6 +57,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/expand_less"
+            android:backgroundTint="?attr/colorOnPrimaryContainer"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/toggleHikeBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toggleHikeBtn" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddMarker"
+            android:translationZ="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_add_location_24"
+            android:backgroundTint="?attr/colorOnPrimaryContainer"
             android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/toggleHikeBtn"
             app:layout_constraintEnd_toEndOf="parent"
@@ -91,6 +93,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/base_cardview"
             style="@style/Base.CardView"
+            android:backgroundTint="?attr/colorSurfaceVariant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -141,10 +144,11 @@
 
                     <!-- Child LinearLayout 1 -->
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/btnTakePhoto"
+                        android:id="@+id/distanceHiked"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="2dp"
                         app:cardUseCompatPadding="true"
+                        android:visibility="gone"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -152,15 +156,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
-                            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                                android:id="@+id/btnShowMarkerInAr2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:src="@drawable/ic_baseline_view_in_ar_24"
-                                android:layout_margin="8dp"
-                                android:visibility="gone" />
-
                             <ImageView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
@@ -168,19 +163,21 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:layout_marginBottom="10dp"
-                                android:src="@drawable/ic_baseline_camera_alt_24" />
+                                android:src="@drawable/ic_baseline_height_24" />
 
                             <TextView
+                                android:id="@+id/tvDistanceHiked"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginTop="20dp"
-                                android:text="Take Photo"
-                                android:textColor="#000000"
+                                android:text="104m"
                                 android:textSize="20dp" />
                         </LinearLayout>
 
+
                     </androidx.cardview.widget.CardView>
+
                     <!-- Child LinearLayout 2 -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/btnAddMarker"
@@ -202,27 +199,22 @@
                                 android:layout_marginEnd="10dp"
                                 android:layout_marginBottom="10dp"
                                 android:src="@drawable/ic_baseline_add_location_24" />
-
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginTop="20dp"
                                 android:text="Add POI"
-                                android:textColor="#000000"
                                 android:textSize="20dp" />
                         </LinearLayout>
-
-
                     </androidx.cardview.widget.CardView>
-
                     <!-- Child LinearLayout 3 -->
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/btnShowMarkerInAr"
+                        android:id="@+id/btnTakePhoto"
                         app:cardCornerRadius="4dp"
                         app:cardElevation="2dp"
+                        android:visibility="gone"
                         app:cardUseCompatPadding="true"
-                        android:visibility="invisible"
                         android:foreground="?android:attr/selectableItemBackground"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -230,6 +222,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
+
                             <ImageView
                                 android:layout_width="50dp"
                                 android:layout_height="50dp"
@@ -237,20 +230,20 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:layout_marginBottom="10dp"
-                                android:src="@drawable/ic_baseline_view_in_ar_24" />
+                                android:src="@drawable/ic_baseline_camera_alt_24" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginTop="20dp"
-                                android:text="Last Marker in AR"
-                                android:textColor="#000000"
+                                android:text="Take Photo"
                                 android:textSize="20dp" />
                         </LinearLayout>
 
-
                     </androidx.cardview.widget.CardView>
+
+
 
 
                     <!-- Child LinearLayout 4 -->
@@ -283,7 +276,6 @@
                                 android:layout_marginStart="20dp"
                                 android:layout_marginTop="20dp"
                                 android:text="Cancel Hike"
-                                android:textColor="#000000"
                                 android:textSize="20dp" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>

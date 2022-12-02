@@ -61,10 +61,7 @@ class RegisterFragment : BaseFragment() {
         binding.tvContinue.setOnClickListener {
             val success = writePersonalDataToSharedPref()
             if(success) {
-                if (viewModel.allData.value?.isEmpty() == true) {
                     findNavController().navigate(R.id.action_global_introductionFragment)
-                }
-                findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
             } else {
                 Snackbar.make(requireView(), "Please enter all the fields", Snackbar.LENGTH_SHORT).show()
             }

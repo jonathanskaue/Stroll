@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.location.Geocoder
+import android.location.Geocoder.GeocodeListener
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -195,22 +196,22 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             if (viewModel.isMarker.value) {
                 it.forEach { poi ->
                     if (viewModel.isMountain.value && poi.category.toString() == "Mountain") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isFishing.value && poi.category.toString() == "Fishing") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isAttraction.value && poi.category.toString() == "Attraction") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isMisc.value && poi.category.toString() == "Misc") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isCamping.value && poi.category.toString() == "Camping") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isCanoe.value && poi.category.toString() == "Canoe") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString())
+                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                 }
             }
@@ -251,6 +252,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
         }
+        binding.fabAddMarker.setOnClickListener {
+            viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
+            Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
+            findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
+        }
         binding.toggleHikeBtn.setOnClickListener {
             toggleHike()
         }
@@ -275,13 +281,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         })
         binding.btnTakePhoto.setOnClickListener {
             checkCameraPermissions()
-        }
-
-        viewModel.isInfoWindowOpen.observe(viewLifecycleOwner) {
-            if (it == true){
-                binding.btnShowMarkerInAr.visibility = View.VISIBLE
-            }
-            else binding.btnShowMarkerInAr.visibility = View.GONE
         }
 
     }
@@ -348,7 +347,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             val formattedTime = Utility.getFormattedStopWatchTime(currentTimeInMillis, true)
             binding.timerTV.text = formattedTime
             if (currentTimeInMillis > 0L) {
+                binding.fabAddMarker.visibility = View.GONE
+                binding.arrowButton.visibility = View.VISIBLE
                 binding.cancelHikeBtn.isVisible = true
+                binding.btnTakePhoto.isVisible = true
+                binding.distanceHiked.isVisible = true
             }
         })
     }
@@ -503,6 +506,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             polygon.outlinePaint.color = Color.parseColor(color)
             polygon.addPoint(GeoPoint(preLastLatLng.latitude, preLastLatLng.longitude))
             polygon.addPoint(GeoPoint(lastLatLng.latitude, lastLatLng.longitude))
+            (if (myLocationOverlay.myLocation != null) {
+                binding.tvDistanceHiked.text = myLocationOverlay.myLocation.altitude.toString()
+                }
+            )
             mapView.overlayManager?.add(polygon)
         }
     }
@@ -554,14 +561,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         mapView.overlayManager?.add(polygon)
     }
 
-    private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double, id: String) {
+    private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double, id: String, myPhoto: String?) {
         val infoWindow = MarkerWindow(mapView)
         val infoImage = infoWindow.view.findViewById<ImageView>(R.id.ivInfoWindow)
         val titleText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowTitle)
         val locationText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowDestination)
         val categoryText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowCategory)
         val arButton = infoWindow.view.findViewById<ImageButton>(R.id.ibShowARInfoWindow)
-        var adresses = geocoder.getFromLocation(lat, lon, 1)
+
         lifecycleScope.launch {
             val poiMarker: Marker = Marker(mapView)
             poiMarker.position = GeoPoint(lat, lon)
@@ -573,34 +580,34 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 "Canoe" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.canoe)
                 "Misc" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.map)
             }
-            var myPhoto: InternalStoragePhoto
-            var myDrawable: Bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
-            if (loadMyPhoto(id).isNotEmpty()) {
-                myPhoto = loadMyPhoto(id).first()
-                myDrawable = BitmapDrawable(resources, myPhoto.bmp).bitmap
+            try {
+                Glide.with(requireContext())
+                    .load(BitmapFactory.decodeFile(context?.filesDir?.path + "/${myPhoto}"))
+                    .transform(CircleCrop())
+                    .into(infoImage)
+            } catch (e: java.lang.NullPointerException) {
+                Log.d("TAG", "myPOIs: Myphoto is null")
             }
-            Glide.with(requireContext())
-                .load(myDrawable)
-                .transform(CircleCrop())
-                .into(infoImage)
             titleText.text = name
-            locationText.text = adresses?.first()?.getAddressLine(0)
             categoryText.text = category
             poiMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             poiMarker.setOnMarkerClickListener { marker, mapView ->
                 poiMarker.title = name
                 poiMarker.infoWindow = infoWindow
+                var addresses = ""
+                addresses = geocoder.getFromLocation(lat, lon, 1)?.first()?.getAddressLine(0).toString()
+                if (addresses.isNullOrEmpty()) {
+                    locationText.text = "${round(lat * 10000) / 10000}, ${round(lon * 10000) / 10000}"
+                }
+                else {
+                    locationText.text = addresses
+                }
                 arButton.setOnClickListener{
                     val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon))
                     findNavController().navigate(action)
                 }
                 viewModel.isInfoWindowOpen()
                 poiMarker.showInfoWindow()
-                binding.btnShowMarkerInAr.visibility = View.VISIBLE
-                binding.btnShowMarkerInAr.setOnClickListener{
-                    val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon))
-                    findNavController().navigate(action)
-                }
                 false
             }
             mapView.overlayManager?.add(poiMarker)
@@ -611,7 +618,19 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         return withContext(Dispatchers.IO) {
             val path = context?.filesDir?.absolutePath + "/$id/"
             val dir = File(path).listFiles()
-            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
+            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }.map {
+                val bytes = it.readBytes()
+                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                InternalStoragePhoto(it.name, bmp)
+            }
+        }
+    }
+
+    private suspend fun loadMyMarkerPhoto(id: String): List<InternalStoragePhoto> {
+        return withContext(Dispatchers.IO) {
+            val path = context?.filesDir?.absolutePath + "/$id/"
+            val dir = File(path).listFiles()
+            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }.map {
                 val bytes = it.readBytes()
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 InternalStoragePhoto(it.name, bmp)

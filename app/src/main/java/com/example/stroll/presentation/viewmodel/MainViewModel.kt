@@ -236,7 +236,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun addMarkerDataToRoom(markerData: MarkerEntity) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             strollRepo.insertMarkerData(markerData)
         }
     }

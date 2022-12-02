@@ -64,7 +64,7 @@ class IntroductionFragment() : BaseFragment() {
         lifecycleScope.launch {
             viewModel.isStarted.collect {
                 if (viewModel.isStarted.value) {
-                    view?.findNavController()?.navigate(R.id.action_global_hikesFragment)
+                    view?.findNavController()?.navigate(R.id.action_global_homeFragment)
                 }
             }
         }
