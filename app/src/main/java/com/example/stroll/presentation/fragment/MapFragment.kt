@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
@@ -315,6 +316,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             val source = imageUri?.let { ImageDecoder.createSource(requireActivity().contentResolver, it) }
             val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
             if (bitmap != null) {
+
                 saveBitmapToSpecificFolder(bitmap.toString().plus(".png"), bitmap)
             }
         }
@@ -548,7 +550,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double) {
         lifecycleScope.launch {
-            var poiMarker: Marker = Marker(mapView)
+            val poiMarker: Marker = Marker(mapView)
             poiMarker.position = GeoPoint(lat, lon)
             when(category) {
                 "Mountain" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.mountain)
@@ -563,16 +565,17 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             poiMarker.setOnMarkerClickListener { marker, mapView ->
                 poiMarker.title = name
                 poiMarker.infoWindow = infoWindow
-                val moveButton = poiMarker.infoWindow.view.findViewById<ImageButton>(R.id.move_button)
-                moveButton.setOnClickListener{
-                    Log.d("Sup", "myPOIs: moveButton clicked ")
-                }
-                viewModel.isInfoWindowOpen()
+                val infoWindowTitle = poiMarker.infoWindow.view.findViewById<TextView>(R.id.text_view)
+                infoWindowTitle.text = poiMarker.title
+                val arButton = poiMarker.infoWindow.view.findViewById<ImageButton>(R.id.btnShowMarkerInAr)
+                val photoToMarkerButton = poiMarker.infoWindow.view.findViewById<ImageButton>(R.id.btnAddPhotoToMarker)
                 poiMarker.showInfoWindow()
-                binding.btnShowMarkerInAr.visibility = View.VISIBLE
-                binding.btnShowMarkerInAr.setOnClickListener{
+                arButton.setOnClickListener{
                     val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon))
                     findNavController().navigate(action)
+                }
+                photoToMarkerButton.setOnClickListener{
+                    checkCameraPermissions()
                 }
                 false
             }
@@ -694,16 +697,13 @@ class MarkerWindow(mapView: MapView) :
 
     override fun onOpen(item: Any?) {
         closeAllInfoWindowsOn(mapView)
-        val moveButton = mView.findViewById<ImageButton>(R.id.move_button)
-        val deleteButton = mView.findViewById<Button>(R.id.delete_button)
 
         mView.setOnClickListener{
-            close()
+            closeAllInfoWindowsOn(mapView)
         }
     }
 
     override fun onClose() {
-        val moveButton = mView.findViewById<ImageButton>(R.id.move_button)
     }
 
 }

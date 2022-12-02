@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
 
     <TextView
         android:id="@+id/text_view"
@@ -24,24 +25,21 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/move_button"
-            android:layout_width="120dp"
+            android:id="@+id/btnShowMarkerInAr"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
-            android:backgroundTint="@android:color/darker_gray"
-            android:src="@drawable/ic_baseline_view_in_ar_24"
-            android:text="Move" />
+            android:src="@drawable/ic_baseline_view_in_ar_24" />
 
 
-        <Button
-            android:id="@+id/delete_button"
-            android:layout_width="120dp"
+        <ImageButton
+            android:id="@+id/btnAddPhotoToMarker"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="10dp"
-            android:backgroundTint="@android:color/darker_gray"
-            android:text="Delete" />
+            android:src="@drawable/ic_baseline_camera_alt_24" />
 
     </LinearLayout>
 
