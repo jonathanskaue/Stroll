@@ -332,16 +332,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     }
 
     private fun subscribeToObservers() {
-        LocationService.isTracking.observe(viewLifecycleOwner, Observer {
-            updateTracking(it)
-        })
-
-        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
-            pathPoints = it
-            addLatestPolyline(polygonColor)
-
-        })
-
         LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
             currentTimeInMillis = it
             val formattedTime = Utility.getFormattedStopWatchTime(currentTimeInMillis, true)
@@ -353,6 +343,15 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 binding.btnTakePhoto.isVisible = true
                 binding.distanceHiked.isVisible = true
             }
+        })
+        LocationService.isTracking.observe(viewLifecycleOwner, Observer {
+            updateTracking(it)
+        })
+
+        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
+            pathPoints = it
+            addLatestPolyline(polygonColor)
+
         })
     }
 
