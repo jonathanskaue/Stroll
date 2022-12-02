@@ -18,6 +18,8 @@ import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.*
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
@@ -40,7 +42,6 @@ import com.example.stroll.databinding.FragmentMapBinding
 import com.example.stroll.other.Constants.ACTION_PAUSE
 import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.other.Constants.ACTION_STOP
-import com.example.stroll.other.MapEventsReceiverImpl
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -50,7 +51,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import org.osmdroid.api.IMapView
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -63,7 +63,6 @@ import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Overlay.Snappable
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.infowindow.InfoWindow
@@ -82,14 +81,13 @@ import kotlin.math.sin
 
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
+class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var latLng: GeoPoint
     private lateinit var myLocationOverlay: MyLocationNewOverlay
-    private lateinit var mapEventsReceiver: MapEventsReceiverImpl
     private val viewModel: MainViewModel by activityViewModels()
 
     private var isTracking = false
@@ -156,9 +154,6 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
 
         controller = mapView.controller as MapController
 
-
-
-        mapEventsReceiver = MapEventsReceiverImpl()
         val mapEventsOverLay = MapEventsOverlay(this)
         mapView.overlays.add(mapEventsOverLay)
 
@@ -563,9 +558,15 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
                 "Canoe" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.canoe)
                 "Misc" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.map)
             }
+            val infoWindow = MarkerWindow(mapView)
             poiMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
             poiMarker.setOnMarkerClickListener { marker, mapView ->
                 poiMarker.title = name
+                poiMarker.infoWindow = infoWindow
+                val moveButton = poiMarker.infoWindow.view.findViewById<ImageButton>(R.id.move_button)
+                moveButton.setOnClickListener{
+                    Log.d("Sup", "myPOIs: moveButton clicked ")
+                }
                 viewModel.isInfoWindowOpen()
                 poiMarker.showInfoWindow()
                 binding.btnShowMarkerInAr.visibility = View.VISIBLE
@@ -610,10 +611,6 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
             it.action = action
             requireContext().startService(it)
         }
-
-    override fun onSnapToItem(x: Int, y: Int, snapPoint: Point?, mapView: IMapView?): Boolean {
-        return true
-    }
 
     private fun saveBitmapToInternalStorage(filename: String, bitmap: Bitmap): Boolean {
         return try {
@@ -690,4 +687,23 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
         viewModel.isNotInfoWindowOpen()
         return false
     }
+}
+
+class MarkerWindow(mapView: MapView) :
+        InfoWindow(R.layout.info_window, mapView) {
+
+    override fun onOpen(item: Any?) {
+        closeAllInfoWindowsOn(mapView)
+        val moveButton = mView.findViewById<ImageButton>(R.id.move_button)
+        val deleteButton = mView.findViewById<Button>(R.id.delete_button)
+
+        mView.setOnClickListener{
+            close()
+        }
+    }
+
+    override fun onClose() {
+        val moveButton = mView.findViewById<ImageButton>(R.id.move_button)
+    }
+
 }

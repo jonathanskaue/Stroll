@@ -40,9 +40,6 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private var activityTrackingEnabled = false
-    private lateinit var activityTransitionList: List<ActivityTransition>
-
     private val TRANSITIONS_RECEIVER_ACTION: String =
         BuildConfig.APPLICATION_ID + "TRANSITIONS_RECEIVER_ACTION"
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
@@ -54,21 +51,13 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) &&
-                    permissions.getOrDefault(Manifest.permission.ACTIVITY_RECOGNITION, false) -> {
-                Toast.makeText(
-                    applicationContext,
-                    "You have given us permission to use your precise location and activity",
-                    Toast.LENGTH_SHORT
-                ).show()
-                navController.navigate(R.id.action_global_mapFragment)
-            }
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 Toast.makeText(
                     applicationContext,
-                    "you have given us permission to use your precise location, but we need your permissionto use your activity too",
+                    "you have given us permission to use your precise location",
                     Toast.LENGTH_SHORT
                 ).show()
+                navController.navigate(R.id.action_global_mapFragment)
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 Toast.makeText(
@@ -103,40 +92,8 @@ class MainActivity : AppCompatActivity() {
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        activityTrackingEnabled = false
-
-        activityTransitionList = ArrayList()
-
-        (activityTransitionList as ArrayList<ActivityTransition>).add(
-            ActivityTransition.Builder()
-                .setActivityType(DetectedActivity.WALKING)
-                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-                .build()
-        )
-        (activityTransitionList as ArrayList<ActivityTransition>).add(
-            ActivityTransition.Builder()
-                .setActivityType(DetectedActivity.WALKING)
-                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-                .build()
-        )
-        (activityTransitionList as ArrayList<ActivityTransition>).add(
-            ActivityTransition.Builder()
-                .setActivityType(DetectedActivity.STILL)
-                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
-                .build()
-        )
-        (activityTransitionList as ArrayList<ActivityTransition>).add(
-            ActivityTransition.Builder()
-                .setActivityType(DetectedActivity.STILL)
-                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
-                .build()
-        )
 
         val intent = Intent(TRANSITIONS_RECEIVER_ACTION)
-        mActivityTransitionsPendingIntent =
-            PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-        val viewModel = viewModel
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -205,59 +162,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onPause() {
-        if (activityTrackingEnabled) {
-            disableActivityTransitions()
-        }
-        super.onPause()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (activityRecognitionPermissionApproved() && !activityTrackingEnabled) {
-            enableActivityTransitions()
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun enableActivityTransitions() {
-        val request = ActivityTransitionRequest(activityTransitionList)
-
-        val task: Task<Void> = ActivityRecognition.getClient(this).requestActivityTransitionUpdates(
-            request,
-            mActivityTransitionsPendingIntent!!
-        )
-
-        task.addOnSuccessListener {
-            activityTrackingEnabled = true
-        }
-        task.addOnFailureListener { e ->
-            Log.e(TAG, "Transitions Api could NOT be registered: $e")
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun disableActivityTransitions() {
-        ActivityRecognition.getClient(this).removeActivityTransitionUpdates(
-            mActivityTransitionsPendingIntent!!
-        )
-            .addOnSuccessListener {
-                activityTrackingEnabled = false
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Transitions could not be unregistered: $e")
-            }
-    }
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         navigateToMapFragmentIfNeeded(intent)
@@ -277,17 +181,12 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.ACTIVITY_RECOGNITION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             locationPermissionRequest.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACTIVITY_RECOGNITION,
                 )
             )
         } else {
@@ -310,38 +209,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun activityRecognitionPermissionApproved(): Boolean {
-        return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACTIVITY_RECOGNITION)
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp()
-    }
-
-    fun onClickEnableOrDisableActivityRecognition(view: View?) {
-        if (activityRecognitionPermissionApproved()) {
-            if (activityTrackingEnabled) {
-                disableActivityTransitions()
-            } else {
-                enableActivityTransitions()
-            }
-        }
-        else {
-            checkLocationPermissions()
-        }
-    }
-
-    inner class TransitionsReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (ActivityTransitionResult.hasResult(intent)) {
-                val result = ActivityTransitionResult.extractResult(intent)
-
-                /*for (event in result!!.transitionEvents) {
-                    viewModel.setDetectedActivity(toActivityString(event.activityType))
-                }*/
-            }
-        }
     }
 
     companion object {
