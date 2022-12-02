@@ -72,4 +72,12 @@
         <item>Distance</item>
         <item>Average Speed</item>
     </string-array>
+
+    <!-- statistics - sort by: -->
+    <string name="sort_by">Sort by:</string>
+    <string name="sort_by_distance">Distance</string>
+    <string name="sort_by_averageSpeed">Average Speed</string>
+    <string name="sort_by_time">Time</string>
+    <string name="check_top5">Show Top 5</string>
+
 </resources>

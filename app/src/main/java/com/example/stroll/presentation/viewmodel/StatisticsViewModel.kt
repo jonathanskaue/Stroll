@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
+import com.example.stroll.other.SortType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +29,10 @@ class StatisticsViewModel @Inject constructor(
     val totalTimeInMillisHiked = strollRepo.getTotalTimeInMillis
     val totalAverageSpeed = strollRepo.getTotalAverageSpeed
     val hikeSortedByDate = strollRepo.selectAllHikesSortedByDate
-
+    val hikeSortedByTime = strollRepo.selectAllHikesSortedByTimeInMillis
+    val hikeSortedByDistance = strollRepo.selectAllHikesSortedByDistance
+    val hikeSortedBySpeed = strollRepo.selectAllHikesSortedByAvgSpeed
+    var sortType = SortType.DATE
     fun getHikeById(id: Int) {
         viewModelScope.launch {
             hikeById = strollRepo.getHikeById(id)

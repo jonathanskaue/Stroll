@@ -17,6 +17,7 @@ data class StrollDataEntity(
     var startLatitude: Double = 0.0,
     var startLongitude: Double = 0.0,
 ) {
+
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
 }
