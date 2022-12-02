@@ -225,6 +225,10 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
                     }
                 }
         }
+        binding.btnCenterLocation.setOnClickListener {
+            controller.animateTo(myLocationOverlay.myLocation, 18.0, 1000L)
+            myLocationOverlay.enableFollowLocation()
+        }
         binding.arrowButton.setOnClickListener {
             // If the CardView is already expanded, set its visibility
             // to gone and change the expand less icon to expand more.
@@ -233,11 +237,11 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
                 // Here we use an object of the AutoTransition Class to create a default transition
                 TransitionManager.beginDelayedTransition(binding.baseCardview, AutoTransition())
                 binding.hiddenView.visibility = View.GONE
-                binding.arrowButton.setImageResource(R.drawable.expand_more)
+                binding.arrowButton.setImageResource(R.drawable.expand_less)
             } else {
                 TransitionManager.beginDelayedTransition(binding.baseCardview, AutoTransition())
                 binding.hiddenView.visibility = View.VISIBLE
-                binding.arrowButton.setImageResource(R.drawable.expand_less)
+                binding.arrowButton.setImageResource(R.drawable.expand_more)
             }
         }
         binding.btnAddMarker.setOnClickListener {
@@ -354,6 +358,7 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
             .setPositiveButton("YES") {_,_ ->
                 deleteFolderWhenCancellingHike()
                 sendCommandToService(ACTION_STOP) // another idea: calling stopHike() with parameter
+                findNavController().navigate(R.id.action_global_homeFragment)
             }
             .setNegativeButton("NO") { dialogInterface, _ ->
                 dialogInterface.cancel()
@@ -509,11 +514,6 @@ class MapFragment() : BaseFragment(), Snappable, MapEventsReceiver {
                 startMarker.title = title
                 startMarker.subDescription = subDescription
                 startMarker.showInfoWindow()
-                if (startMarker.isInfoWindowOpen) {
-                }
-                else{
-                    binding.btnShowMarkerInAr.visibility = View.GONE
-                }
                 Log.d("onclick", "myMarker: Hello world")
                 false
             }
