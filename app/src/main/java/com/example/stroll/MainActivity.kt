@@ -66,14 +66,6 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
-                Toast.makeText(
-                    applicationContext,
-                    "you have given us access to your camera",
-                    Toast.LENGTH_SHORT
-                ).show()
-                navController.navigate(R.id.action_global_arFragment)
-            }
             else -> {
                 Toast.makeText(
                     applicationContext,
@@ -104,7 +96,6 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.hikesFragment,
                 R.id.mapFragment,
-                R.id.arFragment
             )
         )
         setupActionBarWithNavController(navController, bottomBarConfiguration)
@@ -119,11 +110,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.mapFragment -> {
                     checkLocationPermissions()
-                    return@setOnItemSelectedListener true
-                }
-                R.id.arFragment -> {
-                    checkCameraPermissions()
-                    navController.navigate(R.id.action_global_arFragment)
                     return@setOnItemSelectedListener true
                 }
                 R.id.hikesFragment -> {
@@ -191,21 +177,6 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
             navController.navigate(R.id.action_global_mapFragment)
-        }
-    }
-
-    fun checkCameraPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.CAMERA
-        ) != PackageManager.PERMISSION_GRANTED
-        ){
-            locationPermissionRequest.launch(arrayOf(
-                Manifest.permission.CAMERA
-            ))
-        }
-        else {
-            navController.navigate(R.id.action_global_arFragment)
         }
     }
 
