@@ -20,7 +20,7 @@
                 android:key="heat_map"
                 android:title="Heat map"/>
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="marker_map"
                 android:title="Markers"/>
         </PreferenceCategory>
@@ -31,30 +31,30 @@
             app:icon="@drawable/ic_baseline_location_on_24"
             android:key="map_poi">
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="poi_mountain"
                 android:title="Mountains"/>
 
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="poi_fishing"
                 android:title="Fishing"/>
 
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="poi_attraction"
                 android:title="Attractions"/>
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="poi_camping"
                 android:title="Camping"/>
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="poi_canoe"
                 android:title="Canoe"/>
 
             <SwitchPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="poi_misc"
                 android:title="Misc"/>
             <SwitchPreference
