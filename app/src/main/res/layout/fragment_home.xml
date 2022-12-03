@@ -5,7 +5,7 @@
     tools:context=".presentation.fragment.HomeFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_bg"
+    android:background="?attr/colorSurfaceVariant"
     android:padding="16dp">
 
     <LinearLayout
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/clTotals"
+        app:layout_constraintBottom_toTopOf="@id/cvTotals"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -27,7 +27,7 @@
                 style="@style/TextAppearance.MaterialComponents.Headline3"
                 android:text="Greetings"
                 android:layout_gravity="center"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="?attr/colorOnSurface"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
@@ -36,158 +36,174 @@
             android:text="Your name"
             style="@style/TextAppearance.MaterialComponents.Headline4"
             android:gravity="center"
-            android:textColor="?attr/colorOnPrimary"
+            android:textColor="?attr/colorOnSurface"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clTotals"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvTotals"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:backgroundTint="?attr/colorSurface"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true"
         android:layout_marginTop="250dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/home_layout_bg"
-        android:backgroundTint="?attr/colorOnPrimary"
-        android:padding="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <LinearLayout
-            android:id="@+id/llTotalInfo"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-            <TextView
-                android:id="@+id/tvTotalInfo"
-                android:text="Summary"
-                style="@style/TextAppearance.MaterialComponents.Headline4"
-                android:gravity="center"
-                android:textColor="?attr/colorSecondary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llTotalDistance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/llTotalTime"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/llTotalInfo"
-            app:layout_constraintVertical_chainStyle="spread">
-
-            <ImageView
-                android:id="@+id/totalDistanceIcon"
-                android:src="@drawable/ic_outline_run_circle_24"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clTotals"
+        android:layout_gravity="center"
+        android:padding="32dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:backgroundTint="?attr/colorSurface">
 
 
-            <TextView
-                android:id="@+id/tvTotalDistanceInfo"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?attr/colorSecondary"
-                android:gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="3dp"
-                android:text="Total Distance" />
-
-            <TextView
-                android:id="@+id/tvTotalDistance"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?attr/colorSecondary"
+            <LinearLayout
+                android:id="@+id/llTotalInfo"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="0km" />
-        </LinearLayout>
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <TextView
+                    android:id="@+id/tvTotalInfo"
+                    android:text="Summary"
+                    style="@style/TextAppearance.MaterialComponents.Headline4"
+                    android:gravity="center"
+                    android:textColor="?attr/colorSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-        <LinearLayout
-            android:id="@+id/llTotalTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/llAverageSpeed"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/llTotalDistance">
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/totalTimeIcon"
-                android:src="@drawable/ic_outline_access_time_24"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tvTotalTimeInfo"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?attr/colorSecondary"
-                android:gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="3dp"
-                android:text="Total Time" />
-
-            <TextView
-                android:id="@+id/tvTotalTime"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?attr/colorSecondary"
+            <LinearLayout
+                android:id="@+id/llTotalDistance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="00:00:00" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/llTotalTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/llTotalInfo"
+                app:layout_constraintVertical_chainStyle="spread">
 
-        <LinearLayout
-            android:id="@+id/llAverageSpeed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/llTotalTime">
+                <ImageView
+                    android:id="@+id/totalDistanceIcon"
+                    android:src="@drawable/ic_outline_run_circle_24"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-            <ImageView
-                android:id="@+id/averageSpeedIcon"
-                android:src="@drawable/ic_baseline_speed_24"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/tvAverageSpeedInfo"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?attr/colorSecondary"
-                android:gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="3dp"
-                android:text="Average Speed" />
+                <TextView
+                    android:id="@+id/tvTotalDistanceInfo"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="?attr/colorSecondary"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="3dp"
+                    android:text="Total Distance" />
 
-            <TextView
-                android:id="@+id/tvAverageSpeed"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:textColor="?attr/colorSecondary"
+                <TextView
+                    android:id="@+id/tvTotalDistance"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="?attr/colorSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="0km" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llTotalTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="0km/h" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@id/llAverageSpeed"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llTotalDistance">
+
+                <ImageView
+                    android:id="@+id/totalTimeIcon"
+                    android:src="@drawable/ic_outline_access_time_24"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tvTotalTimeInfo"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="?attr/colorSecondary"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="3dp"
+                    android:text="Total Time" />
+
+                <TextView
+                    android:id="@+id/tvTotalTime"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="?attr/colorSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="00:00:00" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llAverageSpeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llTotalTime">
+
+                <ImageView
+                    android:id="@+id/averageSpeedIcon"
+                    android:src="@drawable/ic_baseline_speed_24"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tvAverageSpeedInfo"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="?attr/colorSecondary"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="3dp"
+                    android:text="Average Speed" />
+
+                <TextView
+                    android:id="@+id/tvAverageSpeed"
+                    style="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="?attr/colorSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="0km/h" />
+            </LinearLayout>
+
+
+
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

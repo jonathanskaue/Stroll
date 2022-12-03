@@ -5,24 +5,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="336dp"
-        android:layout_height="323dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/group_1" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/about_text"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:translationZ="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            android:layout_weight="0.8">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="32dp"
+                android:fontFamily="sans-serif-condensed"
+                android:letterSpacing="0.2"
+                android:gravity="center"
+                android:text="STROLL"
+                android:textSize="32sp"
+                android:textColor="?attr/colorOnSurface" />
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:paddingEnd="32dp"
+            android:paddingStart="32dp"
+            android:paddingTop="64dp"
+            android:paddingBottom="64dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="?attr/colorOnSurface"
+            android:layout_weight="0.2">
+            <ImageView
+                android:padding="16dp"
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:tint="?attr/colorSurface"
+                app:srcCompat="@drawable/group_1" />
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="32dp"
+                android:textColor="?attr/colorSurface"
+                android:text="@string/about_text" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

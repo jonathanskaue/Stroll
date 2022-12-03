@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
 import com.example.stroll.R
 import com.example.stroll.presentation.viewmodel.MainViewModel
+import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import java.util.*
 
 class ViewPagerAdapter(
@@ -44,8 +45,7 @@ class ViewPagerAdapter(
         introButtonButton.setOnClickListener() {
             viewModel.checkStarted()
         }
-
-        imageView.setImageResource(imageList.get(position))
+        imageView.setImageResource(imageList[position])
         headingView.text = headingList[position]
         bodyView.text = bodyList[position]
         Objects.requireNonNull(container).addView(itemView)

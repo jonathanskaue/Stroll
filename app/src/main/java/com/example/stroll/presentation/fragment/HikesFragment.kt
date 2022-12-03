@@ -2,6 +2,7 @@ package com.example.stroll.presentation.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,6 +98,14 @@ class HikesFragment() : BaseFragment(), RVClickListener {
 
         viewModel.hikes.observe(viewLifecycleOwner, Observer {
             hikeAdapter.submitList(it)
+            if (it.isEmpty()) {
+                binding.constraintLayout.visibility = View.GONE
+                binding.noHikes.visibility = View.VISIBLE
+            }
+            else {
+                binding.constraintLayout.visibility = View.VISIBLE
+                binding.noHikes.visibility = View.GONE
+            }
         })
     }
 

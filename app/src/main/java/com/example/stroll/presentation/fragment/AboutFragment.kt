@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.stroll.MainActivity
+import com.example.stroll.R
 import com.example.stroll.databinding.FragmentAboutBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,8 +22,14 @@ class AboutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        (activity as MainActivity).supportActionBar?.hide()
+        (activity as MainActivity).bottomNavBar.visibility = View.VISIBLE
         // Inflate the layout for this fragment
         _binding = FragmentAboutBinding.inflate(inflater, container, false)
         return binding.root
+    }
+    override fun onStop() {
+        super.onStop()
+        (activity as MainActivity).supportActionBar?.show()
     }
 }

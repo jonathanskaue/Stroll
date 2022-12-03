@@ -12,7 +12,6 @@ import com.example.stroll.R
 import com.example.stroll.databinding.FragmentRegisterBinding
 import com.example.stroll.other.Constants.KEY_FIRST_TIME_TOGGLE
 import com.example.stroll.other.Constants.KEY_NAME
-import com.example.stroll.other.Constants.KEY_WEIGHT
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,10 +48,10 @@ class RegisterFragment : BaseFragment() {
 
         if(!isFirstAppOpen) {
             val navOptions = NavOptions.Builder()
-                .setPopUpTo(R.id.registerFragment, false)
+                .setPopUpTo(R.id.registerFragment, true)
                 .build()
             findNavController().navigate(
-                R.id.action_global_homeFragment,
+                R.id.action_registerFragment_to_homeFragment,
                 savedInstanceState,
                 navOptions
             )
@@ -61,7 +60,7 @@ class RegisterFragment : BaseFragment() {
         binding.tvContinue.setOnClickListener {
             val success = writePersonalDataToSharedPref()
             if(success) {
-                    findNavController().navigate(R.id.action_global_introductionFragment)
+                    findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
             } else {
                 Snackbar.make(requireView(), "Please enter all the fields", Snackbar.LENGTH_SHORT).show()
             }
@@ -70,13 +69,11 @@ class RegisterFragment : BaseFragment() {
 
     private fun writePersonalDataToSharedPref(): Boolean {
         val name = binding.etName.text.toString()
-        val weight = binding.etWeight.text.toString()
-        if(name.isEmpty() || weight.isEmpty()) {
+        if(name.isEmpty()) {
             return false
         }
         sharedPref.edit()
             .putString(KEY_NAME, name)
-            .putFloat(KEY_WEIGHT, weight.toFloat())
             .putBoolean(KEY_FIRST_TIME_TOGGLE, false)
             .apply()
         return true

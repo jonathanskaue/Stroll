@@ -49,13 +49,16 @@ class StatisticsViewModel @Inject constructor(
     }
 
     fun getDetailsByLatLng(geocoder: Geocoder, lat: Double, lng: Double) {
-        try {
-            var adresses = geocoder.getFromLocation(lat, lng, 1)
-            _address.value = adresses?.get(0)?.getAddressLine(0)
-            _city.value = adresses?.get(0)?.subAdminArea
+        viewModelScope.launch {
+            try {
+                var adresses = geocoder.getFromLocation(lat, lng, 1)
+                _address.value = adresses?.get(0)?.getAddressLine(0)
+                _city.value = adresses?.get(0)?.subAdminArea
 
-        } catch (e: java.lang.NullPointerException) {
-            Log.d("error", "getDetailsByLatLng: $e")
+            } catch (e: java.lang.NullPointerException) {
+                Log.d("error", "getDetailsByLatLng: $e")
+            }
         }
+
     }
 }

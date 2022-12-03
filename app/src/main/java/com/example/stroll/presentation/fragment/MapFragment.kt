@@ -113,8 +113,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     private val binding get() = _binding!!
 
     private var initializeViewModel = true
-    @set:Inject
-    var weight = 80f
 
     @set:Inject
     var name = "Default"
@@ -141,7 +139,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     ): View? {
 
         viewModel.initialize(initializeViewModel)
-        Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
 
         latLng = GeoPoint(10.0,10.0)
 
@@ -381,15 +378,15 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         this.isTracking = isTracking
         if (!isTracking) {
             if (currentTimeInMillis == 0L) {
-                binding.toggleHikeBtn.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_play_arrow_24))
+                binding.toggleHikeBtn.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_baseline_play_arrow_24))
             }
             else {
-                binding.toggleHikeBtn.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_play_arrow_24))
+                binding.toggleHikeBtn.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_baseline_play_arrow_24))
                 binding.finishHikeBtn.show()
             }
 
         } else {
-            binding.toggleHikeBtn.setImageDrawable(resources.getDrawable(R.drawable.ic_baseline_pause_24))
+            binding.toggleHikeBtn.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_baseline_pause_24))
             binding.finishHikeBtn.hide()
         }
     }
