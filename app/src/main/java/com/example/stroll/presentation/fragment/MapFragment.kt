@@ -196,22 +196,22 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             if (viewModel.isMarker.value) {
                 it.forEach { poi ->
                     if (viewModel.isMountain.value && poi.category.toString() == "Mountain") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
+                        myPOIs(poi.name, poi.category!!, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isFishing.value && poi.category.toString() == "Fishing") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
+                        myPOIs(poi.name, poi.category!!, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isAttraction.value && poi.category.toString() == "Attraction") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
+                        myPOIs(poi.name, poi.category!!, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isMisc.value && poi.category.toString() == "Misc") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
+                        myPOIs(poi.name, poi.category!!, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isCamping.value && poi.category.toString() == "Camping") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
+                        myPOIs(poi.name, poi.category!!, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                     if (viewModel.isCanoe.value && poi.category.toString() == "Canoe") {
-                        myPOIs(poi.name, poi.category, poi.lat, poi.lon, poi.id.toString(), poi.photo)
+                        myPOIs(poi.name, poi.category!!, poi.lat, poi.lon, poi.id.toString(), poi.photo)
                     }
                 }
             }
@@ -560,7 +560,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         mapView.overlayManager?.add(polygon)
     }
 
-    private fun myPOIs(name: String?, category: String?, lat: Double, lon: Double, id: String, myPhoto: String?) {
+    private fun myPOIs(name: String?, category: String, lat: Double, lon: Double, id: String, myPhoto: String?) {
         val infoWindow = MarkerWindow(mapView)
         val infoImage = infoWindow.view.findViewById<ImageView>(R.id.ivInfoWindow)
         val titleText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowTitle)
@@ -602,7 +602,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                     locationText.text = addresses
                 }
                 arButton.setOnClickListener{
-                    val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon))
+                    val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon), category)
                     findNavController().navigate(action)
                 }
                 viewModel.isInfoWindowOpen()

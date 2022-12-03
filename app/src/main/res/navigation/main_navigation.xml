@@ -119,6 +119,9 @@
         <argument
             android:name="latLng"
             app:argType="com.example.stroll.data.local.LatLong" />
+        <argument
+            android:name="category"
+            app:argType="string"/>
     </fragment>
     <fragment
         android:id="@+id/addMarkerFragment"
