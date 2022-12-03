@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.example.stroll.R
 import com.example.stroll.data.local.InternalStoragePhoto
 import com.example.stroll.databinding.FragmentHikeDetailsBinding
+import com.example.stroll.domain.repository.RVClickListener
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.adapters.PhotoAdapter
 import com.example.stroll.presentation.viewmodel.StatisticsViewModel
@@ -41,14 +42,14 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HikeDetailsFragment : BaseFragment() {
+class HikeDetailsFragment : BaseFragment(), RVClickListener {
 
     @set:Inject
     var name = ""
 
     private val args: HikeDetailsFragmentArgs by navArgs()
 
-    private var photoAdapter = PhotoAdapter()
+    private val photoAdapter by lazy { PhotoAdapter(this) }
     private val viewModel: StatisticsViewModel by viewModels()
 
     private var _binding: FragmentHikeDetailsBinding? = null
@@ -156,5 +157,12 @@ class HikeDetailsFragment : BaseFragment() {
             }
             .create()
         dialog.show()
+    }
+
+    override fun onClick(position: Int) {
+        val photoString = photoAdapter.differ.currentList[position].name
+        val hikeId = args.id
+        val action = HikeDetailsFragmentDirections.actionHikeDetailsFragmentToFullPhotoFragment(hikeId, photoString)
+        findNavController().navigate(action)
     }
 }

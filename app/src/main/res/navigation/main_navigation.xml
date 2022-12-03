@@ -66,6 +66,9 @@
         <argument
             android:name="id"
             app:argType="integer"/>
+        <action
+            android:id="@+id/action_hikeDetailsFragment_to_fullPhotoFragment"
+            app:destination="@id/fullPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
@@ -112,10 +115,10 @@
         tools:layout="@layout/fragment_a_r">
         <argument
             android:name="poiName"
-            app:argType="string"/>
+            app:argType="string" />
         <argument
             android:name="latLng"
-            app:argType="com.example.stroll.data.local.LatLong"/>
+            app:argType="com.example.stroll.data.local.LatLong" />
     </fragment>
     <fragment
         android:id="@+id/addMarkerFragment"
@@ -125,5 +128,17 @@
         <action
             android:id="@+id/action_addMarkerFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fullPhotoFragment"
+        android:name="com.example.stroll.presentation.fragment.FullPhotoFragment"
+        android:label="Full photo"
+        tools:layout="@layout/fragment_full_photo">
+        <argument
+            android:name="hikeId"
+            app:argType="integer" />
+        <argument
+            android:name="photoName"
+            app:argType="string" />
     </fragment>
 </navigation>
