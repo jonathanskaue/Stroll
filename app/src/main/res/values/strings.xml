@@ -52,16 +52,6 @@
     settings</string>
     <string name="settings_dialog_positive_button_text">Go to settings</string>
     <string name="settings_dialog_negative_button_text">No thanks</string>
-
-    <string name="transition_update_request_success">Transition updates requested</string>
-    <string name="transition_update_request_failed">Requesting transition updates failed</string>
-    <string name="transition_update_remove_success">Transition updates removed</string>
-    <string name="transition_update_remove_failed">Removing transition updates failed</string>
-
-    <string name="activity_update_request_success">Activity updates requested</string>
-    <string name="activity_update_request_failed">Requesting activity updates failed</string>
-    <string name="activity_update_remove_success">Activity updates removed</string>
-    <string name="activity_update_remove_failed">Removing activity updates failed</string>
     <string name="take_photo">Take Photo</string>
 
     <string name="take_picture">Take Picture</string>
@@ -71,8 +61,14 @@
     <string name="add_photo">Add Photo</string>
     <string name="create_marker">Create Marker</string>
     <string name="create_point_of_interest">Create Point of interest</string>
+    <string name="poi_made_successfully">POI made successfully</string>
+    <string name="please_enter_a_name_for_poi">Please enter a name for POI</string>
+    <string name="location_marker_touched">Location marker touched.</string>
     <string name="marker_name">Marker Name</string>
     <string name="history">History</string>
+    <string name="delete_hike_question">Delete Hike?</string>
+    <string name="delete_hike_forever_question">Are you sure you want to delete the hike forever?</string>
+    <string name="are_you_sure_you_wanna_cancel_the_hike">Are you sure you want to cancel the hike and delete data for current hike?</string>
 
     <string-array name="filter_options">
         <item>Date</item>
@@ -87,8 +83,96 @@
     <string name="sort_by_averageSpeed">Average Speed</string>
     <string name="sort_by_time">Time</string>
     <string name="check_top5">Show Top 5</string>
+    <string name="time_in_min">Time in min</string>
+    <string name="average_speed_in_kmh">Average speed in km/h</string>
+    <string name="average_speed_over_time">Average speed over time</string>
 
     <string name="no_recorded_hike">No recorded hikes yet. Please record a hike to see the statistics :)</string>
+    <string name="from">From:</string>
+    <string name="distance">Distance:</string>
+    <string name="speed">Speed:</string>
+    <string name="time">Time:</string>
+    <string name="totaltime">TOTALTIME</string>
+    <string name="date">Date:</string>
+    <string name="photos">Photos</string>
+    <string name="greetings">Greetings</string>
+    <string name="your_name">Your name</string>
+    <string name="summary">Summary</string>
+    <string name="total_distance">Total Distance</string>
+    <string name="_0km">0km</string>
+    <string name="total_time">Total Time</string>
+    <string name="_00_00_00">00:00:00</string>
+    <string name="average_speed">Average Speed</string>
+    <string name="_0km_h">0km/h</string>
+    <string name="hike">hike</string>
+    <string name="start_hike">start hike</string>
+    <string name="start_a_hike">Start a hike!</string>
+    <string name="augmented_reality">Augmented Reality</string>
+    <string name="recorded_hikes">Recorded hikes</string>
+    <string name="finish_hike">FINISH HIKE</string>
+    <string name="_0moh">0moh</string>
+    <string name="add_poi">Add POI</string>
+    <string name="_0">0</string>
+    <string name="cancel_hike">Cancel Hike</string>
+    <string name="cancel_hike_question">Cancel Hike?</string>
+    <string name="hike_saved_successfully">Hike saved successfully</string>
+    <string name="welcome_nplease_enter_your_name">Welcome!\nPlease enter your name</string>
+    <string name="please_enter_all_the_fields">Please enter all the fields</string>
+    <string name="your_weight">Your Weight</string>
+    <string name="kg">kg</string>
+    <string name="start_strolling">Start Strolling</string>
+    <string name="start_recording">Start recording</string>
+    <string name="stop_recording">Stop recording</string>
+    <string name="no_data">No data</string>
+    <string name="unfiltered_sensor_data">Unfiltered sensor data:</string>
+    <string name="raw_acc_data">Raw acc data</string>
+    <string name="raw_gyro_data">Raw gyro data</string>
+    <string name="raw_magnet_data">Raw magnet data</string>
+    <string name="filtered_sensor_data">Filtered sensor data:</string>
+    <string name="no_changes_in_acc_data">No changes in Acc data</string>
+    <string name="no_changes_in_gyro_data">No changes in Gyro data</string>
+    <string name="device_orientation">Device orientation</string>
+    <string name="get_started">GET STARTED!</string>
+    <string name="marker_title">Marker Title</string>
+    <string name="destination">Destination</string>
+    <string name="category">Category</string>
+    <string name="move">Move</string>
+    <string name="time_caps">TIME</string>
+    <string name="avgspeed">AVGSPEED</string>
+    <string name="_12_12_2022">12.12.2022</string>
+    <string name="moh">Moh</string>
+    <string name="hike_id">HIKE_ID</string>
+    <string name="date_caps">DATE</string>
+    <string name="duration">DURATION</string>
+    <string name="avg_speed">AVG SPEED</string>
+    <string name="distance_caps">DISTANCE</string>
+    <string name="distance_in_km">Distance in km</string>
+    <string name="yes_caps">YES</string>
+    <string name="no_caps">NO</string>
+    <string name="good_morning">Good Morning</string>
+    <string name="good_afternoon">Good Afternoon</string>
+    <string name="good_evening">Good Evening</string>
+    <string name="start_a_hike_by_starting_point_and_destination">Start a hike by either creating a starting point and destination
+ or by just start strolling!</string>
+    <string name="see_your_favourite_destinations_in_ar">See your favorite destinations in AR</string>
+    <string name="see_all_your_previous_hikes_and_stats">See all your previous hikes and stats!</string>
+
+    <string name="yes_to_camera_request">have given us permission to use your camera</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="heat_map">Heat map</string>
+    <string name="markers">Markers</string>
+    <string name="point_of_interest">Point of interest</string>
+    <string name="mountains">Mountains</string>
+    <string name="fishing">Fishing</string>
+    <string name="attractions">Attractions</string>
+    <string name="camping">Camping</string>
+    <string name="canoe">Canoe</string>
+    <string name="misc">Misc</string>
+    <string name="starting_position">Starting position</string>
+    <string name="register">Register</string>
+    <string name="hikes">Hikes</string>
+    <string name="details">Details</string>
+    <string name="full_photo">Full Photo</string>
 
 
     <string-array name="marker_categories">

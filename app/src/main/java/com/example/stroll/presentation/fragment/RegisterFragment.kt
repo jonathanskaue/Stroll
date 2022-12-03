@@ -27,9 +27,6 @@ class RegisterFragment : BaseFragment() {
     @set:Inject
     var isFirstAppOpen = true
 
-    private val viewModel: MainViewModel by viewModels()
-
-
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
 
@@ -63,7 +60,7 @@ class RegisterFragment : BaseFragment() {
             if(success) {
                     findNavController().navigate(R.id.action_global_introductionFragment)
             } else {
-                Snackbar.make(requireView(), "Please enter all the fields", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), getString(R.string.please_enter_all_the_fields), Snackbar.LENGTH_SHORT).show()
             }
         }
     }

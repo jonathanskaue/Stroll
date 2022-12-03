@@ -129,7 +129,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
             SensorManager.getRotationMatrix(rotationMatrix, null, accSensorData, sensorMagData)
             SensorManager.getOrientation(rotationMatrix, deviceOrientation)
             binding.tvOrientation.text =
-                "Device Orientation: ${(deviceOrientation[0] * 180 / 3.14159).toInt()}," +
+                "${getString(R.string.device_orientation)} ${(deviceOrientation[0] * 180 / 3.14159).toInt()}," +
                         " ${(deviceOrientation[1] * 180 / 3.14159).toInt()}, ${(deviceOrientation[2] * 180 / 3.14159).toInt()}"
 
             // binding.tvBox.apply { translationX = - (deviceOrientation[0]*180/3.14159f) * 20f }

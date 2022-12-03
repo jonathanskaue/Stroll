@@ -142,17 +142,17 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
     }
     private fun showDeleteHikeDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
-            .setTitle("Delete Hike?")
-            .setMessage("Are you sure you want to delete the hike forever?")
+            .setTitle(resources.getString(R.string.delete_hike_question))
+            .setMessage(resources.getString(R.string.delete_hike_forever_question))
             .setIcon(R.drawable.group_1)
-            .setPositiveButton("YES") {_,_ ->
+            .setPositiveButton(resources.getString(R.string.yes_caps)) {_,_ ->
                 lifecycleScope.launch {
                     viewModel.deleteHikeById(args.id)
                 }
                 val action = HikeDetailsFragmentDirections.actionGlobalHikesFragment()
                 findNavController().navigate(action)
             }
-            .setNegativeButton("NO") { dialogInterface, _ ->
+            .setNegativeButton(resources.getString(R.string.no_caps)) { dialogInterface, _ ->
                 dialogInterface.cancel()
             }
             .create()

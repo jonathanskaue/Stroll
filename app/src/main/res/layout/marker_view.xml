@@ -16,14 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="HIKE_ID"
+            android:text="@string/hike_id"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DATE"
+            android:text="@string/date_caps"
             android:textSize="20sp"
             android:gravity="center"/>
 
@@ -31,7 +31,7 @@
             android:id="@+id/tvDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DURATION"
+            android:text="@string/duration"
             android:textSize="20sp"
             android:gravity="center"/>
 
@@ -39,7 +39,7 @@
             android:id="@+id/tvAvgSpeed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="AVG SPEED"
+            android:text="@string/avg_speed"
             android:textSize="20sp"
             android:gravity="center"/>
 
@@ -47,7 +47,7 @@
             android:id="@+id/tvDistance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DISTANCE"
+            android:text="@string/distance_caps"
             android:textSize="20sp"
             android:gravity="center"/>
 

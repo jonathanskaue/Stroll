@@ -11,6 +11,7 @@ import com.example.stroll.databinding.FragmentHomeBinding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.example.stroll.R
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.StatisticsViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,10 +82,10 @@ class HomeFragment : BaseFragment() {
         val timeOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
         return when(timeOfDay) {
-            in 0..11 -> "Good Morning"
-            in 12..16 -> "Good Afternoon"
-            in 17..23 -> "Good Evening"
-            else -> "Greetings"
+            in 0..11 -> resources.getString(R.string.good_morning)
+            in 12..16 -> resources.getString(R.string.good_afternoon)
+            in 17..23 -> getString(R.string.good_evening)
+            else -> resources.getString(R.string.greetings)
         }
     }
 }

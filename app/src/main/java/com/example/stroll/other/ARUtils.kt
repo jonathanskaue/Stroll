@@ -17,10 +17,6 @@ import uk.co.appoly.arcorelocation.utils.ARLocationPermissionHelper
 class ARUtils {
     private val TAG = "SceneformDemoUtils"
 
-    /**
-     * Creates and shows a Toast containing an error message. If there was an exception passed in it
-     * will be appended to the toast. The error will also be written to the Log
-     */
     fun displayError(
         context: Context, errorMsg: String, problem: Throwable?
     ) {
@@ -45,18 +41,6 @@ class ARUtils {
             }
     }
 
-    /**
-     * Creates an ARCore session. This checks for the CAMERA permission, and if granted, checks the
-     * state of the ARCore installation. If there is a problem an exception is thrown. Care must be
-     * taken to update the installRequested flag as needed to avoid an infinite checking loop. It
-     * should be set to true if null is returned from this method, and called again when the
-     * application is resumed.
-     *
-     * @param activity         - the activity currently active.
-     * @param installRequested - the indicator for ARCore that when checking the state of ARCore, if
-     * an installation was already requested. This is true if this method previously returned
-     * null. and the camera permission has been granted.
-     */
     @Throws(UnavailableException::class)
     fun createArSession(activity: Activity?, installRequested: Boolean): Session? {
         var session: Session? = null
@@ -75,52 +59,6 @@ class ARUtils {
         return session
     }
 
-    /** Check to see we have the necessary permissions for this app, and ask for them if we don't. */
-    /*public static void requestPermission(Activity activity, int requestCode) {
-    ActivityCompat.requestPermissions(
-        activity, new String[] {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-  }
-  */
-    /** Check to see we have the necessary permissions for this app. *//*
-  public static boolean hasPermission(Activity activity) {
-    return ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-        == PackageManager.PERMISSION_GRANTED;
-  }
-  */
-    /** Check to see if we need to show the rationale for this permission. *//*
-  public static boolean shouldShowRequestPermissionRationale(Activity activity) {
-    return ActivityCompat.shouldShowRequestPermissionRationale(
-        activity, Manifest.permission.CAMERA);
-  }
-  */
-
-    /** Check to see we have the necessary permissions for this app, and ask for them if we don't.  */ /*public static void requestPermission(Activity activity, int requestCode) {
-    ActivityCompat.requestPermissions(
-        activity, new String[] {Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
-  }
-  */
-    /** Check to see we have the necessary permissions for this app.  */ /*
-  public static boolean hasPermission(Activity activity) {
-    return ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-        == PackageManager.PERMISSION_GRANTED;
-  }
-  */
-    /** Check to see if we need to show the rationale for this permission.  */ /*
-  public static boolean shouldShowRequestPermissionRationale(Activity activity) {
-    return ActivityCompat.shouldShowRequestPermissionRationale(
-        activity, Manifest.permission.CAMERA);
-  }
-  */
-    /**
-     * Launch Application Setting to grant permission.
-     */
-    /*
-  public static void launchPermissionSettings(Activity activity) {
-    Intent intent = new Intent();
-    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-    intent.setData(Uri.fromParts("package", activity.getPackageName(), null));
-    activity.startActivity(intent);
-  }*/
     fun handleSessionException(
         activity: Activity?, sessionException: UnavailableException
     ) {

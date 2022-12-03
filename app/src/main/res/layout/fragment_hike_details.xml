@@ -41,7 +41,7 @@
                     style="@style/TextAppearance.Material3.TitleMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="From:" />
+                    android:text="@string/from" />
 
                 <TextView
                     android:id="@+id/tvLocation"
@@ -90,7 +90,7 @@
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Distance:" />
+                    android:text="@string/distance" />
 
                 <TextView
                     android:id="@+id/tvDistance"
@@ -129,7 +129,7 @@
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Speed:" />
+                    android:text="@string/speed" />
 
                 <TextView
                     android:id="@+id/tvAverageSpeed"
@@ -167,7 +167,7 @@
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time:" />
+                    android:text="@string/time" />
 
                 <TextView
                     android:id="@+id/tvTime"
@@ -175,7 +175,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:text="TOTALTIME" />
+                    android:text="@string/totaltime" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -205,7 +205,7 @@
                     android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date:" />
+                    android:text="@string/date" />
 
                 <TextView
                     android:id="@+id/tvHikeDate"
@@ -213,7 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:text="DATE" />
+                    android:text="@string/date" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -243,7 +243,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="16dp"
-                    android:text="Photos"/>
+                    android:text="@string/photos"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvPrivatePhotos"

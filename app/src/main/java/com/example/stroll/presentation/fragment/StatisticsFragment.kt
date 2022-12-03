@@ -110,7 +110,7 @@ class StatisticsFragment : BaseFragment() {
         }
         binding.barChart.apply {
             description.setPosition(700f, 100f)
-            description.text = "Distance in km"
+            description.text = getString(R.string.distance_in_km)
             description.textColor = Color.WHITE
             description.textSize = 16f
             legend.isEnabled = false
@@ -122,42 +122,42 @@ class StatisticsFragment : BaseFragment() {
             0 -> {  //pos = 1: Date
                 viewModel.hikeSortedByDate.observe(viewLifecycleOwner, Observer {
                     it?.let {val allDates = it.indices.map { i -> BarEntry(i.toFloat(), it[i].distanceInMeters.toFloat() / 1000) }
-                        create_barDataSet(allDates, "Distance in km", it)
+                        create_barDataSet(allDates, getString(R.string.distance_in_km), it)
                     }
                 })
                 binding.barChart.apply {
-                    description.text = "Distance in km"
+                    description.text = getString(R.string.distance_in_km)
                 }
             }
 
             1 -> {  //pos = 1: hikingTime
                 viewModel.hikeSortedByTime.observe(viewLifecycleOwner, Observer {
                     it?.let { val allDates = it.indices.map { i -> BarEntry(i.toFloat(), it[i].timeInMillis.toFloat() / 60000) }
-                        create_barDataSet(allDates, "Time in min", it)
+                        create_barDataSet(allDates, getString(R.string.time_in_min), it)
                     }
                 })
                 binding.barChart.apply {
-                    description.text = "Time in min"
+                    description.text = getString(R.string.time_in_min)
                 }
             }
             2 -> {  //pos = 2: distanceInMeters
                 viewModel.hikeSortedByDistance.observe(viewLifecycleOwner, Observer {
                     it?.let { val allDates = it.indices.map { i -> BarEntry(i.toFloat(), it[i].distanceInMeters.toFloat() / 1000) }
-                        create_barDataSet(allDates, "Distance in km", it)
+                        create_barDataSet(allDates, getString(R.string.distance_in_km), it)
                     }
                 })
                 binding.barChart.apply {
-                    description.text = "Average speed in km/h"
+                    description.text = getString(R.string.average_speed_in_kmh)
                 }
             }
             3 -> {  //pos = 3: averageSpeed
                 viewModel.hikeSortedBySpeed.observe(viewLifecycleOwner, Observer {
                     it?.let { val allDates = it.indices.map { i -> BarEntry(i.toFloat(), it[i].averageSpeedInKMH)}
-                        create_barDataSet(allDates, "Average speed over time", it)
+                        create_barDataSet(allDates, getString(R.string.average_speed_over_time), it)
                     }
                 })
                 binding.barChart.apply {
-                    description.text = "Average speed in km/h"
+                    description.text = getString(R.string.average_speed_in_kmh)
                 }
             }
         }

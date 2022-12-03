@@ -8,59 +8,59 @@
             <SwitchPreference
                 android:defaultValue="false"
                 android:key="dark_mode"
-                android:title="Dark mode"/>
+                android:title="@string/dark_mode"/>
         </PreferenceCategory>
 
         <PreferenceCategory
-            android:title="Map"
+            android:title="@string/map"
             app:icon="@drawable/ic_baseline_my_location_24">
 
             <SwitchPreference
                 android:defaultValue="false"
                 android:key="heat_map"
-                android:title="Heat map"/>
+                android:title="@string/heat_map"/>
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="marker_map"
-                android:title="Markers"/>
+                android:title="@string/markers"/>
         </PreferenceCategory>
 
         <PreferenceCategory
             android:defaultValue="map_poi"
-            android:title="Point of interest"
+            android:title="@string/point_of_interest"
             app:icon="@drawable/ic_baseline_location_on_24"
             android:key="map_poi">
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="poi_mountain"
-                android:title="Mountains"/>
+                android:title="@string/mountains"/>
 
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="poi_fishing"
-                android:title="Fishing"/>
+                android:title="@string/fishing"/>
 
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="poi_attraction"
-                android:title="Attractions"/>
+                android:title="@string/attractions"/>
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="poi_camping"
-                android:title="Camping"/>
+                android:title="@string/camping"/>
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="poi_canoe"
-                android:title="Canoe"/>
+                android:title="@string/canoe"/>
 
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="poi_misc"
-                android:title="Misc"/>
+                android:title="@string/misc"/>
             <SwitchPreference
                 android:defaultValue="false"
                 android:key="poi_starting"
-                android:title="Starting position"/>
+                android:title="@string/starting_position"/>
         </PreferenceCategory>
 
 

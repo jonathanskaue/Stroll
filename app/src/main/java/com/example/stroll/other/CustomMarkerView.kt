@@ -38,18 +38,18 @@ class CustomMarkerView(
         val calendar = Calendar.getInstance().apply {
             timeInMillis = hike.timeStamp
         }
-        val id_number = "hike #${hike.id}"
+        val id_number = "${resources.getString(R.string.hike)} #${hike.id}"
         tvID.text = id_number
 
         val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(calendar.time)
-        "date: ${dateFormat}".also { tvDate.text = it }
+        "${resources.getString(R.string.date)}: ${dateFormat}".also { tvDate.text = it }
 
-        val avgSpeed = "speed: ${hike.averageSpeedInKMH}km/h"
+        val avgSpeed = "${resources.getString(R.string.speed)}: ${hike.averageSpeedInKMH}km/h"
         tvAvgSpeed.text = avgSpeed
 
-        val distanceInKm = "distance: ${hike.distanceInMeters / 1000f}km"
+        val distanceInKm = "${resources.getString(R.string.distance)}: ${hike.distanceInMeters / 1000f}km"
         tvDistance.text = distanceInKm
 
-        "time: ${Utility.getFormattedStopWatchTime(hike.timeInMillis)}".also { tvDuration.text = it }
+        "${resources.getString(R.string.time)}: ${Utility.getFormattedStopWatchTime(hike.timeInMillis)}".also { tvDuration.text = it }
     }
 }

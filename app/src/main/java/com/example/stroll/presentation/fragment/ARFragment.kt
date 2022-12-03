@@ -68,13 +68,8 @@ class ARFragment : Fragment() {
             .setView(requireContext(), R.layout.example_layout)
             .build()
 
-        val exampleLayout2: CompletableFuture<ViewRenderable> = ViewRenderable.builder()
-            .setView(requireContext(), R.layout.example_layout)
-            .build()
-
         CompletableFuture.allOf(
             exampleLayout,
-            exampleLayout2
         )
             .handle<Any?> { notUsed: Void?, throwable: Throwable? ->
                 if (throwable != null) {
@@ -189,7 +184,7 @@ class ARFragment : Fragment() {
         val c: Context? = context
         val eView = renderable.view
         eView.setOnTouchListener { v: View?, event: MotionEvent? ->
-            Toast.makeText(c, "Location marker touched.", Toast.LENGTH_LONG).show()
+            Toast.makeText(c, resources.getString(R.string.location_marker_touched), Toast.LENGTH_LONG).show()
             false
         }
         return base

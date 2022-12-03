@@ -48,14 +48,14 @@ class IntroductionFragment() : BaseFragment() {
         imageList = imageList + R.drawable.allura___ui_windows
 
         headingList = ArrayList()
-        headingList = headingList + "Start a hike!"
-        headingList = headingList + "Augmented Reality"
-        headingList = headingList + "Recorded hikes"
+        headingList = headingList + getString(R.string.start_a_hike)
+        headingList = headingList + getString(R.string.augmented_reality)
+        headingList = headingList + getString(R.string.recorded_hikes)
 
         bodyList = ArrayList()
-        bodyList = bodyList + "Start a hike by either creating a starting point and destination \n or by just start strolling!"
-        bodyList = bodyList + "See your favorite destinations in AR"
-        bodyList = bodyList + "See all your previous hikes and stats!"
+        bodyList = bodyList + getString(R.string.start_a_hike_by_starting_point_and_destination)
+        bodyList = bodyList + getString(R.string.see_your_favourite_destinations_in_ar)
+        bodyList = bodyList + getString(R.string.see_all_your_previous_hikes_and_stats)
 
         viewPagerAdapter = ViewPagerAdapter(viewModel, view, requireContext(), imageList, headingList, bodyList)
         viewPager.adapter = viewPagerAdapter

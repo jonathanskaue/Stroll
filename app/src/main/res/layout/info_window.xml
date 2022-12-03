@@ -34,7 +34,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="Marker Title"
+                android:text="@string/marker_title"
                 android:textSize="20dp" />
         </LinearLayout>
         <LinearLayout
@@ -54,7 +54,7 @@
                 android:layout_margin="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Destination" />
+                android:text="@string/destination" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                 android:layout_margin="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"/>
+                android:text="@string/category"/>
         </LinearLayout>
 
 
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="?attr/colorPrimary"
                 android:src="@drawable/ic_baseline_view_in_ar_24"
-                android:text="Move" />
+                android:text="@string/move" />
 
         </LinearLayout>
 

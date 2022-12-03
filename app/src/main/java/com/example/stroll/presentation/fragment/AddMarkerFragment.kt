@@ -51,7 +51,7 @@ class AddMarkerFragment : BaseFragment() {
             permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
                 Toast.makeText(
                     requireContext(),
-                    "You have given us permission to use your camera",
+                    resources.getString(R.string.yes_to_camera_request),
                     Toast.LENGTH_SHORT
                 ).show()
                 openCameraInterface()
@@ -63,7 +63,6 @@ class AddMarkerFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d("MYFragment", "THIS IS MY MARKER POSITION: ${viewModel.currentLatLng.value}")
         // Inflate the layout for this fragment
         _binding = FragmentAddMarkerBinding.inflate(inflater, container, false)
 
@@ -126,7 +125,7 @@ class AddMarkerFragment : BaseFragment() {
                     }
                     Snackbar.make(
                         requireActivity().findViewById(R.id.mapFragment),
-                        "POI made successfully",
+                        resources.getString(R.string.poi_made_successfully),
                         Snackbar.LENGTH_LONG
                     ).show()
                     findNavController().navigate(R.id.action_addMarkerFragment_to_mapFragment)
@@ -135,7 +134,7 @@ class AddMarkerFragment : BaseFragment() {
                 }
             }
             else {
-                Snackbar.make(requireView(), "Please enter a name for POI", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), resources.getString(R.string.please_enter_a_name_for_poi), Snackbar.LENGTH_SHORT).show()
             }
 
         }

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Stroll</string>
+    <string name="mode">Dag</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hallo blankt fragment</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Meldinger</string>
+    <string name="sync_header">Synkroniser</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Din signatur</string>
+    <string name="reply_title">Standard svarhandling</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Synkroniser e-post med jevne mellomrom</string>
+    <string name="attachment_title">Last ned innkommende vedlegg</string>
+    <string name="attachment_summary_on">Last ned inkommende vedlegg automatisk</string>
+
+    <!-- Bottom bar names -->
+    <string name="attachment_summary_off">Last ned vedlegg kun når du blir bedt om det manuelt</string>
+    <string name="map">Kart</string>
+    <string name="home">Hjem</string>
+    <string name="camera">Kamera</string>
+    <string name="statistics">Statistikk</string>
+
+    <!-- Toolbar names -->
+    <string name="settings">Innstillinger</string>
+    <string name="sensors">Sensorer</string>
+    <string name="introduction">Introduksjon</string>
+
+    <string name="start_tracking">Start</string>
+    <string name="stop_tracking">Stopp</string>
+    <string name="reset_tracking">Nullstill</string>
+    <string name="time_to_start">Det er på tide å starte aktiviteten</string>
+
+    <string name="still">I ro</string>
+    <string name="walking">Går</string>
+    <string name="running">Springer</string>
+
+    <string name="still_text">Du står for øyeblikket i ro!</string>
+    <string name="walking_text">Du går!</string>
+    <string name="running_text">Du springer!</string>
+
+    <string name="permission_rational_dialog_title">Trenger tillatelse for aktivitetsgjenkjenning</string>
+    <string name="permission_rational_dialog_message">For å få informasjon om aktiviteten din, må du gi tillatelse til aktivitetsgjenkjenning til Pet Buddy.</string>
+    <string name="permission_rational_dialog_positive_button_text">Be om tillatelse</string>
+    <string name="permission_rational_dialog_negative_button_text">Nei takk</string>
+
+    <string name="settings_dialog_title">Trenger tillatelse for aktivitetsgjenkjenning</string>
+    <string name="settings_dialog_message">Gi tillatelse manuelt inne i appens innstillinger</string>
+    <string name="settings_dialog_positive_button_text">Gå til innstillinger</string>
+    <string name="settings_dialog_negative_button_text">Nei takk</string>
+
+    <string name="take_photo">Ta bilde</string>
+
+    <string name="take_picture">Take bilde</string>
+    <string name="take_picture_description">Ta et stillbilde med kameraet</string>
+    <string name="plane_finding">Plan ikke funnet</string>
+    <string name="ar">AR</string>
+    <string name="add_photo">Legg til bilde</string>
+    <string name="create_marker">Opprett markør</string>
+    <string name="create_point_of_interest">Opprett interessepunkt</string>
+    <string name="marker_name">Markør navn</string>
+    <string name="history">Historie</string>
+    <string name="register">Registrer</string>
+    <string name="hikes">Turer</string>
+    <string name="details">Detaljer</string>
+    <string name="full_photo">Bilde i fokus</string>
+
+    <string-array name="filter_options">
+        <item>Dato</item>
+        <item>Tid brukt</item>
+        <item>Distanse</item>
+        <item>Gjennomsnittsfart</item>
+    </string-array>
+
+    <!-- statistics - sort by: -->
+    <string name="sort_by">Sorter etter:</string>
+    <string name="sort_by_distance">Distanse</string>
+    <string name="sort_by_averageSpeed">Gjennomsnitsfart</string>
+    <string name="sort_by_time">Tid</string>
+    <string name="check_top5">Vis topp 5</string>
+
+    <string name="no_recorded_hike">Ingen registrerte turer ennå. Registrer en tur for å se statistikken :)</string>
+    <string name="poi_made_successfully">interessepunkt opprettet</string>
+    <string name="please_enter_a_name_for_poi">Skriv navnet til interessepunktet</string>
+    <string name="location_marker_touched">lokasjonsmarkør trykket på</string>
+
+    <string name="delete_hike_question">Slette tur?</string>
+    <string name="delete_hike_forever_question">Er du sikker på at du vil slette turen for alltid?</string>
+    <string name="are_you_sure_you_wanna_cancel_the_hike">Er du sikker på at du vil avbryte turen og slette data for nåværende tur?</string>
+
+    <string name="time_in_min">Tid i min</string>
+    <string name="average_speed_in_kmh">Snitthastighet km/t</string>
+    <string name="average_speed_over_time">Gjennomsnittsfart over tid</string>
+
+    <string name="from">Fra:</string>
+    <string name="distance">Distanse:</string>
+    <string name="speed">Fart:</string>
+    <string name="time">Tid:</string>
+    <string name="totaltime">TOTALTID</string>
+    <string name="date">Dato:</string>
+    <string name="photos">Bilder</string>
+    <string name="greetings">Vær hilset</string>
+    <string name="your_name">Ditt navn</string>
+    <string name="summary">Sammendrag</string>
+    <string name="total_distance">Total Distanse</string>
+    <string name="_0km">0km</string>
+    <string name="total_time">Total Tid</string>
+    <string name="_00_00_00">00:00:00</string>
+    <string name="average_speed">Snitthastighet</string>
+    <string name="_0km_h">0km/h</string>
+    <string name="hike">tur</string>
+    <string name="start_hike">start tur</string>
+    <string name="start_a_hike">Start en tur!</string>
+    <string name="augmented_reality">Utvided virkelighet</string>
+    <string name="recorded_hikes">Registrerte turer</string>
+    <string name="finish_hike">AVSLUTT TUR</string>
+    <string name="_0moh">0moh</string>
+    <string name="add_poi">Legg til interessepunkt</string>
+    <string name="_0">0</string>
+    <string name="cancel_hike">Avbryt tur</string>
+    <string name="cancel_hike_question">Avbryt tur?</string>
+    <string name="hike_saved_successfully">Tur lagret</string>
+    <string name="welcome_nplease_enter_your_name">Velkommen!\nSkriv inn navnet ditt</string>
+    <string name="please_enter_all_the_fields">Fyll inn alle feltene</string>
+    <string name="your_weight">Din vekt</string>
+    <string name="kg">kg</string>
+    <string name="start_strolling">Begynn å rusle</string>
+    <string name="start_recording">Start opptak</string>
+    <string name="stop_recording">Stop opptak</string>
+    <string name="no_data">Ingen data</string>
+    <string name="unfiltered_sensor_data">Ufiltrerte sensordata:</string>
+    <string name="raw_acc_data">Rå acc-data</string>
+    <string name="raw_gyro_data">Rå gyro-data</string>
+    <string name="raw_magnet_data">Rå magnet-data</string>
+    <string name="filtered_sensor_data">Filtrert sensordata:</string>
+    <string name="no_changes_in_acc_data">Ingen endringer i Acc-data</string>
+    <string name="no_changes_in_gyro_data">Ingen endringer i Gyro-data</string>
+    <string name="get_started">KOM I GANG!</string>
+    <string name="marker_title">Markør Tittel</string>
+    <string name="destination">Destinasjon</string>
+    <string name="category">Kategori</string>
+    <string name="move">Beveg</string>
+    <string name="time_caps">TID</string>
+    <string name="avgspeed">SNITTFART</string>
+    <string name="_12_12_2022">12.12.2022</string>
+    <string name="moh">Moh</string>
+    <string name="hike_id">HIKE_ID</string>
+    <string name="date_caps">DATO</string>
+    <string name="duration">VARIGHET</string>
+    <string name="avg_speed">SNITTFART</string>
+    <string name="distance_caps">DISTANSE</string>
+    <string name="distance_in_km">Distanse i km</string>
+    <string name="yes_caps">JA</string>
+    <string name="no_caps">NEI</string>
+    <string name="good_morning">God Morgen</string>
+    <string name="good_afternoon">God ettermiddag</string>
+    <string name="good_evening">God kveld</string>
+    <string name="start_a_hike_by_starting_point_and_destination">Start en tur ved å enten lage et startpunkt og en destinasjon
+ eller bare begynn å rusle!</string>
+    <string name="see_your_favourite_destinations_in_ar">Se favorittdestinasjonene dine i AR</string>
+    <string name="see_all_your_previous_hikes_and_stats">Se alle dine tidligere turer og statistikk om dem</string>
+
+    <string name="yes_to_camera_request">Du har gitt oss tillatelse til å bruke kameraet</string>
+    <string name="device_orientation">Enhetsorientering: </string>
+    <string name="dark_mode">Mørkmodus</string>
+    <string name="heat_map">Varmekart</string>
+    <string name="markers">Markører</string>
+    <string name="point_of_interest">Interessepunkt</string>
+    <string name="mountains">Fjell</string>
+    <string name="fishing">Fisking</string>
+    <string name="attractions">Attraksjoner</string>
+    <string name="camping">Camping</string>
+    <string name="canoe">Kano</string>
+    <string name="misc">Diverse</string>
+    <string name="starting_position">Startposisjon</string>
+
+
+    <string-array name="marker_categories">
+        <item>Mountain</item>
+        <item>Fishing</item>
+        <item>Attraction</item>
+        <item>Camping</item>
+        <item>Canoe</item>
+        <item>Misc</item>
+    </string-array>
+</resources>

@@ -126,7 +126,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
                 Toast.makeText(
                     requireContext(),
-                    "You have given us permission to use your camera",
+                    getString(R.string.yes_to_camera_request),
                     Toast.LENGTH_SHORT
                 ).show()
                 openCameraInterface()
@@ -141,7 +141,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     ): View? {
 
         viewModel.initialize(initializeViewModel)
-        Log.d("Sharedpreferences works", "Weight: $weight, Name: $name")
 
         latLng = GeoPoint(10.0,10.0)
 
@@ -357,15 +356,15 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private fun showCancelHikeDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
-            .setTitle("Cancel Hike?")
-            .setMessage("Are you sure you want to cancel the hike and delete data for current hike?")
+            .setTitle(getString(R.string.cancel_hike_question))
+            .setMessage(getString(R.string.are_you_sure_you_wanna_cancel_the_hike))
             .setIcon(R.drawable.group_1)
-            .setPositiveButton("YES") {_,_ ->
+            .setPositiveButton(getString(R.string.yes_caps)) {_,_ ->
                 deleteFolderWhenCancellingHike()
                 sendCommandToService(ACTION_STOP) // another idea: calling stopHike() with parameter
                 findNavController().navigate(R.id.action_global_homeFragment)
             }
-            .setNegativeButton("NO") { dialogInterface, _ ->
+            .setNegativeButton(getString(R.string.no_caps)) { dialogInterface, _ ->
                 dialogInterface.cancel()
             }
             .create()
@@ -441,16 +440,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     @MainThread
     private suspend fun endHikeAndSaveToDb() {
-        Log.d("timeInMillis", "endHikeAndSaveToDb: $currentTimeInMillis")
         var distanceInMeters = 0
-        var latLng = pathPoints.first().first()
+        val latLng = pathPoints.first().first()
         for (polyline in pathPoints) {
             distanceInMeters += Utility.calculatePolylineLength(polyline).toInt()
         }
         val averageSpeed = round((distanceInMeters / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
         val dateTimeStamp = Calendar.getInstance().timeInMillis
         val folderPath = context?.filesDir?.absolutePath + "/${highestHikeId.value?.plus(1)}/"
-        Log.d("testDatabase", "endHikeAndSaveToDb: $latLng")
         val mapSnapshot = MapSnapshot(MapSnapshot.MapSnapshotable { pMapSnapshot ->
             if (pMapSnapshot.status != MapSnapshot.Status.CANVAS_OK) {
                 return@MapSnapshotable
@@ -469,7 +466,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             viewModel.addDataToRoom(hike, findNavController())
             Snackbar.make(
                 requireActivity().findViewById(R.id.hikesFragment),
-                "Hike saved successfully",
+                getString(R.string.hike_saved_successfully),
                 Snackbar.LENGTH_LONG
             ).show()
             sendCommandToService(ACTION_STOP)
@@ -515,7 +512,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private fun myMarker(lat: Double, lon: Double) {
         lifecycleScope.launch {
-            var startMarker: Marker = Marker(mapView)
+            val startMarker: Marker = Marker(mapView)
             startMarker.position = GeoPoint(lat, lon)
             startMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.location)
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -531,8 +528,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     ) {
         val steps = 50
         val polygon = Polygon(mapView)
-        var centerX = mutableListOf<Double>()
-        var centerY = mutableListOf<Double>()
+        val centerX = mutableListOf<Double>()
+        val centerY = mutableListOf<Double>()
         polygon.fillPaint.color = Color.parseColor("#10"+ "FF0000")
         polygon.strokeWidth = 0f
         polygon.outlinePaint.color = Color.parseColor("#50"+ "FF0000")

@@ -10,7 +10,7 @@
 
     <Button
         android:id="@+id/startButton"
-        android:text="Start recording"
+        android:text="@string/start_recording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -21,7 +21,7 @@
 
     <Button
         android:id="@+id/stopButton"
-        android:text="Stop recording"
+        android:text="@string/stop_recording"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -33,7 +33,7 @@
         android:id="@+id/accdata"
         android:textSize="16dp"
         android:textColor="@color/md_theme_dark_onError"
-        android:text="No data"
+        android:text="@string/no_data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="Unfiltered sensor data: "
+        android:text="@string/unfiltered_sensor_data"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/tvFilteredSensors"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +57,7 @@
         android:id="@+id/tvSensorDataAcc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Raw acc data"
+        android:text="@string/raw_acc_data"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvUnfilteredSensors"
         app:layout_constraintTop_toBottomOf="@+id/tvUnfilteredSensors" />
@@ -66,7 +66,7 @@
         android:id="@+id/tvSensorDataGyro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Raw gyro data"
+        android:text="@string/raw_gyro_data"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvSensorDataAcc"
         app:layout_constraintTop_toBottomOf="@+id/tvSensorDataAcc" />
@@ -75,7 +75,7 @@
         android:id="@+id/tvSensorDataMag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Raw magnet data"
+        android:text="@string/raw_magnet_data"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvSensorDataAcc"
         app:layout_constraintTop_toBottomOf="@+id/tvSensorDataGyro" />
@@ -85,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:text="Filtered sensor data: "
+        android:text="@string/filtered_sensor_data"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +95,7 @@
         android:id="@+id/tvSensorDataAccFiltered"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No changes in Acc data"
+        android:text="@string/no_changes_in_acc_data"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvFilteredSensors"
         app:layout_constraintTop_toBottomOf="@+id/tvFilteredSensors" />
@@ -104,7 +104,7 @@
         android:id="@+id/tvSensorDataGyroFiltered"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No changes in Gyro data"
+        android:text="@string/no_changes_in_gyro_data"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvSensorDataAccFiltered"
         app:layout_constraintTop_toBottomOf="@+id/tvSensorDataAccFiltered" />
@@ -113,7 +113,7 @@
         android:id="@+id/tvOrientation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Device orientation"
+        android:text="@string/device_orientation"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvSensorDataGyroFiltered"
         app:layout_constraintTop_toBottomOf="@+id/tvSensorDataGyroFiltered" />

@@ -40,7 +40,7 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.stroll.presentation.fragment.RegisterFragment"
-        android:label="Register"
+        android:label="@string/register"
         tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_homeFragment"
@@ -52,12 +52,12 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.stroll.presentation.fragment.HomeFragment"
-        android:label="Home"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/hikesFragment"
         android:name="com.example.stroll.presentation.fragment.HikesFragment"
-        android:label="Hikes"
+        android:label="@string/hikes"
         tools:layout="@layout/fragment_hikes">
         <action
             android:id="@+id/action_hikesFragment_to_hikeDetailsFragment"
@@ -70,7 +70,7 @@
     <fragment
         android:id="@+id/hikeDetailsFragment"
         android:name="com.example.stroll.presentation.fragment.HikeDetailsFragment"
-        android:label="Details"
+        android:label="@string/details"
         tools:layout="@layout/fragment_hike_details">
         <argument
             android:name="id"
@@ -82,7 +82,7 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.stroll.presentation.fragment.MapFragment"
-        android:label="Map"
+        android:label="@string/map"
         tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_mapFragment_to_hikesFragment"
@@ -97,7 +97,7 @@
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="com.example.stroll.presentation.fragment.StatisticsFragment"
-        android:label="Statistics"
+        android:label="@string/statistics"
         tools:layout="@layout/fragment_statistics">
         <action
             android:id="@+id/action_statisticsFragment_to_hikesFragment"
@@ -106,21 +106,21 @@
     <fragment
         android:id="@+id/introductionFragment"
         android:name="com.example.stroll.presentation.fragment.IntroductionFragment"
-        android:label="Introduction"
+        android:label="@string/introduction"
         tools:layout="@layout/fragment_introduction"/>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.stroll.presentation.fragment.SettingsFragment"
-        android:label="Settings" />
+        android:label="@string/settings" />
     <fragment
         android:id="@+id/sensorFragment"
         android:name="com.example.stroll.presentation.fragment.SensorFragment"
-        android:label="Sensors"
+        android:label="@string/sensors"
         tools:layout="@layout/fragment_sensor"/>
     <fragment
         android:id="@+id/ARFragment"
         android:name="com.example.stroll.presentation.fragment.ARFragment"
-        android:label="Augmented Reality"
+        android:label="@string/augmented_reality"
         tools:layout="@layout/fragment_a_r">
         <argument
             android:name="poiName"
@@ -135,7 +135,7 @@
     <fragment
         android:id="@+id/addMarkerFragment"
         android:name="com.example.stroll.presentation.fragment.AddMarkerFragment"
-        android:label="Create POI"
+        android:label="@string/create_point_of_interest"
         tools:layout="@layout/fragment_add_marker" >
         <action
             android:id="@+id/action_addMarkerFragment_to_mapFragment"
@@ -144,7 +144,7 @@
     <fragment
         android:id="@+id/fullPhotoFragment"
         android:name="com.example.stroll.presentation.fragment.FullPhotoFragment"
-        android:label="Full photo"
+        android:label="string/full_photo"
         tools:layout="@layout/fragment_full_photo">
         <argument
             android:name="hikeId"
