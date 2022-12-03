@@ -35,6 +35,9 @@
     <action android:id="@+id/action_global_arFragment"
         app:destination="@+id/ARFragment"
         app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_aboutFragment"
+        app:destination="@+id/aboutFragment"
+        app:launchSingleTop="true"/>
 
 
     <fragment
@@ -44,10 +47,7 @@
         tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_registerFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/main_navigation"
-            app:popUpToInclusive="true"/>
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -117,6 +117,11 @@
         android:name="com.example.stroll.presentation.fragment.SensorFragment"
         android:label="@string/sensors"
         tools:layout="@layout/fragment_sensor"/>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.stroll.presentation.fragment.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about"/>
     <fragment
         android:id="@+id/ARFragment"
         android:name="com.example.stroll.presentation.fragment.ARFragment"

@@ -10,7 +10,6 @@ import com.example.stroll.data.repository.StrollRepositoryImpl
 import com.example.stroll.domain.repository.StrollRepository
 import com.example.stroll.other.Constants.KEY_FIRST_TIME_TOGGLE
 import com.example.stroll.other.Constants.KEY_NAME
-import com.example.stroll.other.Constants.KEY_WEIGHT
 import com.example.stroll.other.Constants.SHARED_PREFERENCES_NAME
 import dagger.Module
 import dagger.Provides
@@ -47,10 +46,6 @@ object AppModule {
     @Singleton
     @Provides
     fun provideName(sharedPref: SharedPreferences) = sharedPref.getString(KEY_NAME, "") ?: ""
-
-    @Singleton
-    @Provides
-    fun provideWeight(sharedPref: SharedPreferences) = sharedPref.getFloat(KEY_WEIGHT, 80f)
 
     @Singleton
     @Provides

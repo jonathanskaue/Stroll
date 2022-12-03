@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="30dp">
 
-    <TextView
+    <ImageView
         android:id="@+id/category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
