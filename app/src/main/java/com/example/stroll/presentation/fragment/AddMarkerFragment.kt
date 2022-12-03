@@ -100,38 +100,44 @@ class AddMarkerFragment : BaseFragment() {
 
         binding.createMarkerBtn.setOnClickListener {
             val markerName = binding.markerName.text.toString()
-            try {
-                if (bitmapForMarker != null){
-                    saveBitmapToInternalStorage(bitmapForMarker.toString(), bitmapForMarker!!)
-                    viewModel.addMarkerDataToRoom(
-                        MarkerEntity(
-                            name = markerName,
-                            category = markerCategory,
-                            lat = viewModel.currentLatLng.value!!.latitude,
-                            lon = viewModel.currentLatLng.value!!.longitude,
-                            photo = bitmapForMarker.toString().plus(".png")
+            if (markerName.isNotEmpty()) {
+                try {
+                    if (bitmapForMarker != null){
+                        saveBitmapToInternalStorage(bitmapForMarker.toString(), bitmapForMarker!!)
+                        viewModel.addMarkerDataToRoom(
+                            MarkerEntity(
+                                name = markerName,
+                                category = markerCategory,
+                                lat = viewModel.currentLatLng.value!!.latitude,
+                                lon = viewModel.currentLatLng.value!!.longitude,
+                                photo = bitmapForMarker.toString().plus(".png")
+                            )
                         )
-                    )
-                }
-                else{
-                    viewModel.addMarkerDataToRoom(
-                        MarkerEntity(
-                            name = markerName,
-                            category = markerCategory,
-                            lat = viewModel.currentLatLng.value!!.latitude,
-                            lon = viewModel.currentLatLng.value!!.longitude,
+                    }
+                    else{
+                        viewModel.addMarkerDataToRoom(
+                            MarkerEntity(
+                                name = markerName,
+                                category = markerCategory,
+                                lat = viewModel.currentLatLng.value!!.latitude,
+                                lon = viewModel.currentLatLng.value!!.longitude,
+                            )
                         )
-                    )
+                    }
+                    Snackbar.make(
+                        requireActivity().findViewById(R.id.mapFragment),
+                        "POI made successfully",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    findNavController().navigate(R.id.action_addMarkerFragment_to_mapFragment)
+                } catch (e: java.lang.NullPointerException) {
+                    Log.d("nullpointer", "onCreateView: $e")
                 }
-                Snackbar.make(
-                    requireActivity().findViewById(R.id.mapFragment),
-                    "POI made successfully",
-                    Snackbar.LENGTH_LONG
-                ).show()
-                findNavController().navigate(R.id.action_addMarkerFragment_to_mapFragment)
-            } catch (e: java.lang.NullPointerException) {
-                Log.d("nullpointer", "onCreateView: $e")
             }
+            else {
+                Snackbar.make(requireView(), "Please enter a name for POI", Snackbar.LENGTH_SHORT).show()
+            }
+
         }
 
         return binding.root
