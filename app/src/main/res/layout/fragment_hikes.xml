@@ -11,7 +11,7 @@
         android:id="@+id/noHikes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No recorded hikes.\n Come back after you've recorded a hike!"
+        android:text="@string/no_recorded_hikes_n_come_back_after_you_ve_recorded_a_hike"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
