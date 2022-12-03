@@ -27,6 +27,7 @@
     <string name="settings">Settings</string>
     <string name="sensors">Sensors</string>
     <string name="introduction">Introduction</string>
+    <string name="about">About</string>
 
     <string name="start_tracking">Start</string>
     <string name="stop_tracking">Stop</string>
@@ -80,6 +81,8 @@
     <string name="sort_by_time">Time</string>
     <string name="check_top5">Show Top 5</string>
 
-    <string name="no_recorded_hike">No recorded hikes yet. Please record a hike to see the statistics :)</string>
+    <string name="no_recorded_hike">No recorded hikes yet\nPlease record a hike to see the statistics</string>
+    <string name="about_text">Stroll is brought to you by the Stroll development team. \nIt was developed as a project at UiT in Narvik by: \n
+         - August Fredriksen: Project Manager \n - Jonathan Skaue: Senior Developer \n - Frédéric Charon: Senior Developer</string>
 
 </resources>

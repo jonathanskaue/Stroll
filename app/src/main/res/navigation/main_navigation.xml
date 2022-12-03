@@ -29,6 +29,9 @@
     <action android:id="@+id/action_global_introductionFragment"
         app:destination="@+id/introductionFragment"
         app:launchSingleTop="true"/>
+    <action android:id="@+id/action_global_aboutFragment"
+        app:destination="@+id/aboutFragment"
+        app:launchSingleTop="true"/>
 
 
     <fragment
@@ -100,4 +103,9 @@
         android:name="com.example.stroll.presentation.fragment.CameraFragment"
         android:label="Camera"
         tools:layout="@layout/fragment_camera" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.stroll.presentation.fragment.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about"/>
 </navigation>

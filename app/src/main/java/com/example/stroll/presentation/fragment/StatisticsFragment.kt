@@ -167,7 +167,7 @@ class StatisticsFragment : BaseFragment() {
     private fun create_barDataSet(allDates: List<BarEntry>, label: String, dataList: List<StrollDataEntity>){
         if(allDates.isEmpty()){
             binding.tvNoHikesRecorded.visibility = View.VISIBLE
-            binding.checkTop5.visibility = View.INVISIBLE
+            binding.barChart.visibility = View.INVISIBLE
         }
         else{
             binding.tvNoHikesRecorded.visibility = View.INVISIBLE
