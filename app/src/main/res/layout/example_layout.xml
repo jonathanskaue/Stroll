@@ -3,27 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:alpha="0.93"
     android:orientation="vertical"
-    android:padding="30dp">
+    android:alpha="0.95"
+    android:padding="16dp">
 
-    <ImageView
-        android:id="@+id/category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#111B55"
-        android:textColor="#fff" />
+        android:orientation="vertical"
+        android:background="@drawable/home_layout_bg"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#fff"
-        android:background="#0A25E8"
-        android:textSize="24sp" />
+        <ImageView
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"/>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+
 </LinearLayout>
