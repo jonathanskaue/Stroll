@@ -29,6 +29,8 @@ interface StrollRepository {
 
     val readAllData: LiveData<List<StrollDataEntity>>
 
+    val allHikeId: LiveData<List<Int>>
+
     val getAllMarkers: LiveData<List<MarkerEntity>>
 
 }

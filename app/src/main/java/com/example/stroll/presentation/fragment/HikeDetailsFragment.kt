@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import com.example.stroll.databinding.FragmentHomeBinding
 
@@ -72,9 +73,18 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.fabDeleteHike.setOnClickListener {
-            showDeleteHikeDialog()
+        viewModel.allHikeId.observe(viewLifecycleOwner) {
+            if ((it.maxOrNull() ?: 0) != args.id) {
+                binding.fabDeleteHike.setOnClickListener {
+                    showDeleteHikeDialog()
+                }
+            }
+            else {
+                binding.fabDeleteHike.visibility = View.GONE
+            }
         }
+
+
         viewModel.hikeById.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d("gethikebyid", "onViewCreated: ${args.id}")
@@ -133,7 +143,7 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
     private fun showDeleteHikeDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
             .setTitle("Delete Hike?")
-            .setMessage("Are you sure you want to delete the hike and delete data for this hike?")
+            .setMessage("Are you sure you want to delete the hike forever?")
             .setIcon(R.drawable.group_1)
             .setPositiveButton("YES") {_,_ ->
                 lifecycleScope.launch {

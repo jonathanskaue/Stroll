@@ -23,6 +23,7 @@ class StrollRepositoryImpl @Inject constructor(
     override val getTotalTimeInMillis: LiveData<Long> = dao.getTotalTimeInMillis(),
     override val getTotalAverageSpeed: LiveData<Float> = dao.getTotalAverageSpeed(),
     override val getAllMarkers: LiveData<List<MarkerEntity>> = dao.getAllMarkers(),
+    override val allHikeId: LiveData<List<Int>> = dao.getAllHikeId(),
 ): StrollRepository {
 
     override suspend fun insertData(data: StrollDataEntity) {

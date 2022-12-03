@@ -224,7 +224,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 }
                 if (viewModel.isMarker.value && viewModel.isStartingPos.value) {
                     it.forEach { pos ->
-                        myMarker(pos.startLatitude, pos.startLongitude, pos.id.toString(), pos.timeInMillis.toString(), pos.averageSpeedInKMH.toString())
+                        myMarker(pos.startLatitude, pos.startLongitude)
                     }
                 }
         }
@@ -249,12 +249,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
         binding.btnAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
-            Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
+
+
         }
         binding.fabAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
-            Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
         }
         binding.toggleHikeBtn.setOnClickListener {
@@ -513,29 +513,16 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
-    private fun myMarker(lat: Double, lon: Double, id: String, title: String, subDescription: String) {
+    private fun myMarker(lat: Double, lon: Double) {
         lifecycleScope.launch {
             var startMarker: Marker = Marker(mapView)
             startMarker.position = GeoPoint(lat, lon)
             startMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.location)
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            startMarker.setOnMarkerClickListener { marker, mapView ->
-                startMarker.title = title
-                startMarker.subDescription = subDescription
-                startMarker.showInfoWindow()
-                Log.d("onclick", "myMarker: Hello world")
-                false
-            }
-            var myPhoto: InternalStoragePhoto
-            if (loadMyPhoto(id).isNotEmpty()) {
-                myPhoto = loadMyPhoto(id).first()
-                val myDrawable = BitmapDrawable(resources, myPhoto.bmp)
-                startMarker.image = myDrawable
-            }
+            startMarker.setInfoWindow(null)
             mapView.overlayManager?.add(startMarker)
         }
     }
-
 
     private fun myHeatMap(
         lat: Double,

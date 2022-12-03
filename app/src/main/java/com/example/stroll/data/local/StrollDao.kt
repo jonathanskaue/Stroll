@@ -25,6 +25,9 @@ interface StrollDao {
     @Query("SELECT * FROM marker_table WHERE category= :category")
     fun getMarkersByCategory(category: String): LiveData<List<MarkerEntity>>
 
+    @Query("SELECT id FROM hike_table")
+    fun getAllHikeId(): LiveData<List<Int>>
+
     @Delete
     suspend fun deleteData(data: StrollDataEntity)
 
