@@ -16,6 +16,16 @@
         app:layout_constraintStart_toStartOf="@+id/barChart"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tvFilterBy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_by"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/statistics_spFilter"
+        app:layout_constraintEnd_toStartOf="@+id/statistics_spFilter"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Spinner
         android:id="@+id/statistics_spFilter"
         android:layout_width="wrap_content"
