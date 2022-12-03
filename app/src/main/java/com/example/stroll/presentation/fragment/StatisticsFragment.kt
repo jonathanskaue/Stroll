@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -165,6 +166,13 @@ class StatisticsFragment : BaseFragment() {
 
     @SuppressLint("ResourceType")
     private fun create_barDataSet(allDates: List<BarEntry>, label: String, dataList: List<StrollDataEntity>){
+        if(allDates.isEmpty()){
+            binding.tvNoHikesRecorded.visibility = View.VISIBLE
+            binding.checkTop5.visibility = View.INVISIBLE
+        }
+        else{
+            binding.tvNoHikesRecorded.visibility = View.INVISIBLE
+        }
         val bardataSet: BarDataSet
         if (show_top5){
             bardataSet = BarDataSet(allDates.subList(0,5), label).apply {
