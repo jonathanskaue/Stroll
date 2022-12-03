@@ -81,6 +81,16 @@
         <item>Average Speed</item>
     </string-array>
 
+    <!-- statistics - sort by: -->
+    <string name="sort_by">Sort by:</string>
+    <string name="sort_by_distance">Distance</string>
+    <string name="sort_by_averageSpeed">Average Speed</string>
+    <string name="sort_by_time">Time</string>
+    <string name="check_top5">Show Top 5</string>
+
+    <string name="no_recorded_hike">No recorded hikes yet. Please record a hike to see the statistics :)</string>
+
+
     <string-array name="marker_categories">
         <item>Mountain</item>
         <item>Fishing</item>
