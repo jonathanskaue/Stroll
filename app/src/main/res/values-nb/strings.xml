@@ -176,6 +176,9 @@
     <string name="canoe">Kano</string>
     <string name="misc">Diverse</string>
     <string name="starting_position">Startposisjon</string>
+    <string name="stroll">STROLL</string>
+    <string name="about_text">Stroll er brakt til deg av Stroll-utviklingsteamet. \nDet er utviklet som et prosjekt ved UiT i Narvik av: \n
+         - August Fredriksen: Prosjektleder \n - Jonathan Skaue: Seniorutvikler \n - Frédéric Charon: Seniorutvikler</string>
 
 
     <string-array name="marker_categories">

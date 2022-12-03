@@ -28,7 +28,7 @@
                 android:fontFamily="sans-serif-condensed"
                 android:letterSpacing="0.2"
                 android:gravity="center"
-                android:text="STROLL"
+                android:text="@string/stroll"
                 android:textSize="32sp"
                 android:textColor="?attr/colorOnSurface" />
 

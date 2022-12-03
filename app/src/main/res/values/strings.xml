@@ -173,6 +173,9 @@
     <string name="hikes">Hikes</string>
     <string name="details">Details</string>
     <string name="full_photo">Full Photo</string>
+    <string name="stroll">STROLL</string>
+    <string name="about_text">Stroll is brought to you by the Stroll development team. \nIt was developed as a project at UiT in Narvik by: \n
+         - August Fredriksen: Project Manager \n - Jonathan Skaue: Senior Developer \n - Frédéric Charon: Senior Developer</string>
 
 
     <string-array name="marker_categories">
