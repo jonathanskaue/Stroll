@@ -40,7 +40,6 @@ class StatisticsFragment : BaseFragment() {
 
         // Inflate the layout for this fragment
         _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -174,7 +173,7 @@ class StatisticsFragment : BaseFragment() {
             binding.tvNoHikesRecorded.visibility = View.INVISIBLE
         }
         val bardataSet: BarDataSet
-        if (show_top5){
+        if (show_top5 && allDates.size > 5){
             bardataSet = BarDataSet(allDates.subList(0,5), label).apply {
                 valueTextColor = Color.WHITE
                 valueTextSize = 16f
