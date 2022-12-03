@@ -144,6 +144,9 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(HikesFragmentDirections.actionGlobalSensorFragment())
             R.id.toolbar_introduction ->
                 navController.navigate(HikesFragmentDirections.actionGlobalIntroductionFragment())
+            R.id.toolbar_about ->
+                navController.navigate(HikesFragmentDirections.actionGlobalAboutFragment())
+
         }
         return super.onOptionsItemSelected(item)
     }
