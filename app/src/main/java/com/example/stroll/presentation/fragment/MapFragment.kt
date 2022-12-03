@@ -249,12 +249,12 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
         binding.btnAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
-            Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
+
+
         }
         binding.fabAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
-            Log.d("AddMarker", "LatLng: ${viewModel.currentLatLng.value}")
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
         }
         binding.toggleHikeBtn.setOnClickListener {

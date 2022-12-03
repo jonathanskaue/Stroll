@@ -9,7 +9,7 @@
     android:padding="16dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,11 +20,13 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/tvGreetings"
-                style="@style/TextAppearance.MaterialComponents.Headline2"
+                style="@style/TextAppearance.MaterialComponents.Headline3"
                 android:text="Greetings"
+                android:layout_gravity="center"
                 android:textColor="?attr/colorOnPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>

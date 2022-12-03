@@ -46,6 +46,7 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObservers()
+        binding.tvGreetings.text = myGreetingsMessage()
         binding.tvUserName.text = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 
@@ -73,5 +74,17 @@ class HomeFragment : BaseFragment() {
                 binding.tvAverageSpeed.text = avgSpeedString
             }
         })
+    }
+
+    private fun myGreetingsMessage() : String {
+        val cal = Calendar.getInstance()
+        val timeOfDay = cal.get(Calendar.HOUR_OF_DAY)
+
+        return when(timeOfDay) {
+            in 0..11 -> "Good Morning"
+            in 12..16 -> "Good Afternoon"
+            in 17..23 -> "Good Evening"
+            else -> "Greetings"
+        }
     }
 }

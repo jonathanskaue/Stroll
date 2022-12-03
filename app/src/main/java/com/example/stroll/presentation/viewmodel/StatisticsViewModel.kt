@@ -29,6 +29,7 @@ class StatisticsViewModel @Inject constructor(
     val totalTimeInMillisHiked = strollRepo.getTotalTimeInMillis
     val totalAverageSpeed = strollRepo.getTotalAverageSpeed
     val hikeSortedByDate = strollRepo.selectAllHikesSortedByDate
+    var allHikeId: LiveData<List<Int>> = strollRepo.allHikeId
 
     fun getHikeById(id: Int) {
         viewModelScope.launch {

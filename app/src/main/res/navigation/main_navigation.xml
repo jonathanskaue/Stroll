@@ -108,7 +108,7 @@
     <fragment
         android:id="@+id/ARFragment"
         android:name="com.example.stroll.presentation.fragment.ARFragment"
-        android:label="fragment_a_r"
+        android:label="Augmented Reality"
         tools:layout="@layout/fragment_a_r">
         <argument
             android:name="poiName"
@@ -120,7 +120,7 @@
     <fragment
         android:id="@+id/addMarkerFragment"
         android:name="com.example.stroll.presentation.fragment.AddMarkerFragment"
-        android:label="fragment_add_marker"
+        android:label="Create POI"
         tools:layout="@layout/fragment_add_marker" >
         <action
             android:id="@+id/action_addMarkerFragment_to_mapFragment"
