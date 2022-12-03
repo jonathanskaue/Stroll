@@ -49,10 +49,10 @@ class RegisterFragment : BaseFragment() {
 
         if(!isFirstAppOpen) {
             val navOptions = NavOptions.Builder()
-                .setPopUpTo(R.id.registerFragment, true)
+                .setPopUpTo(R.id.registerFragment, false)
                 .build()
             findNavController().navigate(
-                R.id.action_registerFragment_to_homeFragment,
+                R.id.action_global_homeFragment,
                 savedInstanceState,
                 navOptions
             )
