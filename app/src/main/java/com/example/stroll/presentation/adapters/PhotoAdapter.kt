@@ -2,19 +2,32 @@ package com.example.stroll.presentation.adapters
 
 import android.content.ClipData.Item
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stroll.data.local.InternalStoragePhoto
+import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.ItemPhotoBinding
+import com.example.stroll.domain.repository.RVClickListener
 
-class PhotoAdapter(): ListAdapter<InternalStoragePhoto, PhotoAdapter.PhotoViewHolder>(Companion) {
+class PhotoAdapter(var listener: RVClickListener): RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
-    inner class PhotoViewHolder(val binding: ItemPhotoBinding): RecyclerView.ViewHolder(binding.root)
+    inner class PhotoViewHolder(val binding: ItemPhotoBinding): RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener{
+                val position = absoluteAdapterPosition
+                listener.onClick(position)
+            }
+        }
+    }
 
-    companion object : DiffUtil.ItemCallback<InternalStoragePhoto>() {
+   val diffCallback = object : DiffUtil.ItemCallback<InternalStoragePhoto>(){
         override fun areItemsTheSame(
             oldItem: InternalStoragePhoto,
             newItem: InternalStoragePhoto
@@ -30,6 +43,10 @@ class PhotoAdapter(): ListAdapter<InternalStoragePhoto, PhotoAdapter.PhotoViewHo
         }
     }
 
+    val differ = AsyncListDiffer(this, diffCallback)
+
+    fun submitList(list: List<InternalStoragePhoto>) = differ.submitList(list)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
         return PhotoViewHolder(
             ItemPhotoBinding.inflate(
@@ -41,7 +58,7 @@ class PhotoAdapter(): ListAdapter<InternalStoragePhoto, PhotoAdapter.PhotoViewHo
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        val photo = currentList[position]
+        val photo = differ.currentList[position]
         holder.binding.apply {
             ivPhoto.setImageBitmap(photo.bmp)
 
@@ -52,5 +69,10 @@ class PhotoAdapter(): ListAdapter<InternalStoragePhoto, PhotoAdapter.PhotoViewHo
                 applyTo(root)
             }
         }
+
+    }
+
+    override fun getItemCount(): Int {
+        return differ.currentList.size
     }
 }
