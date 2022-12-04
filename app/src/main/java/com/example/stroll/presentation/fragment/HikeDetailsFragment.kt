@@ -46,7 +46,7 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         geocoder = Geocoder(this.requireContext(), Locale.getDefault())
 
         // Inflate the layout for this fragment

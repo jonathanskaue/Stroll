@@ -16,7 +16,7 @@ class FullPhotoFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentFullPhotoBinding.inflate(inflater, container, false)
         loadMyPhoto(args.photoName, args.hikeId)
