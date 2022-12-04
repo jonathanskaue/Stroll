@@ -179,7 +179,7 @@
     <string name="stroll">STROLL</string>
     <string name="about_text">Stroll is brought to you by the Stroll development team. \nIt was developed as a project at UiT in Narvik by: \n
          - August Fredriksen: Project Manager \n - Jonathan Skaue: Senior Developer \n - Frédéric Charon: Senior Developer</string>
-    <string name="no_recorded_hikes_n_come_back_after_you_ve_recorded_a_hike">No recorded hikes.\n Come back after you\'ve recorded a hike!</string>
+    <string name="no_recorded_hikes_n_come_back_after_you_ve_recorded_a_hike">No recorded hikes.\nCome back after you\'ve recorded a hike!</string>
 
 
     <string-array name="marker_categories">
