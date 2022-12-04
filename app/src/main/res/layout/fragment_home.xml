@@ -24,7 +24,11 @@
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/tvGreetings"
-                style="@style/TextAppearance.MaterialComponents.Headline3"
+                style="@style/TextAppearance.Material3.HeadlineMedium"
+                android:textSize="36sp"
+                android:layout_marginBottom="16dp"
+                android:textFontWeight="400"
+                android:letterSpacing="0.04"
                 android:text="@string/greetings"
                 android:layout_gravity="center"
                 android:textColor="?attr/colorOnSurface"
@@ -34,7 +38,7 @@
         <TextView
             android:id="@+id/tvUserName"
             android:text="@string/your_name"
-            style="@style/TextAppearance.MaterialComponents.Headline4"
+            style="@style/TextAppearance.Material3.HeadlineSmall"
             android:gravity="center"
             android:textColor="?attr/colorOnSurface"
             android:layout_width="match_parent"
@@ -78,7 +82,9 @@
                 <TextView
                     android:id="@+id/tvTotalInfo"
                     android:text="@string/summary"
-                    style="@style/TextAppearance.MaterialComponents.Headline4"
+                    style="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textFontWeight="400"
+                    android:letterSpacing="0.04"
                     android:gravity="center"
                     android:textColor="?attr/colorSecondary"
                     android:layout_width="match_parent"
