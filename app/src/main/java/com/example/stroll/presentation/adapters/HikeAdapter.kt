@@ -15,6 +15,9 @@ import com.example.stroll.other.Utility
 import java.text.SimpleDateFormat
 import java.util.*
 
+/*
+Hike adapter for hike history
+ */
 class HikeAdapter(var listener: RVClickListener): RecyclerView.Adapter<HikeAdapter.HikeViewHolder>() {
 
     inner class HikeViewHolder(var binding: ItemHikeBinding): RecyclerView.ViewHolder(binding.root) {

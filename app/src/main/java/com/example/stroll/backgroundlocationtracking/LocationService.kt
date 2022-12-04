@@ -204,7 +204,6 @@ class LocationService : LifecycleService() {
                 notificationManager.notify(1, notification.build())
             }
         }
-        Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
     }
 
 

@@ -7,6 +7,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
+/*
+All Queries for database
+ */
 @Dao
 interface StrollDao {
 
