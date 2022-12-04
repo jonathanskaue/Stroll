@@ -8,12 +8,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.findNavController
-import com.example.stroll.R
 import com.example.stroll.databinding.FragmentSensorBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,10 +22,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
     private var _binding: FragmentSensorBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var sensorManager: SensorManager
-    private var sensorAccChange = floatArrayOf(0f, 0f, 0f)
     private var accSensorData = floatArrayOf(0f, 0f, 0f)
-    private var sensorGyroChange = listOf(0, 0, 0)
     private var sensorMagData = floatArrayOf(0f, 0f, 0f)
     private var rotationMatrix = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     private var deviceOrientation = floatArrayOf(0f, 0f, 0f)
@@ -40,7 +32,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         // Inflate the layout for this fragment
         _binding = FragmentSensorBinding.inflate(inflater, container, false)
@@ -93,7 +85,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
             }
             binding.tvSensorDataAcc.text = displayDataTriple("acc", accSensorData)
 
-            var accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
+            val accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
             accDataList.add(accData)
             viewModel.getAccData(accDataList)
         }

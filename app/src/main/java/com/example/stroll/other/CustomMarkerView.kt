@@ -1,5 +1,6 @@
 package com.example.stroll.other
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.TextView
 import com.example.stroll.R
@@ -11,23 +12,32 @@ import com.github.mikephil.charting.utils.MPPointF
 import java.text.SimpleDateFormat
 import java.util.*
 
+@SuppressLint("ViewConstructor")
 class CustomMarkerView(
-    val hikes: List<StrollDataEntity>,
+    /*
+    class to make a custom marker view, it displays the different values for a hike when a hike is
+        selected. It is called for example in the barchart when a bar is pressed on.
+     */
+    private val hikes: List<StrollDataEntity>,
     c: Context,
     layoutId: Int
-) : MarkerView(c, layoutId) {
+    ) : MarkerView(c, layoutId) {
 
-    val tvID = findViewById<TextView>(R.id.tvID)
-    val tvDate = findViewById<TextView>(R.id.tvDate)
-    val tvAvgSpeed = findViewById<TextView>(R.id.tvAvgSpeed)
-    val tvDistance = findViewById<TextView>(R.id.tvDistance)
-    val tvDuration = findViewById<TextView>(R.id.tvDuration)
+    // the different values of each hike
+    private val tvID: TextView = findViewById<TextView>(R.id.tvID)
+    private val tvDate: TextView = findViewById<TextView>(R.id.tvDate)
+    private val tvAvgSpeed: TextView = findViewById<TextView>(R.id.tvAvgSpeed)
+    private val tvDistance: TextView = findViewById<TextView>(R.id.tvDistance)
+    private val tvDuration: TextView = findViewById<TextView>(R.id.tvDuration)
 
     override fun getOffset(): MPPointF {
         return MPPointF(-width / 2f, -height.toFloat())
     }
 
     override fun refreshContent(e: Entry?, highlight: Highlight?) {
+        /*
+        refreshing the content and updating the textViews to display the hike's values
+         */
         super.refreshContent(e, highlight)
         if(e == null) {
             return

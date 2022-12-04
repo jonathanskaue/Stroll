@@ -1,5 +1,6 @@
 package com.example.stroll.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -13,11 +14,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val strollRepo: StrollRepository
 ): ViewModel() {
-
+    /*
+    ViewModel to access the database from the statisticFragment
+     */
     private var _city: MutableLiveData<String> = MutableLiveData()
     val city: LiveData<String> = _city
 
@@ -28,6 +32,7 @@ class StatisticsViewModel @Inject constructor(
     val totalDistanceHiked = strollRepo.getTotalDistanceHiked
     val totalTimeInMillisHiked = strollRepo.getTotalTimeInMillis
     val totalAverageSpeed = strollRepo.getTotalAverageSpeed
+    // returns all the hikes sorted by a value
     val hikeSortedByDate = strollRepo.selectAllHikesSortedByDate
     val hikeSortedByTime = strollRepo.selectAllHikesSortedByTimeInMillis
     val hikeSortedByDistance = strollRepo.selectAllHikesSortedByDistance
@@ -39,9 +44,10 @@ class StatisticsViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("LogNotTimber")
     fun getDetailsByLatLng(geocoder: Geocoder, lat: Double, lng: Double) {
         try {
-            var adresses = geocoder.getFromLocation(lat, lng, 1)
+            val adresses = geocoder.getFromLocation(lat, lng, 1)
             _address.value = adresses?.get(0)?.getAddressLine(0)
             _city.value = adresses?.get(0)?.subAdminArea
 
