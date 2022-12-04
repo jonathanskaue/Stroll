@@ -159,7 +159,6 @@ class MapFragment : BaseFragment() {
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
         geocoder = Geocoder(this.requireContext(), Locale.getDefault())
-
         return binding.root
     }
 
