@@ -4,22 +4,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.os.Looper
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.other.Constants.ACTION_PAUSE
-import com.example.stroll.other.Constants.ACTION_SHOW_MAP_FRAGMENT
 import com.example.stroll.other.Constants.ACTION_START
 import com.example.stroll.other.Constants.ACTION_STOP
 import com.example.stroll.other.Constants.FASTEST_LOCATION_INTERVAL
@@ -34,7 +29,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 typealias Polyline = MutableList<LatLng>
@@ -43,8 +37,8 @@ typealias Polylines = MutableList<Polyline>
 @AndroidEntryPoint
 class LocationService : LifecycleService() {
 
-    var isFirstRun = true
-    var serviceStopped = false
+    private var isFirstRun = true
+    private var serviceStopped = false
     private val timeHikedInSeconds = MutableLiveData<Long>()
 
     @Inject
@@ -52,7 +46,7 @@ class LocationService : LifecycleService() {
     @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
-    lateinit var currentNotificationBuilder: NotificationCompat.Builder
+    private lateinit var currentNotificationBuilder: NotificationCompat.Builder
 
     companion object {
         val timeHikedInMillis = MutableLiveData<Long>()
@@ -73,10 +67,10 @@ class LocationService : LifecycleService() {
         postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
-        isTracking.observe(this, Observer {
+        isTracking.observe(this) {
             updateLocationTracking(it)
             updateNotificationTrackingState(it)
-        })
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -162,7 +156,7 @@ class LocationService : LifecycleService() {
         }
     }
 
-    val locationCallback = object : LocationCallback() {
+    private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
             if(isTracking.value!!) {
@@ -203,13 +197,13 @@ class LocationService : LifecycleService() {
 
         startForeground(1, baseNotificationBuilder.build())
 
-        timeHikedInSeconds.observe(this, Observer {
+        timeHikedInSeconds.observe(this) {
             if (!serviceStopped) {
                 val notification = currentNotificationBuilder
                     .setContentText(Utility.getFormattedStopWatchTime(it * 1000L))
                 notificationManager.notify(1, notification.build())
             }
-        })
+        }
         Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
     }
 

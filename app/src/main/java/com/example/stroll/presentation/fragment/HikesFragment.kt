@@ -1,20 +1,15 @@
 package com.example.stroll.presentation.fragment
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import androidx.core.view.MenuHost
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.stroll.backgroundlocationtracking.LocationService
-import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.databinding.FragmentHikesBinding
 import com.example.stroll.domain.repository.RVClickListener
 import com.example.stroll.other.SortType

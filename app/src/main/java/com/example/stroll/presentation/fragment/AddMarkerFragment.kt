@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,17 +20,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.stroll.R
 import com.example.stroll.data.local.MarkerEntity
 import com.example.stroll.databinding.FragmentAddMarkerBinding
-import com.example.stroll.databinding.FragmentRegisterBinding
-import com.example.stroll.other.SortType
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 import java.io.IOException
 
 @AndroidEntryPoint
@@ -62,7 +57,7 @@ class AddMarkerFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAddMarkerBinding.inflate(inflater, container, false)
 
@@ -144,7 +139,7 @@ class AddMarkerFragment : BaseFragment() {
         return binding.root
     }
 
-    fun checkCameraPermissions() {
+    private fun checkCameraPermissions() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA
@@ -184,10 +179,6 @@ class AddMarkerFragment : BaseFragment() {
             if (bitmap != null) {
                 bitmapForMarker = bitmap
             }
-        }
-        else {
-            // Failed to take picture
-            // showAlert("Failed to take camera picture")
         }
     }
 

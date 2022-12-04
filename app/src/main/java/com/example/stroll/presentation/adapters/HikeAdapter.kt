@@ -1,15 +1,12 @@
 package com.example.stroll.presentation.adapters
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.ItemHikeBinding
@@ -29,7 +26,7 @@ class HikeAdapter(var listener: RVClickListener): RecyclerView.Adapter<HikeAdapt
         }
     }
 
-    val diffCallback = object : DiffUtil.ItemCallback<StrollDataEntity>() {
+    private val diffCallback = object : DiffUtil.ItemCallback<StrollDataEntity>() {
         override fun areItemsTheSame(
             oldItem: StrollDataEntity,
             newItem: StrollDataEntity

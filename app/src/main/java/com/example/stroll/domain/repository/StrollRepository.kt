@@ -1,7 +1,6 @@
 package com.example.stroll.domain.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.stroll.data.local.MarkerEntity
 import com.example.stroll.data.local.StrollDataEntity
 

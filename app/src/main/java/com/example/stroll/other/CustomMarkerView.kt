@@ -24,11 +24,11 @@ class CustomMarkerView(
     ) : MarkerView(c, layoutId) {
 
     // the different values of each hike
-    private val tvID: TextView = findViewById<TextView>(R.id.tvID)
-    private val tvDate: TextView = findViewById<TextView>(R.id.tvDate)
-    private val tvAvgSpeed: TextView = findViewById<TextView>(R.id.tvAvgSpeed)
-    private val tvDistance: TextView = findViewById<TextView>(R.id.tvDistance)
-    private val tvDuration: TextView = findViewById<TextView>(R.id.tvDuration)
+    private val tvID = findViewById<TextView>(R.id.tvID)
+    private val tvDate = findViewById<TextView>(R.id.tvDate)
+    private val tvAvgSpeed: TextView = findViewById(R.id.tvAvgSpeed)
+    private val tvDistance: TextView = findViewById(R.id.tvDistance)
+    private val tvDuration: TextView = findViewById(R.id.tvDuration)
 
     override fun getOffset(): MPPointF {
         return MPPointF(-width / 2f, -height.toFloat())
@@ -52,7 +52,7 @@ class CustomMarkerView(
         tvID.text = id_number
 
         val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(calendar.time)
-        "${resources.getString(R.string.date)}: ${dateFormat}".also { tvDate.text = it }
+        "${resources.getString(R.string.date)}: $dateFormat".also { tvDate.text = it }
 
         val avgSpeed = "${resources.getString(R.string.speed)}: ${hike.averageSpeedInKMH}km/h"
         tvAvgSpeed.text = avgSpeed

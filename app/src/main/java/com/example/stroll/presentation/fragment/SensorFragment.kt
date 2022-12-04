@@ -17,7 +17,7 @@ import kotlin.math.sqrt
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
-class SensorFragment() : BaseFragment(), SensorEventListener {
+class SensorFragment : BaseFragment(), SensorEventListener {
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -35,7 +35,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         listenToSensors = false
 
         // Inflate the layout for this fragment
@@ -99,7 +99,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
                 }
                 binding.tvSensorDataAcc.text = displayDataTriple("acc", accSensorData)
 
-                var accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
+                val accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
                 accDataList.add(accData)
                 viewModel.getAccData(accDataList)
             }

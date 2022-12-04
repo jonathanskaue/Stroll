@@ -18,24 +18,24 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class IntroductionFragment() : BaseFragment() {
+class IntroductionFragment : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels()
 
     private var _binding: FragmentIntroductionBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var viewPager: ViewPager
-    lateinit var viewPagerAdapter: ViewPagerAdapter
-    lateinit var dotsIndicator: SpringDotsIndicator
-    lateinit var imageList: List<Int>
-    lateinit var headingList: List<String>
-    lateinit var bodyList: List<String>
+    private lateinit var viewPager: ViewPager
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private lateinit var dotsIndicator: SpringDotsIndicator
+    private lateinit var imageList: List<Int>
+    private lateinit var headingList: List<String>
+    private lateinit var bodyList: List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         (activity as MainActivity).bottomNavBar.visibility = View.GONE
         _binding = FragmentIntroductionBinding.inflate(inflater, container, false)
 

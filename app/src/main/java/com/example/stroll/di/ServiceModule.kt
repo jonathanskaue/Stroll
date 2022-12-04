@@ -31,13 +31,13 @@ object ServiceModule {
     fun provideMainActivityPendingIntent(
         @ApplicationContext app: Context
         ) = PendingIntent.getActivity(
-            app,
-            0,
-            Intent(app, MainActivity::class.java).also {
-                it.action = Constants.ACTION_SHOW_MAP_FRAGMENT
-            },
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
+        app,
+        0,
+        Intent(app, MainActivity::class.java).also {
+            it.action = Constants.ACTION_SHOW_MAP_FRAGMENT
+        },
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )!!
 
     @ServiceScoped
     @Provides

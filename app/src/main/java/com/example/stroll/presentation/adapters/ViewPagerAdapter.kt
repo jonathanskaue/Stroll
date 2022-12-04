@@ -12,16 +12,15 @@ import androidx.core.view.isVisible
 import androidx.viewpager.widget.PagerAdapter
 import com.example.stroll.R
 import com.example.stroll.presentation.viewmodel.MainViewModel
-import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import java.util.*
 
 class ViewPagerAdapter(
     val viewModel: MainViewModel,
     val view: View?,
     val context: Context,
-    val imageList: List<Int>,
-    val headingList: List<String>,
-    val bodyList: List<String>,
+    private val imageList: List<Int>,
+    private val headingList: List<String>,
+    private val bodyList: List<String>,
     ): PagerAdapter() {
 
     override fun getCount(): Int {
@@ -42,7 +41,7 @@ class ViewPagerAdapter(
         val bodyView = itemView.findViewById(R.id.idTvBody) as TextView
         val introButtonButton = itemView.findViewById(R.id.introButton) as Button
 
-        introButtonButton.setOnClickListener() {
+        introButtonButton.setOnClickListener {
             viewModel.checkStarted()
         }
         imageView.setImageResource(imageList[position])

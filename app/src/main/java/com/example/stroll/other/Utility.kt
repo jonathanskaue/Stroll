@@ -40,7 +40,7 @@ object Utility {
                 position2.longitude,
                 result
             )
-            distance = distance + result[0]
+            distance += result[0]
         }
         return distance
     }

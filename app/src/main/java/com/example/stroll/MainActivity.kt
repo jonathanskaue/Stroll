@@ -1,23 +1,16 @@
 package com.example.stroll
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
@@ -29,20 +22,14 @@ import com.example.stroll.other.Constants.ACTION_SHOW_MAP_FRAGMENT
 import com.example.stroll.presentation.fragment.*
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.collections.ArrayList
 
 
 //It works!!!!!!!!
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private val TRANSITIONS_RECEIVER_ACTION: String =
-        BuildConfig.APPLICATION_ID + "TRANSITIONS_RECEIVER_ACTION"
-    private var mActivityTransitionsPendingIntent: PendingIntent? = null
 
     private lateinit var navController: NavController
     lateinit var bottomNavBar: BottomNavigationView
@@ -78,19 +65,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
-            setKeepOnScreenCondition() {
+            setKeepOnScreenCondition {
                 viewModel.isLoading.value
             }
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent(TRANSITIONS_RECEIVER_ACTION)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        val navGraph = navController.navInflater.inflate(R.navigation.main_navigation)
         bottomNavBar = findViewById(R.id.bottomNav)
         val bottomBarConfiguration = AppBarConfiguration(
             setOf(
@@ -180,25 +165,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp()
-    }
-
-    companion object {
-        const val TAG = "MainActivity"
-        private fun toActivityString(activity: Int): String {
-            return when (activity) {
-                DetectedActivity.STILL -> "STILL"
-                DetectedActivity.WALKING -> "WALKING"
-                else -> "UNKNOWN"
-            }
-        }
-
-        private fun toTransitionType(transitionType: Int): String {
-            return when (transitionType) {
-                ActivityTransition.ACTIVITY_TRANSITION_ENTER -> "ENTER"
-                ActivityTransition.ACTIVITY_TRANSITION_EXIT -> "EXIT"
-                else -> "UNKNOWN"
-            }
-        }
     }
 }
 

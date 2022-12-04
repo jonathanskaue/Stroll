@@ -1,18 +1,12 @@
 package com.example.stroll.presentation.adapters
 
-import android.content.ClipData.Item
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.stroll.data.local.InternalStoragePhoto
-import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.ItemPhotoBinding
 import com.example.stroll.domain.repository.RVClickListener
 
@@ -27,7 +21,7 @@ class PhotoAdapter(var listener: RVClickListener): RecyclerView.Adapter<PhotoAda
         }
     }
 
-   val diffCallback = object : DiffUtil.ItemCallback<InternalStoragePhoto>(){
+   private val diffCallback = object : DiffUtil.ItemCallback<InternalStoragePhoto>(){
         override fun areItemsTheSame(
             oldItem: InternalStoragePhoto,
             newItem: InternalStoragePhoto

@@ -1,6 +1,5 @@
 package com.example.stroll.presentation.viewmodel
 
-import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -24,7 +23,6 @@ class StatisticsViewModel @Inject constructor(
     ViewModel to access the database from the statisticFragment
      */
     private var _city: MutableLiveData<String> = MutableLiveData()
-    val city: LiveData<String> = _city
 
     private var _address: MutableLiveData<String> = MutableLiveData()
     val address: LiveData<String> = _address
@@ -56,9 +54,9 @@ class StatisticsViewModel @Inject constructor(
     fun getDetailsByLatLng(geocoder: Geocoder, lat: Double, lng: Double) {
         viewModelScope.launch {
             try {
-                var adresses = geocoder.getFromLocation(lat, lng, 1)
-                _address.value = adresses?.get(0)?.getAddressLine(0)
-                _city.value = adresses?.get(0)?.subAdminArea
+                val addresses = geocoder.getFromLocation(lat, lng, 1)
+                _address.value = addresses?.get(0)?.getAddressLine(0)
+                _city.value = addresses?.get(0)?.subAdminArea
 
             } catch (e: java.lang.NullPointerException) {
                 Log.d("error", "getDetailsByLatLng: $e")

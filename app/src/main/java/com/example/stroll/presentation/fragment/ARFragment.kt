@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -39,7 +38,6 @@ import java.util.concurrent.ExecutionException
 
 class ARFragment : Fragment() {
 
-    private val TAG = "ARCoreCamera"
     private val MIN_OPENGL_VERSION = 3.0
     private var installRequested = false
     private var hasFinishedLoading = false
@@ -59,7 +57,7 @@ class ARFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentARBinding.inflate(inflater, container, false)
         arSceneView = binding.arSceneView
@@ -110,7 +108,7 @@ class ARFragment : Fragment() {
                         distanceTextView.text = node.distance.toString() + "M"
                         val nameView = eView.findViewById<TextView>(R.id.textView1)
                         nameView.text = args.poiName
-                        var categoryView = eView.findViewById<ImageView>(R.id.category)
+                        val categoryView = eView.findViewById<ImageView>(R.id.category)
                         when(args.category) {
                             "Mountain" -> categoryView.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.mountain))
                             "Fishing" -> categoryView.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.fishing))
@@ -187,7 +185,7 @@ class ARFragment : Fragment() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun getExampleView(renderable: ViewRenderable): Node? {
+    private fun getExampleView(renderable: ViewRenderable): Node {
         val base = Node()
         base.renderable = renderable
         val c: Context? = context

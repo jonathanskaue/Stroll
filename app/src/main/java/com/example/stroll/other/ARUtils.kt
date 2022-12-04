@@ -21,8 +21,7 @@ class ARUtils {
         context: Context, errorMsg: String, problem: Throwable?
     ) {
         val tag = context.javaClass.simpleName
-        val toastText: String
-        toastText = if (problem != null && problem.message != null) {
+        val toastText: String = if (problem?.message != null) {
             Log.e(tag, errorMsg, problem)
             errorMsg + ": " + problem.message
         } else if (problem != null) {
@@ -63,17 +62,23 @@ class ARUtils {
         activity: Activity?, sessionException: UnavailableException
     ) {
         val message: String
-        if (sessionException is UnavailableArcoreNotInstalledException) {
-            message = "Please install ARCore"
-        } else if (sessionException is UnavailableApkTooOldException) {
-            message = "Please update ARCore"
-        } else if (sessionException is UnavailableSdkTooOldException) {
-            message = "Please update this app"
-        } else if (sessionException is UnavailableDeviceNotCompatibleException) {
-            message = "This device does not support AR"
-        } else {
-            message = "Failed to create AR session"
-            Log.e(TAG, "Exception: $sessionException")
+        when (sessionException) {
+            is UnavailableArcoreNotInstalledException -> {
+                message = "Please install ARCore"
+            }
+            is UnavailableApkTooOldException -> {
+                message = "Please update ARCore"
+            }
+            is UnavailableSdkTooOldException -> {
+                message = "Please update this app"
+            }
+            is UnavailableDeviceNotCompatibleException -> {
+                message = "This device does not support AR"
+            }
+            else -> {
+                message = "Failed to create AR session"
+                Log.e(TAG, "Exception: $sessionException")
+            }
         }
         Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
     }

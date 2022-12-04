@@ -1,28 +1,19 @@
 package com.example.stroll.presentation.viewmodel
 
 import android.graphics.Bitmap
-import android.location.Geocoder
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.navigation.NavController
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.example.stroll.R
-import com.example.stroll.backgroundlocationtracking.Polyline
 import com.example.stroll.data.local.MarkerEntity
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.domain.repository.StrollRepository
 import com.example.stroll.other.SortType
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.osmdroid.util.GeoPoint
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,23 +131,6 @@ class MainViewModel @Inject constructor(
         _isStartingPos.value = false
     }
 
-    private val _isInfoWindowOpen = MutableLiveData<Boolean>(false)
-    val isInfoWindowOpen: LiveData<Boolean> = _isInfoWindowOpen
-
-    fun isInfoWindowOpen() {
-        _isInfoWindowOpen.value = true
-    }
-    fun isNotInfoWindowOpen() {
-        _isInfoWindowOpen.value = false
-    }
-
-    private var _currentMarker = MutableLiveData<org.osmdroid.views.overlay.Marker>()
-    val currentMarker: LiveData<org.osmdroid.views.overlay.Marker> = _currentMarker
-
-    fun setMarker(marker: org.osmdroid.views.overlay.Marker) {
-        _currentMarker.value = marker
-    }
-
     init {
         viewModelScope.launch {
             _isLoading.value = false
@@ -207,7 +181,7 @@ class MainViewModel @Inject constructor(
         _initialize.value = initialize
     }
 
-    var _accData = MutableLiveData<List<List<Float>>>(listOf(listOf(0f, 0f, 0f)))
+    var _accData = MutableLiveData(listOf(listOf(0f, 0f, 0f)))
     val accData: LiveData<List<List<Float>>> = _accData
 
     fun getAccData(data: List<List<Float>>) {

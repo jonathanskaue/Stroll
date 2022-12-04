@@ -1,6 +1,5 @@
 package com.example.stroll.other
 
-import android.Manifest
 
 object Constants {
     const val ACTION_START = "ACTION_START"

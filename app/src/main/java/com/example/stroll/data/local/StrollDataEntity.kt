@@ -1,9 +1,7 @@
 package com.example.stroll.data.local
-import android.graphics.Bitmap
+
 import androidx.room.Entity
-import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
-import com.google.android.gms.maps.model.LatLng
 
 @Entity(tableName = "hike_table")
 data class StrollDataEntity(

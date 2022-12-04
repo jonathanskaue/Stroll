@@ -11,7 +11,6 @@ import android.graphics.*
 import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.transition.AutoTransition
@@ -38,7 +37,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
-import com.example.stroll.data.local.InternalStoragePhoto
 import com.example.stroll.data.local.LatLong
 import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.FragmentMapBinding
@@ -55,7 +53,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.osmdroid.config.Configuration
-import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
@@ -64,7 +61,6 @@ import org.osmdroid.views.MapController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.drawing.MapSnapshot
 import org.osmdroid.views.drawing.MapSnapshot.INCLUDE_FLAG_SCALED
-import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.TilesOverlay
@@ -82,7 +78,7 @@ import kotlin.math.sin
 
 
 @AndroidEntryPoint
-class MapFragment() : BaseFragment(), MapEventsReceiver {
+class MapFragment : BaseFragment() {
 
     private lateinit var mapView: MapView
     private lateinit var controller: MapController
@@ -126,14 +122,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         viewModel.initialize(initializeViewModel)
         latLng = GeoPoint(10.0,10.0)
         // Inflate the layout for this fragment
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        Configuration.getInstance().userAgentValue = context?.packageName;
+        Configuration.getInstance().userAgentValue = context?.packageName
         Configuration.getInstance().load(context,
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
 
@@ -146,9 +142,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         mapView.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
 
         controller = mapView.controller as MapController
-
-        val mapEventsOverLay = MapEventsOverlay(this)
-        mapView.overlays.add(mapEventsOverLay)
 
         myLocationOverlay =
             MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), mapView)
@@ -262,21 +255,20 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 endHikeAndSaveToDb()
             }
         }
-        viewModel.highestHikeId.observe(viewLifecycleOwner, Observer {
+        viewModel.highestHikeId.observe(viewLifecycleOwner) {
             if (it != null) {
                 highestHikeId.value = it
                 folder = context?.filesDir?.absolutePath + "/${it.plus(1)}/"
-            }
-            else {
+            } else {
                 highestHikeId.value = 0
                 folder = context?.filesDir?.absolutePath + "/1/"
             }
-        })
+        }
         binding.btnTakePhoto.setOnClickListener {
             checkCameraPermissions()
         }
     }
-    fun checkCameraPermissions() {
+    private fun checkCameraPermissions() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA
@@ -293,14 +285,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     override fun onResume() {
         super.onResume()
-        mapView?.onResume()
+        mapView.onResume()
         addAllPolyLines(polygonColor)
 
     }
 
     override fun onPause() {
         super.onPause()
-        mapView?.onPause()
+        mapView.onPause()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -316,9 +308,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 saveBitmapToSpecificFolder(bitmap.toString().plus(".png"), bitmap)
             }
         }
-        else {
-            // Failed to take picture
-        }
     }
 
     /*
@@ -327,7 +316,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     * Draws a trail behind you when on a hike.
     */
     private fun subscribeToObservers() {
-        LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
+        LocationService.timeHikedInMillis.observe(viewLifecycleOwner) {
             currentTimeInMillis = it
             val formattedTime = Utility.getFormattedStopWatchTime(currentTimeInMillis, true)
             binding.timerTV.text = formattedTime
@@ -338,16 +327,16 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 binding.btnTakePhoto.isVisible = true
                 binding.distanceHiked.isVisible = true
             }
-        })
-        LocationService.isTracking.observe(viewLifecycleOwner, Observer {
+        }
+        LocationService.isTracking.observe(viewLifecycleOwner) {
             updateTracking(it)
-        })
+        }
 
-        LocationService.pathPoints.observe(viewLifecycleOwner, Observer {
+        LocationService.pathPoints.observe(viewLifecycleOwner) {
             pathPoints = it
             addLatestPolyline(polygonColor)
 
-        })
+        }
     }
 
     // Cancel hike.
@@ -438,7 +427,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     save all relevant hike data to database and stop the service.
      */
     @MainThread
-    private suspend fun endHikeAndSaveToDb() {
+    private fun endHikeAndSaveToDb() {
         var distanceInMeters = 0
         val latLng = pathPoints.first().first()
         for (polyline in pathPoints) {
@@ -483,7 +472,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             for (polyline in pathPoints) {
 
                 for (i in 0..polyline.size - 2) {
-                    var polygon = Polygon()
+                    val polygon = Polygon()
                     val position = polyline[i] // LATLNG
                     val position2 = polyline[i + 1]
                     polygon.outlinePaint.color = Color.parseColor(color)
@@ -520,7 +509,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     // Creates a marker without infowindow from starting position
     private fun myMarker(lat: Double, lon: Double) {
         lifecycleScope.launch {
-            val startMarker: Marker = Marker(mapView)
+            val startMarker = Marker(mapView)
             startMarker.position = GeoPoint(lat, lon)
             startMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.location)
             startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -573,7 +562,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         val deleteButton = infoWindow.view.findViewById<ImageButton>(R.id.ibDeleteMarker)
 
         lifecycleScope.launch {
-            val poiMarker: Marker = Marker(mapView)
+            val poiMarker = Marker(mapView)
             poiMarker.position = GeoPoint(lat, lon)
             when(category) {
                 "Mountain" -> poiMarker.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.mountain)
@@ -597,9 +586,9 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             poiMarker.setOnMarkerClickListener { marker, mapView ->
                 poiMarker.title = name
                 poiMarker.infoWindow = infoWindow
-                var addresses = ""
-                addresses = geocoder.getFromLocation(lat, lon, 1)?.first()?.getAddressLine(0).toString()
-                if (addresses.isNullOrEmpty()) {
+                val addresses: String =
+                    geocoder.getFromLocation(lat, lon, 1)?.first()?.getAddressLine(0).toString()
+                if (addresses.isEmpty()) {
                     locationText.text = "${round(lat * 10000) / 10000}, ${round(lon * 10000) / 10000}"
                 }
                 else {
@@ -628,35 +617,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                         .create()
                     dialog.show()
                 }
-                viewModel.isInfoWindowOpen()
                 poiMarker.showInfoWindow()
                 false
             }
             mapView.overlayManager?.add(poiMarker)
-        }
-    }
-
-    private suspend fun loadMyPhoto(id: String): List<InternalStoragePhoto> {
-        return withContext(Dispatchers.IO) {
-            val path = context?.filesDir?.absolutePath + "/$id/"
-            val dir = File(path).listFiles()
-            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }.map {
-                val bytes = it.readBytes()
-                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                InternalStoragePhoto(it.name, bmp)
-            }
-        }
-    }
-
-    private suspend fun loadMyMarkerPhoto(id: String): List<InternalStoragePhoto> {
-        return withContext(Dispatchers.IO) {
-            val path = context?.filesDir?.absolutePath + "/$id/"
-            val dir = File(path).listFiles()
-            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }.map {
-                val bytes = it.readBytes()
-                val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                InternalStoragePhoto(it.name, bmp)
-            }
         }
     }
 
@@ -715,8 +679,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private fun deleteFolderWhenCancellingHike(){
         val folder = context?.filesDir
-        val children = folder?.listFiles()
-            ?.filter { it.isDirectory && !it.name.equals("osmdroid") }
 
         val folders = folder?.listFiles()
         folders?.sortByDescending { dir ->
@@ -745,15 +707,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
             e.printStackTrace()
             false
         }
-    }
-
-    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        return true
-    }
-
-    override fun longPressHelper(p: GeoPoint?): Boolean {
-        viewModel.isNotInfoWindowOpen()
-        return false
     }
 }
 
