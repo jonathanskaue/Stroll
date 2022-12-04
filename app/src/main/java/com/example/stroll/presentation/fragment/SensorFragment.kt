@@ -8,12 +8,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.findNavController
-import com.example.stroll.R
 import com.example.stroll.databinding.FragmentSensorBinding
 import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,10 +23,7 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
     private var _binding: FragmentSensorBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var sensorManager: SensorManager
-    private var sensorAccChange = floatArrayOf(0f, 0f, 0f)
     private var accSensorData = floatArrayOf(0f, 0f, 0f)
-    private var sensorGyroChange = listOf(0, 0, 0)
     private var sensorMagData = floatArrayOf(0f, 0f, 0f)
     private var rotationMatrix = floatArrayOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
     private var deviceOrientation = floatArrayOf(0f, 0f, 0f)
@@ -117,6 +109,17 @@ class SensorFragment() : BaseFragment(), SensorEventListener {
                 if (gyroTotal > 0.1) {
                     binding.tvSensorDataGyroFiltered.text = displayDataTriple("gyro", gyroSensorData)
                 }
+            val accData: MutableList<Float> = mutableListOf(accSensorData[0], accSensorData[1], accSensorData[2])
+            accDataList.add(accData)
+            viewModel.getAccData(accDataList)
+        }
+        if (event?.sensor?.type == Sensor.TYPE_GYROSCOPE) {
+            val gyroSensorData = event.values
+            val gyroTotal =
+                sqrt(gyroSensorData[0] * gyroSensorData[0] + gyroSensorData[1] * gyroSensorData[1] + gyroSensorData[2] * gyroSensorData[2])
+            if (gyroTotal > 0.1) {
+                binding.tvSensorDataGyroFiltered.text = displayDataTriple("gyro", gyroSensorData)
+            }
 
                 binding.tvSensorDataGyro.text = displayDataTriple("gyro", gyroSensorData)
 

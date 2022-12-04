@@ -1,11 +1,8 @@
 package com.example.stroll.presentation.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -15,7 +12,9 @@ import com.example.stroll.MainActivity
 import com.example.stroll.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
-
+    /*
+    fragment to display the settings, accessed by opening the toolbar menu and selecting settings
+     */
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         loadSettings()
@@ -34,6 +33,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun loadSettings() {
+        // function to switch between dark and light mode
         val sp = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
         val dark_mode = sp?.getBoolean("dark_mode", false)
         val markers = sp?.getBoolean("marker_map", true)

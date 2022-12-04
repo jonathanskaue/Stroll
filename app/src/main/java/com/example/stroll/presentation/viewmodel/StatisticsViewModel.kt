@@ -1,5 +1,6 @@
 package com.example.stroll.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -14,11 +15,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val strollRepo: StrollRepository
 ): ViewModel() {
-
+    /*
+    ViewModel to access the database from the statisticFragment
+     */
     private var _city: MutableLiveData<String> = MutableLiveData()
     val city: LiveData<String> = _city
 
@@ -29,6 +33,7 @@ class StatisticsViewModel @Inject constructor(
     val totalDistanceHiked = strollRepo.getTotalDistanceHiked
     val totalTimeInMillisHiked = strollRepo.getTotalTimeInMillis
     val totalAverageSpeed = strollRepo.getTotalAverageSpeed
+    // returns all the hikes sorted by a value
     val hikeSortedByDate = strollRepo.selectAllHikesSortedByDate
     val hikeSortedByTime = strollRepo.selectAllHikesSortedByTimeInMillis
     val hikeSortedByDistance = strollRepo.selectAllHikesSortedByDistance
@@ -59,6 +64,5 @@ class StatisticsViewModel @Inject constructor(
                 Log.d("error", "getDetailsByLatLng: $e")
             }
         }
-
     }
 }
