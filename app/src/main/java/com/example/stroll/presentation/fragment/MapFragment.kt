@@ -266,6 +266,7 @@ class MapFragment : BaseFragment() {
             checkCameraPermissions()
         }
     }
+
     private fun checkCameraPermissions() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -302,7 +303,6 @@ class MapFragment : BaseFragment() {
             val source = imageUri?.let { ImageDecoder.createSource(requireActivity().contentResolver, it) }
             val bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
             if (bitmap != null) {
-
                 saveBitmapToSpecificFolder(bitmap.toString().plus(".png"), bitmap)
             }
         }
@@ -642,6 +642,7 @@ class MapFragment : BaseFragment() {
             requireContext().startService(it)
         }
 
+    //Saving a bitmap in the apps internal storage
     private fun saveBitmapToInternalStorage(filename: String, bitmap: Bitmap): Boolean {
         return try {
             context?.openFileOutput("$filename.png", MODE_PRIVATE).use { stream ->
@@ -656,6 +657,8 @@ class MapFragment : BaseFragment() {
         }
     }
 
+    //Making a folder in the internal where the name is the highest hike id + 1
+    //Here we put photos for a hike in progress
     private fun makeFolderInInternalStorage(){
         val folder = context?.filesDir
         val children = folder?.listFiles()
@@ -675,6 +678,7 @@ class MapFragment : BaseFragment() {
         }
     }
 
+    //Deleting the newest folder when canceling hike. So photos on a hike that gets cancelled gets deleted
     private fun deleteFolderWhenCancellingHike(){
         val folder = context?.filesDir
 
@@ -687,6 +691,7 @@ class MapFragment : BaseFragment() {
         newestFolder?.delete()
     }
 
+    //Saving bitmap to the folder in internal storage with the highest Id-number. For when a hike gets finished
     private fun saveBitmapToSpecificFolder(filename: String, bitmap: Bitmap): Boolean {
         return try {
             val file = File(folder + File.separator + filename)

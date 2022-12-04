@@ -98,6 +98,7 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
         layoutManager = StaggeredGridLayoutManager(1, RecyclerView.HORIZONTAL)
     }
 
+    //Loading the map associated with the hike
     private fun loadImage() {
         Glide.with(this)
             .load(BitmapFactory.decodeFile(context?.filesDir?.path + "/${viewModel.hikeById.value?.mapSnapShot}"))
@@ -125,6 +126,7 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
             }
         }
     }
+
     private fun showDeleteHikeDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
             .setTitle(resources.getString(R.string.delete_hike_question))
@@ -144,6 +146,7 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
         dialog.show()
     }
 
+    //Navigating to FullPhoto fragment to show the full photo clicked on
     override fun onClick(position: Int) {
         val photoString = photoAdapter.differ.currentList[position].name
         val hikeId = args.id

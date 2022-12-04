@@ -139,6 +139,8 @@ class AddMarkerFragment : BaseFragment() {
         return binding.root
     }
 
+    //If the user has camera permission, then the camera interface gets opened.
+    //If not, the user gets a prompt to decide if he wants to give the app camera permission
     private fun checkCameraPermissions() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),

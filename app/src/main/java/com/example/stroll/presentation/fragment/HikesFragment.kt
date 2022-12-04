@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,7 @@ import com.example.stroll.presentation.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HikesFragment() : BaseFragment(), RVClickListener {
+class HikesFragment : BaseFragment(), RVClickListener {
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -86,17 +85,16 @@ class HikesFragment() : BaseFragment(), RVClickListener {
             }
         }
 
-        viewModel.hikes.observe(viewLifecycleOwner, Observer {
+        viewModel.hikes.observe(viewLifecycleOwner) {
             hikeAdapter.submitList(it)
             if (it.isEmpty()) {
                 binding.constraintLayout.visibility = View.GONE
                 binding.noHikes.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 binding.constraintLayout.visibility = View.VISIBLE
                 binding.noHikes.visibility = View.GONE
             }
-        })
+        }
     }
 
     private fun setupRecyclerView() = binding.rvHikes.apply {
@@ -104,6 +102,7 @@ class HikesFragment() : BaseFragment(), RVClickListener {
         layoutManager = LinearLayoutManager(requireContext())
     }
 
+    //Navigating to HikeDetailsFragment and showing the specific hike clicked on
     override fun onClick(position: Int) {
         val id = hikeAdapter.differ.currentList[position].id
         val action = id?.let { HikesFragmentDirections.actionHikesFragmentToHikeDetailsFragment(it) }

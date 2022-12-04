@@ -49,7 +49,7 @@ class ARFragment : Fragment() {
 
     private var arSceneView: ArSceneView? = null
 
-    private var exampleLayoutRenderable: ViewRenderable? = null
+    private var arMarkerLayoutRenderable: ViewRenderable? = null
     private var locationScene: LocationScene? = null
 
     private val args: ARFragmentArgs by navArgs()
@@ -64,12 +64,12 @@ class ARFragment : Fragment() {
 
         checkIsSupportedDeviceOrFinish((activity as MainActivity))
 
-        val exampleLayout: CompletableFuture<ViewRenderable> = ViewRenderable.builder()
-            .setView(requireContext(), R.layout.example_layout)
+        val arMarkerLayout: CompletableFuture<ViewRenderable> = ViewRenderable.builder()
+            .setView(requireContext(), R.layout.ar_marker_layout)
             .build()
 
         CompletableFuture.allOf(
-            exampleLayout,
+            arMarkerLayout,
         )
             .handle<Any?> { notUsed: Void?, throwable: Throwable? ->
                 if (throwable != null) {
@@ -77,7 +77,7 @@ class ARFragment : Fragment() {
                     return@handle null
                 }
                 try {
-                    exampleLayoutRenderable = exampleLayout.get()
+                    arMarkerLayoutRenderable = arMarkerLayout.get()
                     hasFinishedLoading = true
                 } catch (ex: InterruptedException) {
                     ARUtils().displayError(requireContext(), "Unable to load renderables", ex)
@@ -96,14 +96,14 @@ class ARFragment : Fragment() {
 
                 val layoutLocationMarker =
                     LocationMarker(
-                        args.latLng.long, args.latLng.lat, getExampleView(
-                            exampleLayoutRenderable!!
+                        args.latLng.long, args.latLng.lat, getARView(
+                            arMarkerLayoutRenderable!!
                         )
                     )
 
                 layoutLocationMarker.renderEvent =
                     LocationNodeRender { node ->
-                        val eView = exampleLayoutRenderable!!.view
+                        val eView = arMarkerLayoutRenderable!!.view
                         val distanceTextView = eView.findViewById<TextView>(R.id.textView2)
                         distanceTextView.text = node.distance.toString() + "M"
                         val nameView = eView.findViewById<TextView>(R.id.textView1)
@@ -185,7 +185,7 @@ class ARFragment : Fragment() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun getExampleView(renderable: ViewRenderable): Node {
+    private fun getARView(renderable: ViewRenderable): Node {
         val base = Node()
         base.renderable = renderable
         val c: Context? = context
@@ -197,7 +197,7 @@ class ARFragment : Fragment() {
         return base
     }
 
-    fun checkIsSupportedDeviceOrFinish(activity: MainActivity): Boolean {
+    private fun checkIsSupportedDeviceOrFinish(activity: MainActivity): Boolean {
         val openGlVersionString =
             (activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
                 .deviceConfigurationInfo
