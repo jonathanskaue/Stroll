@@ -69,7 +69,6 @@ class IntroductionFragment() : BaseFragment() {
             }
         }
         return binding.root
-
     }
 
     override fun onStop() {

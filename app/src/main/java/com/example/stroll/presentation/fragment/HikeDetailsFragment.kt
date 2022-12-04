@@ -44,9 +44,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HikeDetailsFragment : BaseFragment(), RVClickListener {
 
-    @set:Inject
-    var name = ""
-
     private val args: HikeDetailsFragmentArgs by navArgs()
 
     private val photoAdapter by lazy { PhotoAdapter(this) }
@@ -88,7 +85,6 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
         viewModel.hikeById.observe(viewLifecycleOwner) {
             if (it == null) {
                 Log.d("gethikebyid", "onViewCreated: ${args.id}")
-                Log.d("gethikebyid", "onViewCreated: hikeEntity is null")
             }
             else {
                 viewModel.getDetailsByLatLng(geocoder, it.startLatitude, it.startLongitude)
@@ -107,15 +103,15 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
         }
     }
 
+    private fun setUpPhotoRecyclerView() = binding.rvPrivatePhotos.apply {
+        adapter = photoAdapter
+        layoutManager = StaggeredGridLayoutManager(1, RecyclerView.HORIZONTAL)
+    }
+
     private fun loadImage() {
         Glide.with(this)
             .load(BitmapFactory.decodeFile(context?.filesDir?.path + "/${viewModel.hikeById.value?.mapSnapShot}"))
             .into(binding.hikeMapSnapShot)
-    }
-
-    private fun setUpPhotoRecyclerView() = binding.rvPrivatePhotos.apply {
-        adapter = photoAdapter
-        layoutManager = StaggeredGridLayoutManager(1, RecyclerView.HORIZONTAL)
     }
 
     private fun loadHikePhotosIntoRecyclerView(){
@@ -132,8 +128,7 @@ class HikeDetailsFragment : BaseFragment(), RVClickListener {
         return withContext(Dispatchers.IO) {
             val path = context?.filesDir?.absolutePath + "/${args.id}/"
             val dir = File(path).listFiles()
-            Log.d("dir", "${dir?.toList()}: ")
-            dir.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
+            dir?.filter { it.canRead() && it.isFile && it.name.endsWith(".png") }!!.map {
                 val bytes = it.readBytes()
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 InternalStoragePhoto(it.name, bmp)

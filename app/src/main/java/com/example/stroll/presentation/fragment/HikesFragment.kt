@@ -27,9 +27,6 @@ class HikesFragment() : BaseFragment(), RVClickListener {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var isTracking = false
-    private var pathPoints = mutableListOf<Polyline>()
-
     private var _binding: FragmentHikesBinding? = null
     private val binding get() = _binding!!
 
@@ -52,8 +49,6 @@ class HikesFragment() : BaseFragment(), RVClickListener {
             val action = HikesFragmentDirections.actionHikesFragmentToStatisticsFragment()
             findNavController().navigate(action)
         }
-
-        val menuHost: MenuHost = requireActivity()
         setupRecyclerView()
 
         when(viewModel.sortType) {
@@ -113,12 +108,6 @@ class HikesFragment() : BaseFragment(), RVClickListener {
         adapter = hikeAdapter
         layoutManager = LinearLayoutManager(requireContext())
     }
-
-    private fun sendCommandToService(action: String) =
-        Intent(requireContext(), LocationService::class.java).also {
-            it.action = action
-            requireContext().startService(it)
-        }
 
     override fun onClick(position: Int) {
         val id = hikeAdapter.differ.currentList[position].id

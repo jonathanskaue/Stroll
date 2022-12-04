@@ -114,9 +114,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     private var initializeViewModel = true
 
-    @set:Inject
-    var name = "Default"
-
     private val cameraPermissionResult = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -139,13 +136,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     ): View? {
 
         viewModel.initialize(initializeViewModel)
-
         latLng = GeoPoint(10.0,10.0)
-
         // Inflate the layout for this fragment
         _binding = FragmentMapBinding.inflate(inflater, container, false)
-        fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireContext())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         Configuration.getInstance().userAgentValue = context?.packageName;
         Configuration.getInstance().load(context,
             context?.let { PreferenceManager.getDefaultSharedPreferences(it.applicationContext) })
@@ -189,6 +183,8 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Loop through every marker in database and display on map.
         viewModel.getAllMarkers.observe(viewLifecycleOwner) {
             if (viewModel.isMarker.value) {
                 it.forEach { poi ->
@@ -213,28 +209,29 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 }
             }
         }
-            viewModel.allData.observe(viewLifecycleOwner) {
-                if (viewModel.isHeatMap.value) {
-                    it.forEach { pos ->
-                        myHeatMap(pos.startLatitude, pos.startLongitude, 0.001)
-                    }
+        // Heatmap from starting position of hike & Display markers from starting position of hike.
+        viewModel.allData.observe(viewLifecycleOwner) {
+            if (viewModel.isHeatMap.value) {
+                it.forEach { pos ->
+                    myHeatMap(pos.startLatitude, pos.startLongitude, 0.001)
                 }
-                if (viewModel.isMarker.value && viewModel.isStartingPos.value) {
-                    it.forEach { pos ->
-                        myMarker(pos.startLatitude, pos.startLongitude)
-                    }
+            }
+            if (viewModel.isMarker.value && viewModel.isStartingPos.value) {
+                it.forEach { pos ->
+                    myMarker(pos.startLatitude, pos.startLongitude)
                 }
+            }
         }
+
+        // Centers map on current location.
         binding.btnCenterLocation.setOnClickListener {
             controller.animateTo(myLocationOverlay.myLocation, 18.0, 1000L)
             myLocationOverlay.enableFollowLocation()
         }
+
+        // Expandable menu while on a hike.
         binding.arrowButton.setOnClickListener {
-            // If the CardView is already expanded, set its visibility
-            // to gone and change the expand less icon to expand more.
             if (binding.hiddenView.visibility == View.VISIBLE) {
-                // The transition of the hiddenView is carried out by the TransitionManager class.
-                // Here we use an object of the AutoTransition Class to create a default transition
                 TransitionManager.beginDelayedTransition(binding.baseCardview, AutoTransition())
                 binding.hiddenView.visibility = View.GONE
                 binding.arrowButton.setImageResource(R.drawable.expand_less)
@@ -244,16 +241,22 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 binding.arrowButton.setImageResource(R.drawable.expand_more)
             }
         }
+
+        // Navigates to Add Marker Fragment while on a hike.
         binding.btnAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
 
 
         }
+
+        // Navigates to Add Marker Fragment while not on a hike.
         binding.fabAddMarker.setOnClickListener {
             viewModel.getCurrentLatLng(LatLng(myLocationOverlay.myLocation.latitude, myLocationOverlay.myLocation.longitude))
             findNavController().navigate(R.id.action_mapFragment_to_addMarkerFragment)
         }
+
+        //Buttons for start/pause, cancel and finish a hike.
         binding.toggleHikeBtn.setOnClickListener {
             toggleHike()
         }
@@ -279,7 +282,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         binding.btnTakePhoto.setOnClickListener {
             checkCameraPermissions()
         }
-
     }
     fun checkCameraPermissions() {
         if (ContextCompat.checkSelfPermission(
@@ -303,7 +305,6 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     }
 
-
     override fun onPause() {
         super.onPause()
         mapView?.onPause()
@@ -324,10 +325,14 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
         else {
             // Failed to take picture
-            // showAlert("Failed to take camera picture")
         }
     }
 
+    /*
+    * Function to add values from service to fragment.
+    * Toggles the Floating action button to become a menu if on a hike.
+    * Draws a trail behind you when on a hike.
+    */
     private fun subscribeToObservers() {
         LocationService.timeHikedInMillis.observe(viewLifecycleOwner, Observer {
             currentTimeInMillis = it
@@ -352,6 +357,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         })
     }
 
+    // Cancel hike.
     private fun showCancelHikeDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
             .setTitle(getString(R.string.cancel_hike_question))
@@ -369,10 +375,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         dialog.show()
     }
 
-    private fun stopHike() {
-        sendCommandToService(ACTION_STOP)
-        view?.findNavController()?.navigate(R.id.action_mapFragment_to_hikesFragment)
-    }
+    // Logic for when to show play/pause icon and finish button.
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
@@ -400,6 +403,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
+    // Used before taking a snapshot of the map.
     private fun zoomToSeeWholeTrack() {
         myLocationOverlay.disableFollowLocation()
         myLocationOverlay.disableMyLocation()
@@ -436,6 +440,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         return BoundingBox(north, east, south, west)
     }
 
+    /*
+    Function to take a snapshot of map,
+    save all relevant hike data to database and stop the service.
+     */
     @MainThread
     private suspend fun endHikeAndSaveToDb() {
         var distanceInMeters = 0
@@ -473,6 +481,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
 
     }
 
+    /*
+    Loops through every polyline in your hike and displays it to map.
+    Gets called when a user is currently on a hike and enters the map fragment.
+     */
     private fun addAllPolyLines(color: String) {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             for (polyline in pathPoints) {
@@ -490,6 +502,10 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
+    /*
+    Makes a line from your last position and previous last position.
+    Adds it to the mapview.
+     */
     private fun addLatestPolyline(color: String) {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
             val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
@@ -508,6 +524,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
+    // Creates a marker without infowindow from starting position
     private fun myMarker(lat: Double, lon: Double) {
         lifecycleScope.launch {
             val startMarker: Marker = Marker(mapView)
@@ -519,6 +536,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         }
     }
 
+
+    /*
+    Homemade heatmap.
+    Creates a semi transparent circle around starting position.
+     */
     private fun myHeatMap(
         lat: Double,
         lon: Double,
@@ -542,6 +564,11 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         mapView.overlayManager?.add(polygon)
     }
 
+    /*
+    Point of Interest with custom infowindow.
+    Marker will be customized depending on the parameters.
+    Button for showing POI in AR.
+     */
     private fun myPOIs(name: String?, category: String, lat: Double, lon: Double, id: String, myPhoto: String?) {
         val infoWindow = MarkerWindow(mapView)
         val infoImage = infoWindow.view.findViewById<ImageView>(R.id.ivInfoWindow)
@@ -716,6 +743,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     }
 }
 
+// Custom Infowindow used in POI markers.
 class MarkerWindow(mapView: MapView) :
         InfoWindow(R.layout.info_window, mapView) {
 

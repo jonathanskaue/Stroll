@@ -49,9 +49,6 @@ class HomeFragment : BaseFragment() {
         subscribeToObservers()
         binding.tvGreetings.text = myGreetingsMessage()
         binding.tvUserName.text = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-
-
-
     }
     private fun subscribeToObservers() {
         viewModel.totalTimeInMillisHiked.observe(viewLifecycleOwner, Observer {
@@ -79,9 +76,8 @@ class HomeFragment : BaseFragment() {
 
     private fun myGreetingsMessage() : String {
         val cal = Calendar.getInstance()
-        val timeOfDay = cal.get(Calendar.HOUR_OF_DAY)
 
-        return when(timeOfDay) {
+        return when(cal.get(Calendar.HOUR_OF_DAY)) {
             in 0..11 -> resources.getString(R.string.good_morning)
             in 12..16 -> resources.getString(R.string.good_afternoon)
             in 17..23 -> getString(R.string.good_evening)

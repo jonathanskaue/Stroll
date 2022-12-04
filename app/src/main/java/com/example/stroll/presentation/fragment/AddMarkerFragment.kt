@@ -66,6 +66,7 @@ class AddMarkerFragment : BaseFragment() {
         // Inflate the layout for this fragment
         _binding = FragmentAddMarkerBinding.inflate(inflater, container, false)
 
+        //Gives value to category from the spinner in view.
         var markerCategory = ""
         binding.markerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -97,6 +98,7 @@ class AddMarkerFragment : BaseFragment() {
             checkCameraPermissions()
         }
 
+        //Adding the marker to database.
         binding.createMarkerBtn.setOnClickListener {
             val markerName = binding.markerName.text.toString()
             if (markerName.isNotEmpty()) {

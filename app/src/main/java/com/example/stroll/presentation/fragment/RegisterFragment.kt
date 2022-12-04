@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.example.stroll.MainActivity
 import com.example.stroll.R
 import com.example.stroll.databinding.FragmentRegisterBinding
 import com.example.stroll.other.Constants.KEY_FIRST_TIME_TOGGLE
@@ -17,6 +18,11 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/*
+Registers username with dependency injection and shared preferences.
+Remembers username and if you previously opened the app and navigates to Home fragment if true.
+Prompts you to enter a username if first time opened.
+ */
 @AndroidEntryPoint
 class RegisterFragment : BaseFragment() {
 
@@ -46,15 +52,20 @@ class RegisterFragment : BaseFragment() {
         if(!isFirstAppOpen) {
             findNavController().navigate(R.id.action_global_homeFragment)
         }
-
-        binding.tvContinue.setOnClickListener {
-            val success = writePersonalDataToSharedPref()
-            if(success) {
-                findNavController().navigate(R.id.action_global_homeFragment)
-            } else {
-                Snackbar.make(requireView(), getString(R.string.please_enter_all_the_fields), Snackbar.LENGTH_SHORT).show()
+        else{
+            (activity as MainActivity).bottomNavBar.visibility = View.GONE
+            binding.tvContinue.setOnClickListener {
+                val success = writePersonalDataToSharedPref()
+                if(success) {
+                    (activity as MainActivity).bottomNavBar.visibility = View.VISIBLE
+                    findNavController().navigate(R.id.action_global_introductionFragment)
+                } else {
+                    Snackbar.make(requireView(), getString(R.string.please_enter_all_the_fields), Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
+
+
     }
 
     private fun writePersonalDataToSharedPref(): Boolean {

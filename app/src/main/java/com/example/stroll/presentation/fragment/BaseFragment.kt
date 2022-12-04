@@ -24,7 +24,7 @@ import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreference
 import com.example.stroll.R
 import com.example.stroll.presentation.viewmodel.MainViewModel
-
+//All other fragments will extend BaseFragment
 abstract class BaseFragment : Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
 
