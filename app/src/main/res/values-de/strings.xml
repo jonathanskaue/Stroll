@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="app_name">Stroll</string>
+<string name="mode">Tag</string>
+<!-- Preference Titles -->
+<string name="messages_header">Nachrichten</string>
+<string name="sync_header">Sync</string>
+
+<!-- Messages Preferences -->
+<string name="signature_title">Signatur</string>
+<string name="reply_title">Standard Antwort</string>
+
+<!-- Sync Preferences -->
+<string name="sync_title">Emails regelmäßig synchronisieren</string>
+<string name="attachment_title">Eingehende Anhänge herunterladen</string>
+<string name="attachment_summary_on">Eingehende Email-Anhänge automatisch herunterladen
+    </string>
+
+<!-- Bottom bar names -->
+<string name="attachment_summary_off">Eingehende Email-Anhänge nicht automatisch herunterladen</string>
+<string name="map">Karte</string>
+<string name="home">Home</string>
+<string name="camera">Kamera</string>
+<string name="statistics">Statistik</string>
+
+<!-- Toolbar names -->
+<string name="settings">Einstellungen</string>
+<string name="sensors">Sensoren</string>
+<string name="introduction">Einführung</string>
+
+<string name="start_tracking">Start</string>
+<string name="stop_tracking">Stop</string>
+<string name="reset_tracking">Reset</string>
+<string name="time_to_start">Es ist Zeit zu starten</string>
+
+<string name="still">In Ruhe</string>
+<string name="walking">Gehen</string>
+<string name="running">Laufen</string>
+
+<string name="still_text">Du bewegst dich gerade nicht!</string>
+<string name="walking_text">Du gehst!</string>
+<string name="running_text">Du läufst!</string>
+
+<string name="permission_rational_dialog_title">Aktivitätsbrechtigungen benötigt</string>
+<string name="permission_rational_dialog_message">Bestätige die Berechtigungen, um Deine Aktivität einzusehen.</string>
+<string name="permission_rational_dialog_positive_button_text">Anfrage um Berechtigung</string>
+<string name="permission_rational_dialog_negative_button_text">Nein danke</string>
+
+<string name="settings_dialog_title">Aktivitätsbrechtigungen benötigt</string>
+<string name="settings_dialog_message">Bestätige die Berechtigung manuell in den Geräte-Einstellungen</string>
+<string name="settings_dialog_positive_button_text">Zu Einstellungen</string>
+<string name="settings_dialog_negative_button_text">Nein danke</string>
+<string name="take_photo">Füge Bild hinzu</string>
+
+<string name="take_picture">Füge Bild hinzu</string>
+<string name="take_picture_description">Schieße einen Schnappschuss mit der Kamera</string>
+<string name="plane_finding">Ebene nicht gefunden</string>
+<string name="ar">AR</string>
+<string name="add_photo">Füge Bild hinzu</string>
+<string name="create_marker">Erstelle Marker</string>
+<string name="create_point_of_interest">Erstelle Marker</string>
+<string name="poi_made_successfully">Marker wurde gesetzt</string>
+<string name="please_enter_a_name_for_poi">Gib einen Namen für den Marker ein</string>
+<string name="location_marker_touched">Marker ausgewählt.</string>
+<string name="marker_name">Marker Name</string>
+<string name="history">Verlauf</string>
+<string name="delete_hike_question">Wanderung löschen?</string>
+<string name="delete_hike_forever_question">Möchtets du die Wanderung wirklich endgültig löschen?</string>
+<string name="delete_marker_question">Marker löschen?</string>
+
+<string name="delete_marker_forever_question">Möchtets du den Marker wirklich endgültig löschen?</string>
+<string name="are_you_sure_you_wanna_cancel_the_hike">Möchtets du die Wanderung wirklich abbrechen? Sämtlicher Fortschritt geht verloren</string>
+
+<string-array name="filter_options">
+    <item>Datum</item>
+    <item>Zeit</item>
+    <item>Entfernung</item>
+    <item>Geschwindigkeit</item>
+</string-array>
+
+<!-- statistics - sort by: -->
+<string name="sort_by">Filtere nach:</string>
+<string name="sort_by_distance">Entfernung</string>
+<string name="sort_by_averageSpeed">Geschwindigkeit</string>
+<string name="sort_by_time">Zeit</string>
+<string name="check_top5">ZeigeTop 5</string>
+<string name="time_in_min">Zeit in min</string>
+<string name="average_speed_in_kmh">Geschwindigkeit in km/h</string>
+<string name="average_speed_over_time">Geschwindigkeit</string>
+
+<string name="no_recorded_hike">Keine gespeicherten Wanderungen. Bitte nimm erst eine Wanderung auf :)</string>
+<string name="from">Von:</string>
+<string name="distance">Entfernung:</string>
+<string name="speed">Geschwindigkeit:</string>
+<string name="time">Zeit:</string>
+<string name="totaltime">GESMATZEIT</string>
+<string name="date">Datum:</string>
+<string name="photos">Bilder</string>
+<string name="greetings">Hallo</string>
+<string name="your_name">Dein Name</string>
+<string name="summary">Bericht</string>
+<string name="total_distance">Gesamtstrecke</string>
+<string name="_0km">0km</string>
+<string name="total_time">Gesamtzeit</string>
+<string name="_00_00_00">00:00:00</string>
+<string name="average_speed">Geschwindigkeit</string>
+<string name="_0km_h">0km/h</string>
+<string name="hike">Wanderung</string>
+<string name="start_hike">Beginne Wanderung</string>
+<string name="start_a_hike">Beginne eine Wanderung!</string>
+<string name="augmented_reality">Augmented Reality</string>
+<string name="recorded_hikes">Aufgezeichnete Wanderungen</string>
+<string name="finish_hike">BEENDE WANDERUNG</string>
+<string name="_0moh">0m über NN</string>
+<string name="add_poi">Erstelle Marker</string>
+<string name="_0">0</string>
+<string name="cancel_hike">Wanderung abbrechen</string>
+<string name="cancel_hike_question">Wanderung abbrechen?</string>
+<string name="hike_saved_successfully">Wanderung erfolgreich gespeichert</string>
+<string name="welcome_nplease_enter_your_name">Wilkommen!\nBitte gib Deinen Namen ein!</string>
+<string name="please_enter_all_the_fields">Bitte fülle alle Felder aus</string>
+<string name="your_weight">Dein Gewicht</string>
+<string name="kg">kg</string>
+<string name="start_strolling">Start Strolling</string>
+<string name="start_recording">Start recording</string>
+<string name="stop_recording">Aufnahme beenden</string>
+<string name="no_data">Keine Dateien</string>
+<string name="unfiltered_sensor_data">Ungefilterter Sensor Output:</string>
+<string name="raw_acc_data">Rohe acc data</string>
+<string name="raw_gyro_data">Rohe gyro data</string>
+<string name="raw_magnet_data">Rohe magnet data</string>
+<string name="filtered_sensor_data">Gefilterter Sensor Output:</string>
+<string name="no_changes_in_acc_data">Keine Änderung in Acc data</string>
+<string name="no_changes_in_gyro_data">Keine Änderung in Gyro data</string>
+<string name="device_orientation">Geräte Orientierung</string>
+<string name="get_started">LEG LOS!</string>
+<string name="marker_title">Marker Name</string>
+<string name="destination">Ziel</string>
+<string name="category">Kategorie</string>
+<string name="move">Bewegung</string>
+<string name="time_caps">ZEIT</string>
+<string name="avgspeed">AVGGESCHWINDIGKEIT</string>
+<string name="_12_12_2022">12.12.2022</string>
+<string name="moh">m über NN</string>
+<string name="hike_id">HIKE_ID</string>
+<string name="date_caps">DATUM</string>
+<string name="duration">DAUER</string>
+<string name="avg_speed">AVG GESCHWINDIGKEIT</string>
+<string name="distance_caps">ENTFERNUNG</string>
+<string name="distance_in_km">Entfernung in km</string>
+<string name="yes_caps">JA</string>
+<string name="no_caps">NEIN</string>
+<string name="good_morning">Guten Morgen</string>
+<string name="good_afternoon">Guten Nachmittag</string>
+<string name="good_evening">Guten Abend</string>
+<string name="start_a_hike_by_starting_point_and_destination">Beginne eine Wanderung indem du Start- und Zielpunkt
+    festlegst oder beginne einfach Strolling!</string>
+<string name="see_your_favourite_destinations_in_ar">Zeige deine beliebtesten Ziele in AR </string>
+<string name="see_all_your_previous_hikes_and_stats">Zeige alle bisherigen Wanderungen und Infos</string>
+
+<string name="yes_to_camera_request">Kamerberechtigungen gestattet</string>
+<string name="dark_mode">Dark mode</string>
+<string name="heat_map">Hitzekarte</string>
+<string name="markers">Marker</string>
+<string name="point_of_interest">Besonderer Platz</string>
+<string name="mountains">Berge</string>
+<string name="fishing">Angeln</string>
+<string name="attractions">Sehenswürdigkeiten</string>
+<string name="camping">Camping</string>
+<string name="canoe">Kanu</string>
+<string name="misc">Anderes</string>
+<string name="starting_position">Anfangspunkt</string>
+<string name="register">Registrierung</string>
+<string name="hikes">Wanderungen</string>
+<string name="details">Infos</string>
+<string name="full_photo">Ganzes Bild</string>
+<string name="stroll">STROLL</string>
+<string name="about_text">Stroll wird Dir präsentiert vom Stroll development team. \nEs wurde im Rahmen eines Projektes im UiT in Narvik entworfen von: \n
+         - August Fredriksen: Project Manager \n - Jonathan Skaue: Senior Developer \n - Frédéric Charon: Senior Developer</string>
+<string name="no_recorded_hikes_n_come_back_after_you_ve_recorded_a_hike">Keine gespeicherten Wanderungen.\n Schau später vorbei nachdem du Wanderungen gespeichert hast!</string>
+
+
+<string-array name="marker_categories">
+    <item>Berg</item>
+    <item>Angeln</item>
+    <item>Sehenswürdigkeit</item>
+    <item>Camping</item>
+    <item>Kanu</item>
+    <item>Anderes</item>
+</string-array>
+</resources>
