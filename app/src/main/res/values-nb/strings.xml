@@ -2,8 +2,6 @@
 <resources>
     <string name="app_name">Stroll</string>
     <string name="mode">Dag</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hallo blankt fragment</string>
     <!-- Preference Titles -->
     <string name="messages_header">Meldinger</string>
     <string name="sync_header">Synkroniser</string>
