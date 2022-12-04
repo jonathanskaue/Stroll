@@ -44,20 +44,13 @@ class RegisterFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if(!isFirstAppOpen) {
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(R.id.registerFragment, true)
-                .build()
-            findNavController().navigate(
-                R.id.action_registerFragment_to_homeFragment,
-                savedInstanceState,
-                navOptions
-            )
+            findNavController().navigate(R.id.action_global_homeFragment)
         }
 
         binding.tvContinue.setOnClickListener {
             val success = writePersonalDataToSharedPref()
             if(success) {
-                    findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                findNavController().navigate(R.id.action_global_homeFragment)
             } else {
                 Snackbar.make(requireView(), getString(R.string.please_enter_all_the_fields), Snackbar.LENGTH_SHORT).show()
             }
