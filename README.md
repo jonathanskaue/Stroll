@@ -1,5 +1,6 @@
 # STROLL
-                                          
+[Stroll_Poster.pdf](https://github.com/jonathanskaue/Stroll/files/10149109/Stroll_Poster.pdf)
+                                         
 ## TABLE OF CONTENTS
 coming later
 
