@@ -15,6 +15,9 @@ import com.example.stroll.presentation.viewmodel.MainViewModel
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator
 import java.util.*
 
+/*
+Viewpager for introduction fragment
+ */
 class ViewPagerAdapter(
     val viewModel: MainViewModel,
     val view: View?,

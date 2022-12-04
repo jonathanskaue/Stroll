@@ -88,16 +88,13 @@ class LocationService : LifecycleService() {
                         isFirstRun = false
                     } else {
                         startTimer()
-                        Log.d("LOCATIONSERVICE", "startForegroundService: RESUMING SERVICE")
                     }
                 }
                 ACTION_PAUSE -> {
                     pauseService()
-                    Log.d("LOCATIONSERVICE", "startForegroundService: PAUSED SERVICE")
                 }
                 ACTION_STOP -> {
                     stopService()
-                    Log.d("LOCATIONSERVICE", "startForegroundService: STOPPED SRVICE")
                 }
                 else -> {}
             }
@@ -210,7 +207,6 @@ class LocationService : LifecycleService() {
                 notificationManager.notify(1, notification.build())
             }
         })
-        Log.d("LOCATIONSERVICE", "startForegroundService: INSIDE FOREGROUND")
     }
 
 

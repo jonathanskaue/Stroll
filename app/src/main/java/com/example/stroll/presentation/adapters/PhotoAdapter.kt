@@ -16,6 +16,9 @@ import com.example.stroll.data.local.StrollDataEntity
 import com.example.stroll.databinding.ItemPhotoBinding
 import com.example.stroll.domain.repository.RVClickListener
 
+/*
+Photo adapter for photos taken while on a hike.
+ */
 class PhotoAdapter(var listener: RVClickListener): RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
     inner class PhotoViewHolder(val binding: ItemPhotoBinding): RecyclerView.ViewHolder(binding.root) {

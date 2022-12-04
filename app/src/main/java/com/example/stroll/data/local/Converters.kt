@@ -9,7 +9,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.ByteArrayOutputStream
 
-
+/*
+Converters to save complex values in database
+ */
 class Converters {
     @TypeConverter
     fun fromList(value : List<List<Float>>) = Json.encodeToString(value)
