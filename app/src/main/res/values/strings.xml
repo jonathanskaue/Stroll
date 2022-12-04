@@ -68,6 +68,9 @@
     <string name="history">History</string>
     <string name="delete_hike_question">Delete Hike?</string>
     <string name="delete_hike_forever_question">Are you sure you want to delete the hike forever?</string>
+    <string name="delete_marker_question">Delete Marker?</string>
+
+    <string name="delete_marker_forever_question">Are you sure you want to delete the marker forever?</string>
     <string name="are_you_sure_you_wanna_cancel_the_hike">Are you sure you want to cancel the hike and delete data for current hike?</string>
 
     <string-array name="filter_options">

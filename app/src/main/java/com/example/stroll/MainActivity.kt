@@ -123,11 +123,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         navigateToMapFragmentIfNeeded(intent)
-/*        if (viewModel.allData.value?.size == null) {
-            navGraph.setStartDestination(R.id.introductionFragment)
-        } else {
-            navGraph.setStartDestination(R.id.hikesFragment)
-        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

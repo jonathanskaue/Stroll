@@ -242,7 +242,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun deleteMarkerById(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Main) {
             strollRepo.deleteMarkerById(id)
         }
     }

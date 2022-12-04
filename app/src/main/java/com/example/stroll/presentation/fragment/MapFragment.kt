@@ -8,9 +8,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
 import android.location.Geocoder
-import android.location.Geocoder.GeocodeListener
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -20,7 +18,6 @@ import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
 import android.view.*
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -29,16 +26,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.stroll.R
 import com.example.stroll.backgroundlocationtracking.LocationService
 import com.example.stroll.backgroundlocationtracking.Polyline
@@ -73,7 +69,6 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.TilesOverlay
 import org.osmdroid.views.overlay.infowindow.InfoWindow
-import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.ByteArrayOutputStream
@@ -81,8 +76,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
-import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 import kotlin.math.cos
 import kotlin.math.round
 import kotlin.math.sin
@@ -568,6 +561,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
     Point of Interest with custom infowindow.
     Marker will be customized depending on the parameters.
     Button for showing POI in AR.
+    Button for deleting a marker
      */
     private fun myPOIs(name: String?, category: String, lat: Double, lon: Double, id: String, myPhoto: String?) {
         val infoWindow = MarkerWindow(mapView)
@@ -576,6 +570,7 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
         val locationText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowDestination)
         val categoryText = infoWindow.view.findViewById<TextView>(R.id.tvInfoWindowCategory)
         val arButton = infoWindow.view.findViewById<ImageButton>(R.id.ibShowARInfoWindow)
+        val deleteButton = infoWindow.view.findViewById<ImageButton>(R.id.ibDeleteMarker)
 
         lifecycleScope.launch {
             val poiMarker: Marker = Marker(mapView)
@@ -613,6 +608,25 @@ class MapFragment() : BaseFragment(), MapEventsReceiver {
                 arButton.setOnClickListener{
                     val action = MapFragmentDirections.actionMapFragmentToARFragment(poiMarker.title, LatLong(lat, lon), category)
                     findNavController().navigate(action)
+                }
+                deleteButton.setOnClickListener{
+                    val dialog = MaterialAlertDialogBuilder(requireContext(), androidx.appcompat.R.style.AlertDialog_AppCompat)
+                        .setTitle(resources.getString(R.string.delete_marker_question))
+                        .setMessage(resources.getString(R.string.delete_marker_forever_question))
+                        .setIcon(R.drawable.group_1)
+                        .setPositiveButton(resources.getString(R.string.yes_caps)) {_,_ ->
+                            lifecycleScope.launch {
+                                viewModel.deleteMarkerById(id.toInt())
+                                poiMarker.infoWindow.close()
+                                poiMarker.remove(mapView)
+                                Toast.makeText(requireContext(), "POI deleted forever", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        .setNegativeButton(resources.getString(R.string.no_caps)) { dialogInterface, _ ->
+                            dialogInterface.cancel()
+                        }
+                        .create()
+                    dialog.show()
                 }
                 viewModel.isInfoWindowOpen()
                 poiMarker.showInfoWindow()

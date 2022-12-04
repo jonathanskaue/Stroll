@@ -89,6 +89,8 @@
 
     <string name="delete_hike_question">Slette tur?</string>
     <string name="delete_hike_forever_question">Er du sikker på at du vil slette turen for alltid?</string>
+    <string name="delete_marker_question">Slette markør?</string>
+    <string name="delete_marker_forever_question">Er du sikker på at du vil slette markøren for alltid?</string>
     <string name="are_you_sure_you_wanna_cancel_the_hike">Er du sikker på at du vil avbryte turen og slette data for nåværende tur?</string>
 
     <string name="time_in_min">Tid i min</string>
