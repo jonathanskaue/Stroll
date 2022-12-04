@@ -26,7 +26,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
 
-//It works!!!!!!!!
+/*
+MainActivity, Checks permissions and sets up bottom bar and toggle menu in action bar.
+ */
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

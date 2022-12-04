@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+/*
+Main viewmodel used as a shared viewmodel for keeping values alive when navigating.
+ */
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val strollRepo: StrollRepository
@@ -167,10 +169,6 @@ class MainViewModel @Inject constructor(
     }.also {
         this.sortType = sortType
     }
-
-
-
-
 
     var allData: LiveData<List<StrollDataEntity>> = strollRepo.readAllData
 
