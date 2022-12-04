@@ -47,6 +47,7 @@ class RegisterFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if(!isFirstAppOpen) {
+            findNavController().popBackStack()
             findNavController().navigate(R.id.action_global_homeFragment)
         }
         else{
@@ -55,6 +56,7 @@ class RegisterFragment : BaseFragment() {
                 val success = writePersonalDataToSharedPref()
                 if(success) {
                     (activity as MainActivity).bottomNavBar.visibility = View.VISIBLE
+                    findNavController().popBackStack()
                     findNavController().navigate(R.id.action_global_introductionFragment)
                 } else {
                     Snackbar.make(requireView(), getString(R.string.please_enter_all_the_fields), Snackbar.LENGTH_SHORT).show()

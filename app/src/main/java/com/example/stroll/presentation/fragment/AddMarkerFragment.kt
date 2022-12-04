@@ -125,7 +125,7 @@ class AddMarkerFragment : BaseFragment() {
                         resources.getString(R.string.poi_made_successfully),
                         Snackbar.LENGTH_LONG
                     ).show()
-                    findNavController().navigate(R.id.action_addMarkerFragment_to_mapFragment)
+                    findNavController().navigate(R.id.action_global_mapFragment)
                 } catch (e: java.lang.NullPointerException) {
                     Log.d("nullpointer", "onCreateView: $e")
                 }

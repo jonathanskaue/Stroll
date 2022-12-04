@@ -105,6 +105,7 @@ class LocationService : LifecycleService() {
     private var timeStarted = 0L
     private var lastSecondTimeStamp = 0L
 
+    // Notice isTracking value will be set to true
     private fun startTimer() {
         addEmptyPolyline()
         isTracking.postValue(true)
@@ -156,6 +157,8 @@ class LocationService : LifecycleService() {
         }
     }
 
+
+    // When location changes add new location to pathpoints
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
@@ -163,7 +166,6 @@ class LocationService : LifecycleService() {
                 result.locations.let { locations ->
                     for(location in locations) {
                         addPathPoint(location)
-                        Log.d("NEW LOCATION:", "${location.latitude}, ${location.longitude}")
                     }
                 }
             }
@@ -171,6 +173,7 @@ class LocationService : LifecycleService() {
     }
 
 
+    // Function to add value to pathpoints. Used in locationCallBack
     private fun addPathPoint(location: Location?) {
         location?.let {
             val pos = LatLng(location.latitude, location.longitude)
@@ -186,6 +189,7 @@ class LocationService : LifecycleService() {
         pathPoints.postValue(this)
     } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
 
+    // Starting the service
     private fun startForegroundService() {
         startTimer()
         isTracking.postValue(true)
@@ -207,6 +211,9 @@ class LocationService : LifecycleService() {
     }
 
 
+    /*
+    Section for creating notification which you can access while not having the app open.
+     */
     private fun createNotificationChannel(notificationManager: NotificationManager) {
         val channel = NotificationChannel(
             "TRACKING CHANNEL",
