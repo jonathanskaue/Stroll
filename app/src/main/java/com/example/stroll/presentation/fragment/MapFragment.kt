@@ -156,7 +156,6 @@ class MapFragment : BaseFragment() {
         }
 
         controller.setZoom(18.0)
-
         mapView.setTileSource(TileSourceFactory.MAPNIK)
         subscribeToObservers()
         geocoder = Geocoder(this.requireContext(), Locale.getDefault())
