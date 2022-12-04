@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.stroll.databinding.FragmentHomeBinding
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.example.stroll.R
 import com.example.stroll.other.Utility
 import com.example.stroll.presentation.viewmodel.StatisticsViewModel
@@ -29,7 +28,7 @@ class HomeFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -44,27 +43,27 @@ class HomeFragment : BaseFragment() {
         binding.tvUserName.text = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
     }
     private fun subscribeToObservers() {
-        viewModel.totalTimeInMillisHiked.observe(viewLifecycleOwner, Observer {
+        viewModel.totalTimeInMillisHiked.observe(viewLifecycleOwner) {
             it?.let {
                 val totalTimeHiked = Utility.getFormattedStopWatchTime(it)
                 binding.tvTotalTime.text = totalTimeHiked
             }
-        })
-        viewModel.totalDistanceHiked.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.totalDistanceHiked.observe(viewLifecycleOwner) {
             it?.let {
                 val km = it / 1000f
                 val totalDistance = round(km * 10f) / 10f
                 val totalDistanceString = "${totalDistance}km"
                 binding.tvTotalDistance.text = totalDistanceString
             }
-        })
-        viewModel.totalAverageSpeed.observe(viewLifecycleOwner, Observer {
+        }
+        viewModel.totalAverageSpeed.observe(viewLifecycleOwner) {
             it?.let {
                 val avgSpeed = round(it * 10f) / 10f
                 val avgSpeedString = "${avgSpeed}km/h"
                 binding.tvAverageSpeed.text = avgSpeedString
             }
-        })
+        }
     }
 
     private fun myGreetingsMessage() : String {
